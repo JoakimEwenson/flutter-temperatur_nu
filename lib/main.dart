@@ -46,11 +46,11 @@ class Post {
     var sourceInfo = content.findAllElements("item").map((node) => node.findElements("sourceInfo").single.text);
     var sourceUrl = content.findAllElements("item").map((node) => node.findElements("url").single.text);
     // Average, min, max data
-    var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
-    var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
-    var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
-    var minTime = content.findAllElements("item").map((node) => node.findElements("minTime").single.text);
-    var maxTime = content.findAllElements("item").map((node) => node.findElements("maxTime").single.text);
+    // var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
+    // var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
+    // var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
+    // var minTime = content.findAllElements("item").map((node) => node.findElements("minTime").single.text);
+    // var maxTime = content.findAllElements("item").map((node) => node.findElements("maxTime").single.text);
 
     return Post(
       temperature: currentTemp.single.toString() + "°C", 
