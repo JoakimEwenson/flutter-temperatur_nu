@@ -1,0 +1,26 @@
+<rss version="2.0">
+    <channel>
+        <title>
+        Temperatur.nu API 1.15 - Din url är inte korrekt signerad, clientnyckeln kan tillfälligt blockeras - /tnu_1.15.php
+        </title>
+        <link>http://wiki.temperatur.nu/index.php/Api</link>
+        <item>
+            <title>Karlstad/Romstad</title>
+            <id>romstad</id>
+            <temp>0,6</temp>
+            <lat>59,378191</lat>
+            <lon>13,474149</lon>
+            <lastUpdate>2019-11-07 15:25:37</lastUpdate>
+            <kommun>Karlstad</kommun>
+            <lan>Värmlands län</lan>
+            <sourceInfo>Temperaturdata från Lars Hultqvist.</sourceInfo>
+            <url>https://www.temperatur.nu/romstad.html</url>
+            <ammRange>2019-11-06 03:25 - 2019-11-07 03:25</ammRange>
+            <average>-2,9</average>
+            <min>-5,6</min>
+            <minTime>2019-11-06 21:44</minTime>
+            <max>2,2</max>
+            <maxTime>2019-11-07 13:20</maxTime>
+        </item>
+    </channel>
+</rss>
