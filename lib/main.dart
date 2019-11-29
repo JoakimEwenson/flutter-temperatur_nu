@@ -183,7 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     return Text(snapshot.data.lastUpdate, 
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w200
                       ),
                     
@@ -206,7 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: EdgeInsets.all(10),
                 color: Colors.blue,
                 textColor: Colors.white,
-                child: Text('Uppdatera', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
+                child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
               ),
             ],
           ),
