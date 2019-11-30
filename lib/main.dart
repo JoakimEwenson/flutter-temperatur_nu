@@ -24,6 +24,7 @@ class Utils {
 class Post {
   final String title;
   final String temperature;
+  final String amm;
   final String lastUpdate;
   final String sourceInfo;
   final String sourceUrl;
@@ -31,6 +32,7 @@ class Post {
   Post({
     this.title, 
     this.temperature, 
+    this.amm,
     this.lastUpdate,
     this.sourceInfo,
     this.sourceUrl
@@ -47,15 +49,16 @@ class Post {
     var sourceInfo = content.findAllElements("item").map((node) => node.findElements("sourceInfo").single.text);
     var sourceUrl = content.findAllElements("item").map((node) => node.findElements("url").single.text);
     // Average, min, max data
-    // var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
-    // var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
-    // var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
+    var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
+    var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
+    var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
     // var minTime = content.findAllElements("item").map((node) => node.findElements("minTime").single.text);
     // var maxTime = content.findAllElements("item").map((node) => node.findElements("maxTime").single.text);
 
     return Post(
-      temperature: currentTemp.single.toString() + "°C", 
       title: locationTitle.single.toString(), 
+      temperature: currentTemp.single.toString() + "°C", 
+      amm: "min " + minTemp.single.toString() + "°C ● medel " + averageTemp.single.toString() + " °C ● max " + maxTemp.single.toString() + " °C",
       lastUpdate: "Senast uppdaterad: " + lastUpdated.single.toString(),
       sourceInfo: sourceInfo.single.toString(),
       sourceUrl: sourceUrl.single.toString()
@@ -165,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Container(
             margin: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 // Temperature results
                 FutureBuilder<Post>(
@@ -174,14 +177,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (snapshot.hasData) {
                       return Text(snapshot.data.temperature, 
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 84,
+                          color: Colors.grey[800],
+                          fontSize: 90,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
                         )
                       );
                     } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
+                      return Text("n/a");
                     }
                     // By default, show a loading spinner.
                     return CircularProgressIndicator();
@@ -194,18 +197,38 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (snapshot.hasData) {
                       return Text(snapshot.data.title,
                       style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 24
+                        color: Colors.grey[800],
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       )
                     );
                     } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
+                      return Text("- - -");
                     }
                     // By default, return placeholder text
                     return Text("Hämtar data");
                   }
                 ),
                 SizedBox(height: 10),
+                FutureBuilder<Post>(
+                  future: post,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data.amm,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 11,
+                          fontWeight: FontWeight.normal
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("- - -");
+                    }
+
+                    return Text("");
+                  }
+                ),
+                SizedBox(height: 10,),
                 // Last updated at timestamp
                 FutureBuilder<Post>(
                   future: post,
@@ -215,6 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 10,
+                          fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w200
                         ),
                       
@@ -234,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       position = fetchPosition();
                     });
                   },
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(15),
                   color: Colors.blue,
                   textColor: Colors.white,
                   child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
