@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart' as xml;
 
 void main() => runApp(MyApp());
@@ -64,14 +65,37 @@ class Post {
 
 // Get location
 Future<Position> fetchPosition() async {
-  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high).timeout(Duration(seconds: 10)).then((position) {
+      //getting position without problems
+      return position;
+    }).catchError((error) {
+        //handle the exception
+        print(error);
+    });
 
-  return position;
+    return position;
 }
 
 // Another fetch API function
-Future<Post> fetchPost(String url) async {
+Future<Post> fetchPost(String location) async {
+  // Setting up local data
+  final prefs = await SharedPreferences.getInstance();
+
   // Collect position
+  Position position = await fetchPosition();
+
+  String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
+  String urlOptions = "&amm=true&dc=true&verbose=true&num=1&cli=" + Utils.createCryptoRandomString();
+  String url;
+
+  if (position != null) {
+    url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
+  } else {
+    url = baseUrl + "?p=" + location + urlOptions;
+    prefs.setString('location', location);
+  }
+
+  // Get data
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
@@ -111,18 +135,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Post> post;
   Future<Position> position;
 
+  // Set up default Location
+  static String defaultLocation = "kayravuopio";
+  String locationId = defaultLocation;
+
   @override
   void initState() {
     super.initState();
-    post = fetchPost(apiUrl);
+    post = fetchPost(locationId);
     position = fetchPosition();
+    _loadLocation();
   }
 
-  // Set up API call
-  static String cli = Utils.createCryptoRandomString();
-  static String locationId = "kayravuopio";
-  //String apiUrl = "https://api.temperatur.nu/tnu_1.15.php?p=" + locationId + "&amm=true&dc=true&verbose&cli=" + cli;
-  String apiUrl = "https://api.temperatur.nu/tnu_1.15.php?lat=58.376761&lon=15.562916&amm=true&dc=true&verbose=true&num=1&cli=" + cli;
+  _loadLocation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      locationId = (prefs.getString('location') ?? defaultLocation);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,85 +160,87 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(            
         title: Text('temperatur.nu'),            
       ),
-      body: Center(
-        child: Container(
-          margin: EdgeInsets.all(20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // Temperature results
-              FutureBuilder<Post>(
-                future: post,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data.temperature, 
+      body: Builder(
+        builder: (context) => Center(
+          child: Container(
+            margin: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Temperature results
+                FutureBuilder<Post>(
+                  future: post,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data.temperature, 
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 84,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        )
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    // By default, show a loading spinner.
+                    return CircularProgressIndicator();
+                  }
+                ),
+                // Location Title
+                FutureBuilder<Post>(
+                  future: post,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data.title,
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 84,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
+                        fontSize: 24
                       )
                     );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
+                    // By default, return placeholder text
+                    return Text("Hämtar data");
                   }
-                  // By default, show a loading spinner.
-                  return CircularProgressIndicator();
-                }
-              ),
-              // Location Title
-              FutureBuilder<Post>(
-                future: post,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data.title,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24
-                    )
-                  );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
-                  // By default, return placeholder text
-                  return Text("Loading data");
-                }
-              ),
-              SizedBox(height: 10),
-              // Last updated at timestamp
-              FutureBuilder<Post>(
-                future: post,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data.lastUpdate, 
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w200
-                      ),
-                    
-                    );
-                  } else if (snapshot.hasError) {
-                    return Text("${snapshot.error}");
-                  }
+                ),
+                SizedBox(height: 10),
+                // Last updated at timestamp
+                FutureBuilder<Post>(
+                  future: post,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(snapshot.data.lastUpdate, 
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w200
+                        ),
+                      
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("${snapshot.error}");
+                    }
 
-                  return Text("");
-                }
-              ),
-              SizedBox(height: 20,),
-              RaisedButton(
-                onPressed: () {
-                  setState(() {
-                    cli = Utils.createCryptoRandomString();
-                    post = fetchPost(apiUrl);
-                  });
-                },
-                padding: EdgeInsets.all(10),
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
-              ),
-            ],
+                    return Text("");
+                  }
+                ),
+                SizedBox(height: 20,),
+                RaisedButton(
+                  onPressed: () {
+                    setState(() {
+                      post = fetchPost(locationId);
+                      position = fetchPosition();
+                    });
+                  },
+                  padding: EdgeInsets.all(10),
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
