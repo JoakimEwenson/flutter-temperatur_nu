@@ -58,7 +58,7 @@ class Post {
     return Post(
       title: locationTitle.single.toString(), 
       temperature: currentTemp.single.toString() + "°C", 
-      amm: "min " + minTemp.single.toString() + "°C ● medel " + averageTemp.single.toString() + " °C ● max " + maxTemp.single.toString() + " °C",
+      amm: "min " + minTemp.single.toString() + "°C ● medel " + averageTemp.single.toString() + "°C ● max " + maxTemp.single.toString() + "°C",
       lastUpdate: "Senast uppdaterad: " + lastUpdated.single.toString(),
       sourceInfo: sourceInfo.single.toString(),
       sourceUrl: sourceUrl.single.toString()
@@ -145,9 +145,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    post = fetchPost(locationId);
-    position = fetchPosition();
     _loadLocation();
+    position = fetchPosition();
+    post = fetchPost(locationId);
   }
 
   _loadLocation() async {
@@ -266,8 +266,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 RaisedButton(
                   onPressed: () {
                     setState(() {
-                      post = fetchPost(locationId);
                       position = fetchPosition();
+                      post = fetchPost(locationId);
                     });
                   },
                   shape: RoundedRectangleBorder(
