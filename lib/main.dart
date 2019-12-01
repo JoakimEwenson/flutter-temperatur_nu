@@ -168,117 +168,121 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context) => Center(
           child: Container(
             margin: EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                // Image
-                new Image.asset(
-                  'icon/Solflinga.png',
-                  height: 100,
-                ),
-                // Temperature results
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(fit: BoxFit.fitWidth,
-                        child:
-                          Text(snapshot.data.temperature, 
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: 100,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                          )
-                        )
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("n/a");
-                    }
-                    // By default, show a loading spinner.
-                    return CircularProgressIndicator();
-                  }
-                ),
-                // Location Title
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(fit: BoxFit.fitWidth,
-                        child:
-                          Text(snapshot.data.title,
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                          )
-                      )
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("- - -");
-                    }
-                    // By default, return placeholder text
-                    return Text("Hämtar data");
-                  }
-                ),
-                SizedBox(height: 10),
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data.amm,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 11,
-                          fontWeight: FontWeight.normal
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("- - -");
-                    }
-
-                    return Text("");
-                  }
-                ),
-                SizedBox(height: 10,),
-                // Last updated at timestamp
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(snapshot.data.lastUpdate, 
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w200
-                        ),
-                      
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-
-                    return Text("");
-                  }
-                ),
-                SizedBox(height: 20,),
-                RaisedButton(
-                  onPressed: () {
-                    setState(() {
-                      position = fetchPosition();
-                      post = fetchPost(locationId);
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(18.0),
+            width: double.infinity,
+            height: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  // Image
+                  new Image.asset(
+                    'icon/Solflinga.png',
+                    height: 100,
                   ),
-                  padding: EdgeInsets.all(15),
-                  color: Colors.grey[800],
-                  textColor: Colors.white,
-                  child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
-                ),
-              ],
+                  // Temperature results
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return FittedBox(fit: BoxFit.fitWidth,
+                          child:
+                            Text(snapshot.data.temperature, 
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontSize: 100,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            )
+                          )
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("n/a");
+                      }
+                      // By default, show a loading spinner.
+                      return CircularProgressIndicator();
+                    }
+                  ),
+                  // Location Title
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return FittedBox(fit: BoxFit.fitWidth,
+                          child:
+                            Text(snapshot.data.title,
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            )
+                        )
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("- - -");
+                      }
+                      // By default, return placeholder text
+                      return Text("Hämtar data");
+                    }
+                  ),
+                  SizedBox(height: 10),
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.amm,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                            fontWeight: FontWeight.normal
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("- - -");
+                      }
+
+                      return Text("");
+                    }
+                  ),
+                  SizedBox(height: 10,),
+                  // Last updated at timestamp
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.lastUpdate, 
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w200
+                          ),
+                        
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+
+                      return Text("");
+                    }
+                  ),
+                  SizedBox(height: 20,),
+                  RaisedButton(
+                    onPressed: () {
+                      setState(() {
+                        position = fetchPosition();
+                        post = fetchPost(locationId);
+                      });
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(18.0),
+                    ),
+                    padding: EdgeInsets.all(15),
+                    color: Colors.grey[800],
+                    textColor: Colors.white,
+                    child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
