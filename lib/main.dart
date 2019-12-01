@@ -161,7 +161,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(            
-        title: Text('temperatur.nu'),            
+        title: Text('temperatur.nu'),
+        backgroundColor: Colors.grey[800],
       ),
       body: Builder(
         builder: (context) => Center(
@@ -170,17 +171,25 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
+                // Image
+                new Image.asset(
+                  'icon/Solflinga.png',
+                  height: 100,
+                ),
                 // Temperature results
                 FutureBuilder<Post>(
                   future: post,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Text(snapshot.data.temperature, 
-                        style: TextStyle(
-                          color: Colors.grey[800],
-                          fontSize: 90,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
+                      return FittedBox(fit: BoxFit.fitWidth,
+                        child:
+                          Text(snapshot.data.temperature, 
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 100,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          )
                         )
                       );
                     } else if (snapshot.hasError) {
@@ -195,13 +204,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   future: post,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Text(snapshot.data.title,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                      return FittedBox(fit: BoxFit.fitWidth,
+                        child:
+                          Text(snapshot.data.title,
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          )
                       )
-                    );
+                      );
                     } else if (snapshot.hasError) {
                       return Text("- - -");
                     }
@@ -258,8 +270,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       position = fetchPosition();
                     });
                   },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(18.0),
+                  ),
                   padding: EdgeInsets.all(15),
-                  color: Colors.blue,
+                  color: Colors.grey[800],
                   textColor: Colors.white,
                   child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
                 ),
