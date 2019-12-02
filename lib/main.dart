@@ -23,6 +23,7 @@ class Utils {
 // Custom class for the post results
 class Post {
   final String title;
+  final String id;
   final String temperature;
   final String amm;
   final String lastUpdate;
@@ -31,6 +32,7 @@ class Post {
 
   Post({
     this.title, 
+    this.id,
     this.temperature, 
     this.amm,
     this.lastUpdate,
@@ -43,8 +45,9 @@ class Post {
     // Parse API result as XML
     var content = xml.parse(body);
     // Locate and bind data
-    var currentTemp = content.findAllElements("item").map((node) => node.findElements("temp").single.text);
     var locationTitle = content.findAllElements("item").map((node) => node.findElements("title").single.text);
+    var locationId = content.findAllElements("item").map((node) => node.findElements("id").single.text);
+    var currentTemp = content.findAllElements("item").map((node) => node.findElements("temp").single.text);
     var lastUpdated = content.findAllElements("item").map((node) => node.findElements("lastUpdate").single.text);
     var sourceInfo = content.findAllElements("item").map((node) => node.findElements("sourceInfo").single.text);
     var sourceUrl = content.findAllElements("item").map((node) => node.findElements("url").single.text);
@@ -57,6 +60,7 @@ class Post {
 
     return Post(
       title: locationTitle.single.toString(), 
+      id: locationId.single.toString(),
       temperature: currentTemp.single.toString() + "°C", 
       amm: "min " + minTemp.single.toString() + "°C ● medel " + averageTemp.single.toString() + "°C ● max " + maxTemp.single.toString() + "°C",
       lastUpdate: "Senast uppdaterad: " + lastUpdated.single.toString(),
@@ -80,29 +84,49 @@ Future<Position> fetchPosition() async {
 }
 
 // Another fetch API function
-Future<Post> fetchPost(String location) async {
-  // Setting up local data
-  final prefs = await SharedPreferences.getInstance();
-
-  // Collect position
-  Position position = await fetchPosition();
-
+Future<Post> fetchPost() async {
+  // Set up API URL
   String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
   String urlOptions = "&amm=true&dc=true&verbose=true&num=1&cli=" + Utils.createCryptoRandomString();
   String url;
 
+  // Set up default location and empty location string for later use
+  String defaultLocation = "kayravuopio";
+  String location;
+
+  // Setting up local data
+  final prefs = await SharedPreferences.getInstance();
+  //print("Saved location id: " + prefs.getString('location'));
+
+  // Collect position
+  Position position = await fetchPosition();
+
   if (position != null) {
     url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
-  } else {
+  } 
+  else {
+    // Check if location id is stored in local storage or else, use default
+    if (prefs.getString('location') != null) {
+      location = prefs.getString('location');
+    } 
+    else {
+      location = defaultLocation;
+    }
     url = baseUrl + "?p=" + location + urlOptions;
-    prefs.setString('location', location);
   }
 
-  // Get data
+
+
+  // Get data from API
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
     // If server returns OK, parse XML result
+    Post result = Post.fromXml(response.body);
+    // Save location id to local storage for later
+    prefs.setString('location', result.id.toString());
+    print("Saving location id: " + result.id.toString());
+
     return Post.fromXml(response.body);
   } else {
     throw Exception('Misslyckades med att hämta data.');
@@ -138,23 +162,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<Post> post;
   Future<Position> position;
 
-  // Set up default Location
-  static String defaultLocation = "kayravuopio";
-  String locationId = defaultLocation;
-
   @override
   void initState() {
     super.initState();
-    _loadLocation();
-    position = fetchPosition();
-    post = fetchPost(locationId);
-  }
-
-  _loadLocation() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      locationId = (prefs.getString('location') ?? defaultLocation);
-    });
+    post = fetchPost();
   }
 
   @override
@@ -175,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   // Image
-                  new Image.asset(
+                  Image.asset(
                     'icon/Solflinga.png',
                     height: 100,
                   ),
@@ -269,8 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   RaisedButton(
                     onPressed: () {
                       setState(() {
-                        position = fetchPosition();
-                        post = fetchPost(locationId);
+                        post = fetchPost();
                       });
                     },
                     shape: RoundedRectangleBorder(
