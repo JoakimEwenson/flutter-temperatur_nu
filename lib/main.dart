@@ -139,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(snapshot.data.temperature, 
                             style: TextStyle(
                               color: Colors.grey[800],
-                              fontSize: 200,
+                              fontSize: 180,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
                             )
@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Text(snapshot.data.title,
                             style: TextStyle(
                               color: Colors.grey[800],
-                              fontSize: 28,
+                              fontSize: 36,
                               fontWeight: FontWeight.bold,
                             )
                         )
