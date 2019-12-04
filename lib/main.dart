@@ -114,182 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('temperatur.nu'),
         backgroundColor: Colors.grey[800],
       ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            Container(
-              height: 100,
-              child: DrawerHeader(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text('Huvudmeny', style: TextStyle(color: Colors.white),),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                ),
-              ),
-            ),
-            
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Startsida'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.favorite),
-              title: Text('Favoriter'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.list),
-              title: Text('Mätpunkter'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Inställningar'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
-        ),
-      ),
-      body: Builder(
-        builder: (context) => Center(
-          child: RefreshIndicator(
-            child: Container(
-              margin: EdgeInsets.all(20),
-              width: double.infinity,
-              height: double.infinity,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    // Temperature results
-                    FutureBuilder<Post>(
-                      future: post,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return FittedBox(fit: BoxFit.fitWidth,
-                            child:
-                              Text(snapshot.data.temperature, 
-                              style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 180,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
-                              )
-                            )
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("n/a");
-                        }
-                        // By default, show a loading spinner.
-                        return CircularProgressIndicator();
-                      }
-                    ),
-                    // Location Title
-                    FutureBuilder<Post>(
-                      future: post,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return FittedBox(fit: BoxFit.fitWidth,
-                            child:
-                              Text(snapshot.data.title,
-                              style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 36,
-                                fontWeight: FontWeight.bold,
-                              )
-                          )
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("- - -");
-                        }
-                        // By default, return placeholder text
-                        return Text("Hämtar data");
-                      }
-                    ),
-                    SizedBox(height: 10),
-                    // Min, max, average title
-                    FutureBuilder<Post>(
-                      future: post,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(snapshot.data.amm,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.normal
-                            ),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("- - -");
-                        }
-
-                        return Text("");
-                      }
-                    ),
-                    SizedBox(height: 10,),
-                    // Last updated at timestamp
-                    FutureBuilder<Post>(
-                      future: post,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text(snapshot.data.lastUpdate, 
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 11,
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w200
-                            ),
-                          
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text("${snapshot.error}");
-                        }
-
-                        return Text("");
-                      }
-                    ),
-/*                     SizedBox(height: 20,),
-                    RaisedButton(
-                      onPressed: () {
-                        setState(() {
-                          post = fetchPost();
-                        });
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(18.0),
-                      ),
-                      padding: EdgeInsets.all(15),
-                      color: Colors.grey[800],
-                      textColor: Colors.white,
-                      child: Text('UPPDATERA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold) ),
-                    ), */
-                  ],
-                ),
-              ),
-            ),
-            onRefresh: () {
-              setState(() {
-                post = fetchPost();
-              });
-              return;
-            },
-          ),
-        ),
-      ),
+      drawer: _drawerList(),
+      body: _singleTemperatureView(),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -299,8 +125,170 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: "Uppdatera",
         child: new Icon(Icons.update),
         backgroundColor: Colors.grey[800],
-
       ),
     );
+  }
+
+  _drawerList() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          Container(
+            height: 150,
+            child: DrawerHeader(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.ac_unit, color: Colors.white,),
+                    title: Text('HUVUDMENY', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                  ),
+                ],
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+              ),
+            ),
+          ),
+          
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('Startsida'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.favorite),
+            title: Text('Favoriter'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Mätpunkter'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Inställningar'),
+            onTap: () {
+              Navigator.pop(context);
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  _singleTemperatureView() {
+    return Builder(
+        builder: (context) => Center(
+          child: Container(
+            margin: EdgeInsets.all(20),
+            width: double.infinity,
+            height: double.infinity,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Temperature results
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return FittedBox(fit: BoxFit.fitWidth,
+                          child:
+                            Text(snapshot.data.temperature, 
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontSize: 180,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            )
+                          )
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("n/a");
+                      }
+                      // By default, show a loading spinner.
+                      return CircularProgressIndicator();
+                    }
+                  ),
+                  // Location Title
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return FittedBox(fit: BoxFit.fitWidth,
+                          child:
+                            Text(snapshot.data.title,
+                            style: TextStyle(
+                              color: Colors.grey[800],
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                            )
+                        )
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("- - -");
+                      }
+                      // By default, return placeholder text
+                      return Text("Hämtar data");
+                    }
+                  ),
+                  SizedBox(height: 10),
+                  // Min, max, average title
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.amm,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("- - -");
+                      }
+
+                      return Text("");
+                    }
+                  ),
+                  SizedBox(height: 10,),
+                  // Last updated at timestamp
+                  FutureBuilder<Post>(
+                    future: post,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(snapshot.data.lastUpdate, 
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w200
+                          ),
+                        
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      }
+
+                      return Text("");
+                    }
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
   }
 }
