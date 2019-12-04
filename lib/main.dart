@@ -135,10 +135,9 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-            height: 150,
+            height: 135,
             child: DrawerHeader(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ListTile(
