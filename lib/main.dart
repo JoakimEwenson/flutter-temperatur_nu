@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 // Import views
 import 'views/drawer.dart';
@@ -11,7 +13,22 @@ import 'views/settingspage.dart';
 import 'common.dart';
 import 'post.dart';
 
-void main() => runApp(MyApp());
+// Set up global String for location
+String locationId = 'default';
+
+// Set up SharedPreferences for loading saved data
+SharedPreferences sp;
+
+// Prepare future data
+Future<Post> post;
+
+//void main() => runApp(MyApp());
+Future<Null> main() async {
+  sp = await SharedPreferences.getInstance();
+  locationId = sp.getString('location') ?? 'default';
+  print("Saved location: " + sp.getString('location'));
+  runApp(MyApp());
+}
 
 // Begin app
 class MyApp extends StatelessWidget {
@@ -51,16 +68,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {  
-  // Prepare future data
-  Future<Post> post;
-  //Future<String> locationId = fetchLocallySavedData();
-  String locationId = 'default';
+  
+  //String locationId = 'default';
 
   @override
   void initState() {
     super.initState();
-
-    post = fetchPost(locationId);
+    //post = fetchPost(locationId);
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {
+        post = fetchPost(locationId);
+      });
+    });
   }
 
   @override

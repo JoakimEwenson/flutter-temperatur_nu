@@ -59,7 +59,16 @@ Future<Post> fetchPost(String location) async {
 
     if (position != null) {
       url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
-    } 
+    }
+    else {
+      if (prefs.getString('location') != null) {
+        locationId = prefs.getString('location');
+      } 
+      else {
+        locationId = defaultLocation;
+      }
+    url = baseUrl + "?p=" + locationId + urlOptions;
+    }
     print("GPS searching...");
   }
   else if (location == 'default') {
@@ -70,7 +79,7 @@ Future<Post> fetchPost(String location) async {
   else {
     // Check if location id is stored in local storage or else, use default
     if (prefs.getString('location') != null) {
-      location = prefs.getString('location');
+      locationId = prefs.getString('location');
     } 
     else {
       locationId = defaultLocation;
