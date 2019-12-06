@@ -14,13 +14,13 @@ class AppDrawer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ListTile(
-                    leading: Icon(Icons.ac_unit, color: Theme.of(context).accentColor),
-                    title: Text('HUVUDMENY', style: TextStyle(color: Theme.of(context).accentColor, fontWeight: FontWeight.bold),),
+                    leading: Icon(Icons.ac_unit, ),
+                    title: Text('temperatur.nu', style: Theme.of(context).textTheme.title, ),
                   ),
                 ],
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
+                //color: Theme.of(context).primaryColor,
               ),
             ),
           ),

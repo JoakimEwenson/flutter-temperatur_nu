@@ -40,11 +40,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
-        primaryColor: Colors.grey[800]
+        primaryColor: Colors.grey[800],
+        
+        textTheme: TextTheme(
+        ),
       ),
       darkTheme: ThemeData.dark().copyWith(
         brightness: Brightness.dark,
-        accentColor: Colors.grey[100]
+        accentColor: Colors.grey[100],
       ),
       //home: MyHomePage(title: 'temperatur.nu'),
       initialRoute: '/',
@@ -90,19 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       drawer: AppDrawer(),
       body: _singleTemperatureView(),
-      floatingActionButton: new FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Theme.of(context).accentColor,
-        onPressed: () {
-          setState(() {
-            post = fetchPost('gps');
-          });
-        },
-        tooltip: "Uppdatera",
-        child: new Icon(Icons.location_searching),
-      ),
+      floatingActionButton: _doubleFAB(),
     );
   }
+
 
   _singleTemperatureView() {
     return Builder(
@@ -123,11 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return FittedBox(fit: BoxFit.fitWidth,
                         child:
                           Text(snapshot.data.temperature, 
-                          style: TextStyle(
-                            fontSize: 180,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                          )
+                          style: Theme.of(context).textTheme.display4,
                         )
                       );
                     } else if (snapshot.hasError) {
@@ -145,10 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return FittedBox(fit: BoxFit.fitWidth,
                         child:
                           Text(snapshot.data.title,
-                          style: TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          )
+                          style: Theme.of(context).textTheme.display3,
                       )
                       );
                     } else if (snapshot.hasError) {
@@ -165,10 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Text(snapshot.data.amm,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.normal
-                        ),
+                        style: Theme.of(context).textTheme.body2
                       );
                     } else if (snapshot.hasError) {
                       return Text("- - -");
@@ -184,11 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Text(snapshot.data.lastUpdate, 
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w300
-                        ),
+                        style: Theme.of(context).textTheme.caption
                       
                       );
                     } else if (snapshot.hasError) {
@@ -203,6 +183,43 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  // Multiple Floating Action Buttons setup
+  _doubleFAB() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Theme.of(context).accentColor,
+          onPressed: () {
+            setState(() {
+              post = fetchPost('gps');
+            });
+          },
+          tooltip: 'Hämta position',
+          child: new Icon(Icons.location_searching),
+          heroTag: 'gpsFAB',
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          foregroundColor: Theme.of(context).accentColor,
+          onPressed: () {
+            setState(() {
+              post = fetchPost(locationId);
+            });
+          },
+          tooltip: 'Uppdatera temperaturdata',
+          child: Icon(Icons.update),
+          heroTag: 'updateFAB',
+        ),
+      ],
     );
   }
 }
