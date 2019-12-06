@@ -1,38 +1,63 @@
-import 'dart:core' as prefix0;
 import 'dart:core';
-
 import 'package:flutter/material.dart';
 import 'package:temperatur.nu/views/drawer.dart';
 import 'package:temperatur.nu/post.dart';
 
 List<Post> favorites = [
     Post(
-      title: 'Test',
-      id: 'test',
-      temperature: '25,0°C',
+      title: 'Karlstad',
+      id: 'karlstad',
+      temperature: '6,6°C',
       amm: '',
-      lastUpdate: '',
-      sourceInfo: '',
-      sourceUrl: 'https://www.ewenson.se'
+      lastUpdate: '2019-12-06 13:17:10',
+      sourceInfo: 'Temperaturdata från Magnus väderstation i Karlstad.',
+      sourceUrl: 'https://www.temperatur.nu/karlstad.html'
     ),
     Post(
-      title: 'Test 2',
-      id: 'test',
-      temperature: '-15,0°C',
+      title: 'Karlstad/Haga',
+      id: 'karlstad_haga',
+      temperature: '-7,1°C',
       amm: '',
-      lastUpdate: '',
+      lastUpdate: '2019-12-06 13:15:12',
       sourceInfo: '',
-      sourceUrl: 'https://www.temperatur.nu'
+      sourceUrl: 'https://www.temperatur.nu/karlstad_haga.html'
     ),
     Post(
-      title: 'Test 3',
-      id: 'test',
-      temperature: '0,0°C',
+      title: 'Karlstad/Kronoparken',
+      id: 'kronoparken',
+      temperature: '6,1°C',
       amm: '',
-      lastUpdate: '',
-      sourceInfo: '',
-      sourceUrl: 'https://www.utf.nu'
+      lastUpdate: '2019-12-06 13:16:12',
+      sourceInfo: 'Temperaturdata från Örjan Almén.',
+      sourceUrl: 'https://www.temperatur.nu/kronoparken.html'
     ),
+    Post(
+      title: 'Karlstad/Romstad',
+      id: 'romstad',
+      temperature: '6,2',
+      amm: '',
+      lastUpdate: '2019-12-06 13:15:30',
+      sourceInfo: 'Temperaturdata från Lars Hultqvist.',
+      sourceUrl: 'https://www.temperatur.nu/romstad.html',
+    ),
+    Post(
+      title: 'Karlstad/Skåre',
+      id: 'skare',
+      temperature: '5,8',
+      amm: '',
+      lastUpdate: '2019-12-06 13:16:13',
+      sourceInfo: 'Temperaturdata från Magnus Larsgården.',
+      sourceUrl: 'https://www.temperatur.nu/skare.html',
+    ),
+    Post(
+      title: 'Karlstad/Skåreberget',
+      id: 'skareberget',
+      temperature: '6,2',
+      amm: '',
+      lastUpdate: '2019-12-06 13:16:20',
+      sourceInfo: 'Temperaturdata från Henrik Lönnroth Hartelius.',
+      sourceUrl: 'https://www.temperatur.nu/skareberget.html',
+    )
   ];
 
 

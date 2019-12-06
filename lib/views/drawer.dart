@@ -47,8 +47,8 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Inställningar'),
+            leading: Icon(Icons.info),
+            title: Text('Om appen'),
             onTap: () {
               Navigator.pushNamed(context, '/Settings');
             },
