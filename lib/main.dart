@@ -75,10 +75,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    //post = fetchPost(locationId);
+    //post = fetchSinglePost(locationId);
     Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
-        post = fetchPost(locationId);
+        post = fetchSinglePost(locationId);
       });
     });
   }
@@ -90,106 +90,91 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('temperatur.nu'),
       ),
       drawer: AppDrawer(),
-      body: _singleTemperatureView(),
+      //body: _singleTemperatureView(),
+      body: _singlePostPage(),
       floatingActionButton: _doubleFAB(),
     );
   }
 
-
-  _singleTemperatureView() {
-    return Builder(
-      builder: (context) => Center(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 20),
-          width: double.infinity,
-          height: double.infinity,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 25,),
-                // Temperature results
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(fit: BoxFit.fitWidth,
-                        child:
-                          Text(snapshot.data.temperature, 
-                          style: Theme.of(context).textTheme.display4,
-                        )
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("n/a");
-                    }
-                    // By default, show a loading spinner.
-                    return CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,);
-                  }
+  _singlePostPage() {
+    return FutureBuilder(
+      future: post,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return Center(
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: 20),
+              width: double.infinity,
+              height: double.infinity,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: 25,),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        snapshot.data.temperature + "°C",
+                        style: Theme.of(context).textTheme.display4
+                      ),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        snapshot.data.title,
+                        style: Theme.of(context).textTheme.display3,
+                      ),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        snapshot.data.county,
+                        style: Theme.of(context).textTheme.display1,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        snapshot.data.amm,
+                        style: Theme.of(context).textTheme.body2,
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        snapshot.data.sourceInfo,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    ),
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child:Text(
+                        "Uppdaterad " + snapshot.data.lastUpdate,
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                    ),
+                  ],
                 ),
-                // Location Title
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          snapshot.data.title,
-                          style: Theme.of(context).textTheme.display3,
-                      )
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("- - -");
-                    }
-                    // By default, return placeholder text
-                    return Text("Hämtar data", style: Theme.of(context).textTheme.display2,);
-                  }
-                ),
-                SizedBox(height: 10),
-                // Min, max, average title
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          snapshot.data.amm,
-                          style: Theme.of(context).textTheme.body2
-                        )
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("- - -");
-                    }
-
-                    return Text("");
-                  }
-                ),
-                SizedBox(height: 10,),
-                // Last updated at timestamp
-                FutureBuilder<Post>(
-                  future: post,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Text(
-                          snapshot.data.lastUpdate, 
-                          style: Theme.of(context).textTheme.caption
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text("${snapshot.error}");
-                    }
-
-                    return Text("");
-                  }
-                ),
-              ],
+              ),
             ),
+          );
+        }
+        else if(snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+
+        return Center(
+          child: Column(
+            children: <Widget>[
+              SizedBox(height: 25,),
+              CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
+              Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+            ],
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 
@@ -204,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
           foregroundColor: Theme.of(context).accentColor,
           onPressed: () {
             setState(() {
-              post = fetchPost('gps');
+              post = fetchSinglePost('gps');
             });
           },
           tooltip: 'Hämta position',
@@ -219,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
           foregroundColor: Theme.of(context).accentColor,
           onPressed: () {
             setState(() {
-              post = fetchPost(locationId);
+              post = fetchSinglePost(locationId);
             });
           },
           tooltip: 'Uppdatera temperaturdata',
