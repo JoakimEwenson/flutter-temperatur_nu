@@ -43,7 +43,7 @@ class Post {
       title: locationTitle.single.toString(), 
       id: locationId.single.toString(),
       temperature: currentTemp.single.toString() + "°C", 
-      amm: "min " + minTemp.single.toString() + "°C ● medel " + averageTemp.single.toString() + "°C ● max " + maxTemp.single.toString() + "°C",
+      amm: "min " + minTemp.single.toString() + "°C ◦ medel " + averageTemp.single.toString() + "°C ◦ max " + maxTemp.single.toString() + "°C",
       lastUpdate: "Temperaturen rapporterad: " + lastUpdated.single.toString(),
       sourceInfo: sourceInfo.single.toString(),
       sourceUrl: sourceUrl.single.toString()

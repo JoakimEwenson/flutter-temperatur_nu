@@ -10,15 +10,17 @@ class SettingsPage extends StatelessWidget {
       body: Builder(
         builder: (context) => Center(
           child: Container(
-            margin: EdgeInsets.all(20.0),
             width: double.infinity,
             height: double.infinity,
             child: Column(
               children: <Widget>[
+                SizedBox(height: 25,),
                 Image.asset('icon/Solflinga.png', height: 100,),
                 Text('temperatur.nu', style: Theme.of(context).textTheme.display2,),
-                Text('Version 1.0 beta', style: Theme.of(context).textTheme.subtitle,),
-                Text('Av: Joakim Ewenson (joakim@ewenson.se)', style: Theme.of(context).textTheme.body1,)
+                SizedBox(height: 25,),
+                Text('version 1.0b', style: Theme.of(context).textTheme.subtitle,),
+                SizedBox(height: 10,),
+                Text('https://www.ewenson.se', style: Theme.of(context).textTheme.body1),
               ],
             )
           )

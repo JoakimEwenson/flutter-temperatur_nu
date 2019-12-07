@@ -70,7 +70,6 @@ class FavoritesPage extends StatelessWidget {
       body: Builder(
         builder: (context) => Center(
           child: Container(
-            margin: EdgeInsets.all(20),
             width: double.infinity,
             height: double.infinity,
             child: ListView.builder(

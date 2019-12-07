@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:core';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xml/xml.dart' as xml;
 
 import 'post.dart';
+import 'locationlistitem.dart';
 
 // Create a random CLI string until further notice.
 // This is to not be locked out from the API until a proper key can be put in place.
@@ -28,7 +32,7 @@ Future<String> fetchLocallySavedData() async {
 
 // Get location
 Future<Position> fetchPosition() async {
-  Position position = await Geolocator().getCurrentPosition().timeout(Duration(seconds: 15)).then((position) {
+  Position position = await Geolocator().getCurrentPosition().then((position) {
       //getting position without problems
       return position;
     }).catchError((error) {
@@ -69,12 +73,12 @@ Future<Post> fetchPost(String location) async {
       }
     url = baseUrl + "?p=" + locationId + urlOptions;
     }
-    print("GPS searching...");
+    //print("GPS searching...");
   }
   else if (location == 'default') {
     url = baseUrl + "?p=" + defaultLocation + urlOptions;
 
-    print("Using " + defaultLocation);
+    //print("Using " + defaultLocation);
   }
   else {
     // Check if location id is stored in local storage or else, use default
@@ -97,10 +101,39 @@ Future<Post> fetchPost(String location) async {
     Post result = Post.fromXml(response.body);
     // Save location id to local storage for later
     prefs.setString('location', result.id.toString());
-    print("Saving location id: " + result.id.toString());
+    //print("Saving location id: " + result.id.toString());
 
     return Post.fromXml(response.body);
   } else {
+    throw Exception('Misslyckades med att hämta data.');
+  }
+}
+
+Future<List> fetchLocationList() async {
+  // Set up API URL
+  String urlOptions = "?cli=" + Utils.createCryptoRandomString();
+  String url = "https://api.temperatur.nu/tnu_1.15.php" + urlOptions;
+
+  // Collect data from API
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    // If server responds with OK, parse XML result
+    var content = xml.parse(response.body);
+    List locationList = new List();
+
+    // Iterate results and make into list
+    content.findAllElements('item').forEach((row) {
+      var locationTitle = row.findElements('title').single.text.trim().toString();
+      var locationId = row.findElements('id').single.text.trim().toString();
+      var locationTemperature = row.findElements('temp').single.text.trim().toString();
+      var output  = new LocationListItem(title: locationTitle, id: locationId, temperature: locationTemperature);
+      locationList.add(output);
+    });
+  
+    return locationList;
+  }
+  else {
     throw Exception('Misslyckades med att hämta data.');
   }
 }

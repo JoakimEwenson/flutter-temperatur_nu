@@ -21,12 +21,13 @@ SharedPreferences sp;
 
 // Prepare future data
 Future<Post> post;
+Future<List> testList;
 
 //void main() => runApp(MyApp());
 Future<Null> main() async {
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
-  print("Saved location: " + sp.getString('location'));
+  //print("Saved location: " + sp.getString('location'));
   runApp(MyApp());
 }
 
@@ -71,9 +72,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {  
-  
-  //String locationId = 'default';
-
   @override
   void initState() {
     super.initState();
@@ -102,13 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Builder(
       builder: (context) => Center(
         child: Container(
-          margin: EdgeInsets.all(20),
+          margin: EdgeInsets.symmetric(horizontal: 20),
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
+                SizedBox(height: 25,),
                 // Temperature results
                 FutureBuilder<Post>(
                   future: post,
@@ -124,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text("n/a");
                     }
                     // By default, show a loading spinner.
-                    return CircularProgressIndicator();
+                    return CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,);
                   }
                 ),
                 // Location Title
@@ -132,9 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   future: post,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return FittedBox(fit: BoxFit.fitWidth,
-                        child:
-                          Text(snapshot.data.title,
+                      return FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text(
+                          snapshot.data.title,
                           style: Theme.of(context).textTheme.display3,
                       )
                       );
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Text("- - -");
                     }
                     // By default, return placeholder text
-                    return Text("Hämtar data");
+                    return Text("Hämtar data", style: Theme.of(context).textTheme.display2,);
                   }
                 ),
                 SizedBox(height: 10),
@@ -151,8 +151,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   future: post,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Text(snapshot.data.amm,
-                        style: Theme.of(context).textTheme.body2
+                      return FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text(
+                          snapshot.data.amm,
+                          style: Theme.of(context).textTheme.body2
+                        )
                       );
                     } else if (snapshot.hasError) {
                       return Text("- - -");
@@ -167,9 +171,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   future: post,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      return Text(snapshot.data.lastUpdate, 
-                        style: Theme.of(context).textTheme.caption
-                      
+                      return FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Text(
+                          snapshot.data.lastUpdate, 
+                          style: Theme.of(context).textTheme.caption
+                        ),
                       );
                     } else if (snapshot.hasError) {
                       return Text("${snapshot.error}");
