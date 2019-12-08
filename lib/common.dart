@@ -143,9 +143,9 @@ Future<Post> fetchSinglePost(String location) async {
 }
 
 Future<List> fetchFavorites(List favlist) async {
-  String tempUrl = "karlstad,karlstad_haga,kronoparken,romstad,skare,skareberget,";
+  String searchLocations = favlist.join(',');
   String urlOptions = "&amm=true&dc=true&verbose=true&cli=" + Utils.createCryptoRandomString();
-  String url = baseUrl + "?p=" + tempUrl + urlOptions;
+  String url = baseUrl + "?p=" + searchLocations + urlOptions;
 
   final response = await http.get(url);
 
@@ -157,7 +157,7 @@ Future<List> fetchFavorites(List favlist) async {
       var locationTitle = row.findElements('title').single.text.trim().toString();
       var locationId = row.findElements('id').single.text.trim().toString();
       var currentTemp = row.findElements('temp').single.text.trim().toString();
-      var amm = row.findElements('title').single.text.trim().toString();
+      var amm = "min " + row.findElements('min').single.text.trim().toString() + "°C ◦ medel " + row.findElements('average').single.text.trim().toString() + "°C ◦ max " + row.findElements('max').single.text.trim().toString() + "°C";
       var lastUpdate = row.findElements('lastUpdate').single.text.trim().toString();
       var municipality = row.findElements('kommun').single.text.trim().toString();
       var county = row.findElements('lan').single.text.trim().toString();
@@ -185,6 +185,65 @@ Future<List> fetchFavorites(List favlist) async {
   }
 }
 
+Future<List> fetchNearbyLocations() async {
+  // Set up API URL
+  String urlOptions = "&amm=true&dc=true&verbose=true&num=5&cli=" + Utils.createCryptoRandomString();
+  String url;
+
+  // Create empty list for later
+  List nearbyLocations = new List();
+
+  Position position = await fetchPosition();
+
+  if (position != null) {
+    url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
+
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      // If server returns OK, parse XML result
+      var content = xml.parse(response.body);
+
+      content.findAllElements("item").forEach((row) {
+        var locationTitle = row.findElements("title").single.text.trim().toString();
+        var locationId = row.findElements("id").single.text.trim().toString();
+        var currentTemp = row.findElements("temp").single.text.trim().toString();
+        var distance = row.findElements("dist").single.text.trim().toString();
+        var lastUpdated = row.findElements("lastUpdate").single.text.trim().toString();
+        var municipality = row.findElements("kommun").single.text.trim().toString();
+        var county = row.findElements("lan").single.text.trim().toString();
+        var sourceInfo = row.findElements("sourceInfo").single.text.trim().toString();
+        var sourceUrl = row.findElements("url").single.text.trim().toString();
+        // Average, min, max data
+        var averageTemp = row.findElements("average").single.text.trim().toString();
+        var minTemp = row.findElements("min").single.text.trim().toString();
+        var maxTemp = row.findElements("max").single.text.trim().toString();
+
+        var output = new Post(
+          title: locationTitle,
+          id: locationId,
+          temperature: currentTemp,
+          distance: distance,
+          amm: "min " + minTemp + "°C ◦ medel " + averageTemp + "°C ◦ max " + maxTemp + "°C",
+          lastUpdate: lastUpdated,
+          municipality: municipality,
+          county: county,
+          sourceInfo: sourceInfo,
+          sourceUrl: sourceUrl,
+        );
+        nearbyLocations.add(output);
+      });
+
+      return nearbyLocations;
+    }
+  }
+  else {
+    throw Exception('Misslyckades med att hämta position');
+  }
+
+  return nearbyLocations;
+}
+
 Future<List> fetchLocationList() async {
   // Set up API URL
   String urlOptions = "?cli=" + Utils.createCryptoRandomString();
@@ -203,7 +262,11 @@ Future<List> fetchLocationList() async {
       var locationTitle = row.findElements('title').single.text.trim().toString();
       var locationId = row.findElements('id').single.text.trim().toString();
       var locationTemperature = row.findElements('temp').single.text.trim().toString();
-      var output  = new LocationListItem(title: locationTitle, id: locationId, temperature: locationTemperature);
+      var output  = new LocationListItem(
+        title: locationTitle, 
+        id: locationId, 
+        temperature: locationTemperature
+      );
       locationList.add(output);
     });
   

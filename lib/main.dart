@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Import views
 import 'views/drawer.dart';
 import 'views/favoritespage.dart';
+import 'views/nearbypage.dart';
 import 'views/locationlistpage.dart';
 import 'views/settingspage.dart';
 
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/': (context) => MyHomePage(),
         '/Favorites': (context) => FavoritesPage(),
+        '/Nearby': (context) => NearbyPage(),
         '/LocationList': (context) => LocationListPage(),
         '/Settings': (context) => SettingsPage(),
       },

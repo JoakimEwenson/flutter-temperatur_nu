@@ -3,6 +3,7 @@ class Post {
   String title;
   String id;
   String temperature;
+  String distance;
   String amm;
   String lastUpdate;
   String municipality;
@@ -14,6 +15,7 @@ class Post {
     this.title, 
     this.id,
     this.temperature, 
+    this.distance = "",
     this.amm,
     this.lastUpdate,
     this.municipality,

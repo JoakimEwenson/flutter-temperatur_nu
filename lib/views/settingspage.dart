@@ -19,8 +19,8 @@ class SettingsPage extends StatelessWidget {
                 Text('temperatur.nu', style: Theme.of(context).textTheme.display2,),
                 SizedBox(height: 25,),
                 Text('version 1.0b', style: Theme.of(context).textTheme.subtitle,),
-                SizedBox(height: 10,),
-                Text('https://www.ewenson.se', style: Theme.of(context).textTheme.body1),
+                //SizedBox(height: 10,),
+                //Text('https://www.ewenson.se', style: Theme.of(context).textTheme.body1),
               ],
             )
           )

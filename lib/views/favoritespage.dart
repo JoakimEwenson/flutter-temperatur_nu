@@ -4,7 +4,8 @@ import 'package:temperatur.nu/common.dart';
 import 'package:temperatur.nu/views/drawer.dart';
 import 'package:temperatur.nu/post.dart';
 
-List tempFav = ['karlstad','karlstad_haga','kronoparken','romstad','skare','skareberget'];
+// List of favorites, maximum 5 returns!
+List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
 
 Widget favoritesList(List favSearch) {
   return FutureBuilder(

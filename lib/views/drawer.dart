@@ -29,6 +29,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.home),
             title: Text('Startsida'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushNamed(context, '/');
             },
           ),
@@ -36,13 +37,23 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.favorite),
             title: Text('Favoriter'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushNamed(context, '/Favorites');
             },
           ),
           ListTile(
-            leading: Icon(Icons.list),
-            title: Text('Mätpunkter'),
+            leading: Icon(Icons.gps_fixed),
+            title: Text('Närliggande mätpunkter'),
             onTap: () {
+              Navigator.of(context).pop();
+              Navigator.pushNamed(context, '/Nearby');
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.list),
+            title: Text('Lista alla mätpunkter'),
+            onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushNamed(context, '/LocationList');
             },
           ),
@@ -50,6 +61,7 @@ class AppDrawer extends StatelessWidget {
             leading: Icon(Icons.info),
             title: Text('Om appen'),
             onTap: () {
+              Navigator.of(context).pop();
               Navigator.pushNamed(context, '/Settings');
             },
           )
