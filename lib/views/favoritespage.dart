@@ -22,7 +22,7 @@ Widget favoritesList(List favSearch) {
                   leading: Icon(Icons.ac_unit),
                   title: Text(tempData.title),
                   subtitle: Text(tempData.municipality + " - " + tempData.county),
-                  trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display2,),
+                  trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                 )
               )
             );

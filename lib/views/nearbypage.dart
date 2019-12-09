@@ -30,7 +30,7 @@ Widget nearbyList() {
                     "Avstånd " + tempData.distance + " km\n" + 
                     tempData.municipality + " - " + tempData.county
                   ),
-                  trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display2,),
+                  trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                   onLongPress: () {
                     saveLocationId(tempData.id);
                     Navigator.pushNamed(context, '/');

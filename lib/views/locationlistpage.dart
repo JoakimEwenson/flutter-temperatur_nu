@@ -26,7 +26,7 @@ Widget locationList() {
                 child: ListTile(
                   leading: Icon(Icons.ac_unit),
                   title: Text(listItem.title),
-                  trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display2,),
+                  trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                   onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
                   onLongPress: () {
                     saveLocationId(listItem.id);
