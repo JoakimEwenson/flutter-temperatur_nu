@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur.nu/common.dart';
 import 'package:temperatur.nu/views/drawer.dart';
 import 'package:temperatur.nu/locationlistitem.dart';
-import 'package:temperatur.nu/views/favoritespage.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
