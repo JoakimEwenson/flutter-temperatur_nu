@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder> {
         '/': (context) => MyHomePage(),
         '/Favorites': (context) => FavoritesPage(),
-        '/Nearby': (context) => NearbyPage(),
+        '/Nearby': (context) => NearbyListPage(),
         '/LocationList': (context) => LocationListPage(),
         '/Settings': (context) => SettingsPage(),
       },
@@ -73,7 +73,9 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {  
+class _MyHomePageState extends State<MyHomePage> {
+  final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+
   @override
   void initState() {
     super.initState();
@@ -85,6 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Future<void> _refreshList() async {
+    setState(() {
+      post = fetchSinglePost(locationId);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +101,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       drawer: AppDrawer(),
       //body: _singleTemperatureView(),
-      body: _singlePostPage(),
+      body: RefreshIndicator(
+        child: _singlePostPage(),
+        color: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).accentColor,
+        key: _mainRefreshIndicatorKey,
+        onRefresh:  () => _refreshList(),
+      ),
       floatingActionButton: _doubleFAB(),
     );
   }
@@ -103,12 +117,12 @@ class _MyHomePageState extends State<MyHomePage> {
       future: post,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Center(
+          return SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
-              width: double.infinity,
-              height: double.infinity,
-              child: SingleChildScrollView(
+              height: MediaQuery.of(context).size.height,
+              child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
