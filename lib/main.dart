@@ -212,6 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: new Icon(Icons.location_searching),
           heroTag: 'gpsFAB',
         ),
+        /*
         SizedBox(
           height: 10,
         ),
@@ -227,6 +228,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Icon(Icons.update),
           heroTag: 'updateFAB',
         ),
+        */
       ],
     );
   }

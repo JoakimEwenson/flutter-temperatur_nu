@@ -4,8 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur.nu/common.dart';
 import 'package:temperatur.nu/views/drawer.dart';
 import 'package:temperatur.nu/locationlistitem.dart';
+import 'package:temperatur.nu/views/favoritespage.dart';
 
+// Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
+
+// Prepare future data
+Future<List> locations;
 
 saveLocationId(String savedId) async {
   sp = await SharedPreferences.getInstance();
@@ -14,7 +19,7 @@ saveLocationId(String savedId) async {
 
 Widget locationList() {
   return FutureBuilder(
-    future: fetchLocationList(),
+    future: locations,
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         return ListView.builder(
@@ -52,13 +57,57 @@ Widget locationList() {
   );
 }
 
-class LocationListPage extends StatelessWidget {
+class OldLocationListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mätstationer'),),
       drawer: AppDrawer(),
       body: locationList(),
+    );
+  }
+}
+
+class LocationListPage extends StatefulWidget {
+  LocationListPage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _LocationListPageState createState() => _LocationListPageState();
+}
+
+class _LocationListPageState extends State<LocationListPage> {
+  final GlobalKey<RefreshIndicatorState> _refreshLocationsKey = new GlobalKey<RefreshIndicatorState>();
+
+  @override 
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      setState(() {
+        locations = fetchLocationList();
+      });
+    });
+  }
+
+  Future<void> _refreshList() async {
+    setState(() {
+      locations = fetchLocationList();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Mätstationer'),),
+      drawer: AppDrawer(),
+      body: RefreshIndicator(
+        child: locationList(),
+        color: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).accentColor,
+        key: _refreshLocationsKey,
+        onRefresh: () => _refreshList(),
+      ),
     );
   }
 }
