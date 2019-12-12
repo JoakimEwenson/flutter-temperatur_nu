@@ -14,23 +14,24 @@ import 'views/settingspage.dart';
 import 'common.dart';
 import 'post.dart';
 
-// Set up global String for location
-String locationId = 'default';
-
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
+
+Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  sp = await SharedPreferences.getInstance();
+  locationId = sp.getString('location') ?? 'default';
+
+  runApp(MyApp());
+}
+
+// Set up global String for location
+String locationId = 'default';
 
 // Prepare future data
 Future<Post> post;
 Future<List> testList;
-
-//void main() => runApp(MyApp());
-Future<Null> main() async {
-  sp = await SharedPreferences.getInstance();
-  locationId = sp.getString('location') ?? 'default';
-  //print("Saved location: " + sp.getString('location'));
-  runApp(MyApp());
-}
 
 // Begin app
 class MyApp extends StatelessWidget {
@@ -88,6 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _refreshList() async {
+    _mainRefreshIndicatorKey.currentState?.show();
+    
     setState(() {
       post = fetchSinglePost(locationId);
     });
@@ -121,58 +124,58 @@ class _MyHomePageState extends State<MyHomePage> {
             physics: AlwaysScrollableScrollPhysics(),
             child: Container(
               margin: EdgeInsets.symmetric(horizontal: 20),
-              height: MediaQuery.of(context).size.height,
-              child: Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: 25,),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        snapshot.data.temperature + "°C",
-                        style: Theme.of(context).textTheme.display4
-                      ),
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  SizedBox(height: 25,),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snapshot.data.temperature + "°C",
+                      style: Theme.of(context).textTheme.display4
                     ),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        snapshot.data.title,
-                        style: Theme.of(context).textTheme.display3,
-                      ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snapshot.data.title,
+                      style: Theme.of(context).textTheme.display3,
                     ),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        snapshot.data.county,
-                        style: Theme.of(context).textTheme.display1,
-                      ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snapshot.data.county,
+                      style: Theme.of(context).textTheme.display1,
                     ),
-                    SizedBox(height: 20),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        snapshot.data.amm,
-                        style: Theme.of(context).textTheme.body2,
-                      ),
+                  ),
+                  SizedBox(height: 20),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snapshot.data.amm,
+                      style: Theme.of(context).textTheme.body2,
                     ),
-                    SizedBox(height: 10,),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Text(
-                        snapshot.data.sourceInfo,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
+                  ),
+                  SizedBox(height: 10,),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      snapshot.data.sourceInfo,
+                      style: Theme.of(context).textTheme.caption,
                     ),
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child:Text(
-                        "Uppdaterad " + snapshot.data.lastUpdate,
-                        style: Theme.of(context).textTheme.caption,
-                      ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child:Text(
+                      "Uppdaterad " + snapshot.data.lastUpdate,
+                      style: Theme.of(context).textTheme.caption,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

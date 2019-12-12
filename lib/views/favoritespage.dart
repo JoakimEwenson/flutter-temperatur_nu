@@ -25,6 +25,10 @@ Widget favoritesList(List favSearch) {
                   title: Text(tempData.title),
                   subtitle: Text(tempData.municipality + " - " + tempData.county),
                   trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
+                  onLongPress: () {
+                    saveLocationId(tempData.id);
+                    Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                  },
                 )
               )
             );

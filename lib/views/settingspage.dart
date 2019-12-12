@@ -10,8 +10,6 @@ class SettingsPage extends StatelessWidget {
       body: Builder(
         builder: (context) => Center(
           child: Container(
-            width: double.infinity,
-            height: double.infinity,
             child: Column(
               children: <Widget>[
                 SizedBox(height: 25,),

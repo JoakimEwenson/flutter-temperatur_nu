@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
+//import 'package:crypto/crypto.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +24,12 @@ class Utils {
 
     return base64Url.encode(values);
   }
+}
+
+saveLocationId(String savedId) async {
+  var sp = await SharedPreferences.getInstance();
+  sp = await SharedPreferences.getInstance();
+  sp.setString('location', savedId);
 }
 
 Future<String> fetchLocallySavedData() async {

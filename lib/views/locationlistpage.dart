@@ -11,11 +11,6 @@ SharedPreferences sp;
 // Prepare future data
 Future<List> locations;
 
-saveLocationId(String savedId) async {
-  sp = await SharedPreferences.getInstance();
-  sp.setString('location', savedId);
-}
-
 Widget locationList() {
   return FutureBuilder(
     future: locations,
@@ -34,7 +29,7 @@ Widget locationList() {
                   onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
                   onLongPress: () {
                     saveLocationId(listItem.id);
-                    Navigator.pushNamed(context, '/');
+                    Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                   },
                 )
               )

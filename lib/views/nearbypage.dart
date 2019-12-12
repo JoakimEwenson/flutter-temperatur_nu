@@ -38,7 +38,7 @@ Widget nearbyList() {
                   trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                   onLongPress: () {
                     saveLocationId(tempData.id);
-                    Navigator.pushNamed(context, '/');
+                    Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                   },
                 ),
               ),

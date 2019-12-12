@@ -30,7 +30,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Startsida'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.pushNamed(context, '/');
+              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
             },
           ),
           ListTile(
