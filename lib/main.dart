@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -75,7 +76,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -120,64 +121,66 @@ class _MyHomePageState extends State<MyHomePage> {
       future: post,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Container(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  SizedBox(height: 25,),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snapshot.data.temperature + "°C",
-                      style: Theme.of(context).textTheme.display4
-                    ),
+          return LayoutBuilder(
+            // alignment: Alignment.topCenter,
+            // margin: EdgeInsets.symmetric(horizontal: 20),
+            builder: (BuildContext context, BoxConstraints viewportConstraints) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                physics: AlwaysScrollableScrollPhysics(),
+                dragStartBehavior: DragStartBehavior.down,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: viewportConstraints.maxHeight,
                   ),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snapshot.data.title,
-                      style: Theme.of(context).textTheme.display3,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      SizedBox(height: 25,),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4),
+                        ), 
+                      ),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text(snapshot.data.title,style: Theme.of(context).textTheme.display3,),
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text(snapshot.data.county,style: Theme.of(context).textTheme.display1,),
+                          ),
+                      ),
+                      SizedBox(height: 20),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2,),
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text(snapshot.data.sourceInfo,style: Theme.of(context).textTheme.caption,),
+                        ),
+                      ),
+                      FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Container(
+                          child: Text("Uppdaterad " + snapshot.data.lastUpdate,style: Theme.of(context).textTheme.caption,),
+                        ),
+                      ),
+                    ],
                   ),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snapshot.data.county,
-                      style: Theme.of(context).textTheme.display1,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snapshot.data.amm,
-                      style: Theme.of(context).textTheme.body2,
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      snapshot.data.sourceInfo,
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                  ),
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child:Text(
-                      "Uppdaterad " + snapshot.data.lastUpdate,
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            }
           );
         }
         else if(snapshot.hasError) {

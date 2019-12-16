@@ -36,7 +36,7 @@ Widget nearbyList() {
                     tempData.municipality + " - " + tempData.county
                   ),
                   trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                  onLongPress: () {
+                  onTap: () {
                     saveLocationId(tempData.id);
                     Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                   },

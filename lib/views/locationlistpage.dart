@@ -26,8 +26,8 @@ Widget locationList() {
                   leading: Icon(Icons.ac_unit),
                   title: Text(listItem.title),
                   trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                  onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
-                  onLongPress: () {
+                  //onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
+                  onTap: () {
                     saveLocationId(listItem.id);
                     Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                   },
