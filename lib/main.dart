@@ -76,7 +76,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -132,6 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     minHeight: viewportConstraints.maxHeight,
+                    minWidth: viewportConstraints.maxWidth
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
