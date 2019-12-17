@@ -120,86 +120,109 @@ class _MyHomePageState extends State<MyHomePage> {
     return FutureBuilder(
       future: post,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return LayoutBuilder(
-            // alignment: Alignment.topCenter,
-            // margin: EdgeInsets.symmetric(horizontal: 20),
-            builder: (BuildContext context, BoxConstraints viewportConstraints) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                physics: AlwaysScrollableScrollPhysics(),
-                dragStartBehavior: DragStartBehavior.down,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: viewportConstraints.maxHeight,
-                    minWidth: viewportConstraints.maxWidth
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 25,),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4),
-                        ), 
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+          {
+            loadingView();
+            break;
+          }
+          case ConnectionState.active:
+          {
+            loadingView();
+            break;
+          }
+          case ConnectionState.done: 
+          {
+            if (snapshot.hasData) {
+              return LayoutBuilder(
+                // alignment: Alignment.topCenter,
+                // margin: EdgeInsets.symmetric(horizontal: 20),
+                builder: (BuildContext context, BoxConstraints viewportConstraints) {
+                  return SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    physics: AlwaysScrollableScrollPhysics(),
+                    dragStartBehavior: DragStartBehavior.down,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: viewportConstraints.maxHeight,
+                        minWidth: viewportConstraints.maxWidth
                       ),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text(snapshot.data.title,style: Theme.of(context).textTheme.display3,),
-                        ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text(snapshot.data.county,style: Theme.of(context).textTheme.display1,),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: 25,),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4),
+                            ), 
                           ),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text(snapshot.data.title,style: Theme.of(context).textTheme.display3,),
+                            ),
+                          ),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text(snapshot.data.county,style: Theme.of(context).textTheme.display1,),
+                              ),
+                          ),
+                          SizedBox(height: 20),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2,),
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text(snapshot.data.sourceInfo,style: Theme.of(context).textTheme.caption,),
+                            ),
+                          ),
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              child: Text("Uppdaterad " + snapshot.data.lastUpdate,style: Theme.of(context).textTheme.caption,),
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(height: 20),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2,),
-                        ),
-                      ),
-                      SizedBox(height: 10,),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text(snapshot.data.sourceInfo,style: Theme.of(context).textTheme.caption,),
-                        ),
-                      ),
-                      FittedBox(
-                        fit: BoxFit.fitWidth,
-                        child: Container(
-                          child: Text("Uppdaterad " + snapshot.data.lastUpdate,style: Theme.of(context).textTheme.caption,),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                }
               );
             }
-          );
-        }
-        else if(snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
+            else if(snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
 
-        return Center(
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 25,),
-              CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
-              Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
-            ],
-          ),
-        );
+            loadingView();
+            break;
+          }
+          case ConnectionState.none: 
+          {
+            break;
+          }
+        }
       }
     );
   }
+
+  // Loading indicator
+  Widget loadingView() => Center(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 25,),
+          CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
+          Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+        ],
+      ),
+    );
 
   // Multiple Floating Action Buttons setup
   _doubleFAB() {
