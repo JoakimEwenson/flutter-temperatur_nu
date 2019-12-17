@@ -214,7 +214,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Loading indicator
-  Widget loadingView() => Center(
+  loadingView() {
+  Center(
       child: Column(
         children: <Widget>[
           SizedBox(height: 25,),
@@ -223,7 +224,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
-
+  }
+  
   // Multiple Floating Action Buttons setup
   _doubleFAB() {
     return Column(
