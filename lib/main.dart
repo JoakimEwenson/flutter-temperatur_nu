@@ -203,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           case ConnectionState.none: 
           {
-            return noDataView('Anslutningsfel');
+            break;
           }
           
         }
