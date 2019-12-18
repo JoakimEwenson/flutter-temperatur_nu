@@ -201,13 +201,14 @@ class _MyHomePageState extends State<MyHomePage> {
               return Text("${snapshot.error}");
             }
 
-            loadingView();
             break;
           }
           case ConnectionState.none: 
           {
             break;
           }
+          
+          loadingView();
         }
       }
     );
@@ -225,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-  
+
   // Multiple Floating Action Buttons setup
   _doubleFAB() {
     return Column(
