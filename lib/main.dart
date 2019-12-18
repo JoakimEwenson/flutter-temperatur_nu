@@ -225,6 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  // Error/No data view
   noDataView(String msg) {
     return Center(
       child: Column(
