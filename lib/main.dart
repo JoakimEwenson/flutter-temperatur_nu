@@ -123,13 +123,11 @@ class _MyHomePageState extends State<MyHomePage> {
         switch (snapshot.connectionState) {
           case ConnectionState.waiting:
           {
-            loadingView();
-            break;
+            return loadingView();
           }
           case ConnectionState.active:
           {
-            loadingView();
-            break;
+            return loadingView();
           }
           case ConnectionState.done: 
           {
@@ -198,30 +196,41 @@ class _MyHomePageState extends State<MyHomePage> {
               );
             }
             else if(snapshot.hasError) {
-              return Text("${snapshot.error}");
+              return noDataView(snapshot.error);
             }
 
             break;
           }
           case ConnectionState.none: 
           {
-            break;
+            return noDataView('Anslutningsfel');
           }
           
-          loadingView();
         }
+        return loadingView();
       }
     );
   }
 
   // Loading indicator
   loadingView() {
-  Center(
+    return Center(
       child: Column(
         children: <Widget>[
           SizedBox(height: 25,),
           CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
           Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+        ],
+      ),
+    );
+  }
+
+  noDataView(String msg) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Text('Något gick fel!', style: Theme.of(context).textTheme.display2,),
+          Text(msg, style: Theme.of(context).textTheme.body2,),
         ],
       ),
     );
