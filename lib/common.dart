@@ -297,4 +297,6 @@ Future<List> fetchLocationList() async {
     return locationList;
   }
   else {
-    throw Exception('
+    throw Exception('Misslyckades med att hämta data.');
+  }
+}
