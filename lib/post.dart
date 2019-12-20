@@ -11,16 +11,17 @@ class Post {
   String sourceInfo;
   String sourceUrl;
 
+  // Set up default values
   Post({
-    this.title, 
-    this.id,
-    this.temperature, 
-    this.distance = "",
-    this.amm,
-    this.lastUpdate,
-    this.municipality,
-    this.county,
-    this.sourceInfo,
-    this.sourceUrl
+    this.title = " ", 
+    this.id = " ",
+    this.temperature = "N/A", 
+    this.distance = " ",
+    this.amm = " ",
+    this.lastUpdate = " ",
+    this.municipality = " ",
+    this.county = " ",
+    this.sourceInfo = " ",
+    this.sourceUrl = "https://www.temperatur.nu"
   });
 }
