@@ -11,46 +11,7 @@ SharedPreferences sp;
 // Prepare future data
 Future<List> locations;
 
-Widget locationList() {
-  return FutureBuilder(
-    future: locations,
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        return ListView.builder(
-          itemCount: snapshot.data.length,
-          itemBuilder: (context, index) {
-            LocationListItem listItem = snapshot.data[index];
-            return GestureDetector(
-              child: Card(
-                child: ListTile(
-                  leading: Icon(Icons.ac_unit),
-                  title: Text(listItem.title),
-                  trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                  //onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
-                  onTap: () {
-                    saveLocationId(listItem.id);
-                    Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
-                  },
-                )
-              )
-            );
-          },
-        );
-      }
-
-      return Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 25,),
-            CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
-            Text('Hämtar data', style: Theme.of(context).textTheme.display2,)
-          ],
-        )
-      );
-    },
-  );
-}
-
+/* 
 class OldLocationListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -61,6 +22,7 @@ class OldLocationListPage extends StatelessWidget {
     );
   }
 }
+ */
 
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
@@ -101,6 +63,81 @@ class _LocationListPageState extends State<LocationListPage> {
         backgroundColor: Theme.of(context).accentColor,
         key: _refreshLocationsKey,
         onRefresh: () => _refreshList(),
+      ),
+    );
+  }
+
+  Widget locationList() {
+    return FutureBuilder(
+      future: locations,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.active: {
+            return loadingView();
+          }
+          case ConnectionState.done: {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  LocationListItem listItem = snapshot.data[index];
+                  return GestureDetector(
+                    child: Card(
+                      child: ListTile(
+                        leading: Icon(Icons.ac_unit),
+                        title: Text(listItem.title),
+                        trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
+                        //onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
+                        onTap: () {
+                          saveLocationId(listItem.id);
+                          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                        },
+                      )
+                    )
+                  );
+                },
+              );
+            }
+            else if (snapshot.hasError) {
+              return noDataView(snapshot.error);
+            }
+
+            break;
+          }
+          case ConnectionState.none: {
+            break;
+          }
+          case ConnectionState.waiting: {
+            return loadingView();
+          }
+        }
+
+        return loadingView();
+      },
+    );
+  }
+
+  // Loading indicator
+  loadingView() {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          SizedBox(height: 25,),
+          CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
+          Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+        ],
+      ),
+    );
+  }
+
+  // Error/No data view
+  noDataView(String msg) {
+    return Center(
+      child: Column(
+        children: <Widget>[
+          Text('Något gick fel!', style: Theme.of(context).textTheme.display2,),
+          Text(msg, style: Theme.of(context).textTheme.body2,),
+        ],
       ),
     );
   }

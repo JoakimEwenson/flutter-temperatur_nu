@@ -8,11 +8,11 @@ Litet hobbyprojekt till app som rullar på såväl Android som iOS för att häm
 * Första uppstart och tills dess att positionering varit aktiv med gott resultat så faller den tillbaka på en defaultplats
 * Kunna välja en specifik startort
 * Kunna välja ur en lista över samtliga sensorer aktiva på temperatur.nu
+* Pull to refresh av diverse sidor
 
 ## Tänkt funktionalitet
 * Kunna välja favoriter och visa samtliga resultat
 * Kunna söka ur en lista över samtliga sensorer aktiva på temperatur.nu
-* Pull to refresh av diverse sidor
 * Någon form av felhantering
 
 ## Aktiva buggar
