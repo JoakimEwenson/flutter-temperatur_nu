@@ -188,6 +188,14 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Text("Uppdaterad " + snapshot.data.lastUpdate,style: Theme.of(context).textTheme.caption,),
                             ),
                           ),
+                          RaisedButton(
+                            child: Text('Lägg till ' + snapshot.data.id),
+                            onPressed: () => addToFavorites(snapshot.data.id),
+                          ),
+                          RaisedButton(
+                            child: Text('Ta bort ' + snapshot.data.id),
+                            onPressed: () => removeFromFavorites(snapshot.data.id),
+                          )
                         ],
                       ),
                     ),

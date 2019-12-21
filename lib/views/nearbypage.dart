@@ -16,16 +16,6 @@ saveLocationId(String savedId) async {
   sp.setString('location', savedId);
 }
 
-/* class NearbyPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Närliggande mätpunkter'),),
-      drawer: AppDrawer(),
-      body: nearbyList(),
-    );
-  }
-} */
 
 class NearbyListPage extends StatefulWidget {
   NearbyListPage({Key key, this.title}) : super(key: key);

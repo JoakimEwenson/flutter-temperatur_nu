@@ -27,19 +27,49 @@ class Utils {
   }
 }
 
+// Fetch saved favorites from local storage
 Future<List> fetchLocalFavorites() async {
   var sp = await SharedPreferences.getInstance();
-  var favorites = sp.getString('favorites').split(',');
+  var favorites = sp.getString('favorites');
+  var favList = favorites.split(',');
 
-  return favorites;
+  return favList;
 }
 
-saveFavoritesLocally(List favorites) async {
+// Save favorites to local storage
+saveLocalFavorites(List favorites) async {
   String favoritesString = favorites.join(',');
   var sp = await SharedPreferences.getInstance();
   sp.setString('favorites', favoritesString);
 }
 
+// Add location id to local stored favorites
+// TODO: Check for null
+addToFavorites(String locationId) async {
+  var favList = await fetchLocalFavorites();
+
+  if (favList.length < 5) {
+    favList.add(locationId);
+    saveLocalFavorites(favList);
+  }
+  else {
+    throw Exception('För många favoriter sparad, max antal är 5.');
+  }
+}
+
+// Remove location id from local saved favorites
+removeFromFavorites(String locationId) async {
+  var favList = await fetchLocalFavorites();
+
+  if (favList.remove(locationId)) {
+    saveLocalFavorites(favList);
+  }
+  else {
+    throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
+  }
+}
+
+// Saving location for start screen
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
   sp = await SharedPreferences.getInstance();
@@ -189,7 +219,9 @@ Future<List> fetchFavorites(List favlist) async {
   // Save and fetch locally saved data
   // saveFavoritesLocally(favlist);
   // var localFavs = fetchLocalFavorites();
-  String searchLocations = favlist.join(',');
+  //String searchLocations = favlist.join(',');
+  List searchLocationList = await fetchLocalFavorites();
+  String searchLocations = searchLocationList.join(',');
   String urlOptions = "&amm=true&dc=true&verbose=true&cli=" + Utils.createCryptoRandomString();
   String url = baseUrl + "?p=" + searchLocations + urlOptions;
   List favoritesList = new List();

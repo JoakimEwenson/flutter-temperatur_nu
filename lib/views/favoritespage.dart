@@ -1,26 +1,25 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur.nu/common.dart';
 import 'package:temperatur.nu/views/drawer.dart';
 import 'package:temperatur.nu/post.dart';
 
-// List of favorites, maximum 5 returns!
-List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
+// Set up SharedPreferences for accessing local storage
+SharedPreferences sp;
 
 Future<List> favorites;
 
-/* 
-class OldFavoritesPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Favoriter'),),
-      drawer: AppDrawer(),
-      body: favoritesList(tempFav),
-    );
-  }
+Future<List> getFavoritesString() async {
+  sp = await SharedPreferences.getInstance();
+  var favString = sp.getString('favorites');
+  var favList  = favString.split(',');
+
+  return favList;
 }
- */
+
+// List of favorites, maximum 5 returns!
+List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
 
 class FavoritesPage extends StatefulWidget {
   FavoritesPage({Key key, this.title}) : super(key: key);
