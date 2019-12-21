@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:io';
 import 'dart:math';
-//import 'package:crypto/crypto.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
@@ -27,6 +27,19 @@ class Utils {
   }
 }
 
+Future<List> fetchLocalFavorites() async {
+  var sp = await SharedPreferences.getInstance();
+  var favorites = sp.getString('favorites').split(',');
+
+  return favorites;
+}
+
+saveFavoritesLocally(List favorites) async {
+  String favoritesString = favorites.join(',');
+  var sp = await SharedPreferences.getInstance();
+  sp.setString('favorites', favoritesString);
+}
+
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
   sp = await SharedPreferences.getInstance();
@@ -43,14 +56,10 @@ Future<String> fetchLocallySavedData() async {
 
 // Get location
 Future<Position> fetchPosition() async {
-  Position position = await Geolocator().getCurrentPosition().then((position) {
-      //getting position without problems
-      return position;
-    }).catchError((error) {
-        //handle the exception
-        print(error);
-    });
-
+  Position position = await Geolocator().getCurrentPosition().timeout(Duration(seconds: 15)).then((position) {
+    //getting position without problems
+    return position;
+  });
     return position;
 }
 
@@ -69,7 +78,13 @@ Future<Post> fetchSinglePost(String location) async {
 
   if (location == 'gps') {
     // Collect position
-    Position position = await fetchPosition();
+    Position position;
+    try {
+      position = await fetchPosition();
+    }
+    catch (e) {
+      position = null;
+    }
 
     if (position != null) {
       url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
@@ -83,12 +98,9 @@ Future<Post> fetchSinglePost(String location) async {
       }
     url = baseUrl + "?p=" + locationId + urlOptions;
     }
-    //print("GPS searching...");
   }
   else if (location == 'default') {
     url = baseUrl + "?p=" + defaultLocation + urlOptions;
-
-    //print("Using " + defaultLocation);
   }
   else {
     // Check if location id is stored in local storage or else, use default
@@ -99,8 +111,6 @@ Future<Post> fetchSinglePost(String location) async {
       locationId = defaultLocation;
     }
     url = baseUrl + "?p=" + locationId + urlOptions;
-
-    //print("Using " + location);
   }
 
   try {
@@ -110,7 +120,6 @@ Future<Post> fetchSinglePost(String location) async {
 
     if (response.statusCode == 200) {
       // If server returns OK, parse XML result
-      //Post result = Post.fromXml(response.body);
 
       var content = xml.parse(response.body);
 
@@ -145,67 +154,113 @@ Future<Post> fetchSinglePost(String location) async {
       // Save location id to local storage for later
       prefs.setString('location', output.id);
 
-      //return Post.fromXml(response.body);
       return output;
     } else {
-      throw Exception('Misslyckades med att hämta data.');
+      throw Exception('Misslyckades med att hämta data');
     }
   }
   on TimeoutException catch (e) {
     var output = new Post(
-      title: "Hämtning av data tog för lång tid.",
+      title: "Hämtning av data tog för lång tid",
+      sourceInfo: e.toString(),
       lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
     );
     return output;
   }
+  on SocketException catch (e) {
+    var output = new Post(
+      title: "Kunde inte att nå nätverket",
+      sourceInfo: e.toString(),
+      lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
+    );
+
+    return output;
+  }
   catch (e) {
     return new Post(
-      title: "Något gick snett.",
+      title: "Något gick snett",
+      sourceInfo: e.toString(),
       lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
     );
   }
 }
 
 Future<List> fetchFavorites(List favlist) async {
+  // Save and fetch locally saved data
+  // saveFavoritesLocally(favlist);
+  // var localFavs = fetchLocalFavorites();
   String searchLocations = favlist.join(',');
   String urlOptions = "&amm=true&dc=true&verbose=true&cli=" + Utils.createCryptoRandomString();
   String url = baseUrl + "?p=" + searchLocations + urlOptions;
+  List favoritesList = new List();
 
-  final response = await http.get(url);
+  try {
+    final response = await http.get(url).timeout(const Duration(seconds: 15));
 
-  if (response.statusCode == 200) {
-    var content = xml.parse(response.body);
-    List favoritesList = new List();
+    if (response.statusCode == 200) {
+      var content = xml.parse(response.body);
 
-    content.findAllElements("item").forEach((row) {
-      var locationTitle = row.findElements('title').single.text.trim().toString();
-      var locationId = row.findElements('id').single.text.trim().toString();
-      var currentTemp = row.findElements('temp').single.text.trim().toString();
-      var amm = "min " + row.findElements('min').single.text.trim().toString() + "°C ◦ medel " + row.findElements('average').single.text.trim().toString() + "°C ◦ max " + row.findElements('max').single.text.trim().toString() + "°C";
-      var lastUpdate = row.findElements('lastUpdate').single.text.trim().toString();
-      var municipality = row.findElements('kommun').single.text.trim().toString();
-      var county = row.findElements('lan').single.text.trim().toString();
-      var sourceInfo = row.findElements('sourceInfo').single.text.trim().toString();
-      var sourceUrl = row.findElements('url').single.text.trim().toString();
+      content.findAllElements("item").forEach((row) {
+        var locationTitle = row.findElements('title').single.text.trim().toString();
+        var locationId = row.findElements('id').single.text.trim().toString();
+        var currentTemp = row.findElements('temp').single.text.trim().toString();
+        var amm = "min " + row.findElements('min').single.text.trim().toString() + "°C ◦ medel " + row.findElements('average').single.text.trim().toString() + "°C ◦ max " + row.findElements('max').single.text.trim().toString() + "°C";
+        var lastUpdate = row.findElements('lastUpdate').single.text.trim().toString();
+        var municipality = row.findElements('kommun').single.text.trim().toString();
+        var county = row.findElements('lan').single.text.trim().toString();
+        var sourceInfo = row.findElements('sourceInfo').single.text.trim().toString();
+        var sourceUrl = row.findElements('url').single.text.trim().toString();
 
-      var output = new Post(
-        title: locationTitle,
-        id: locationId,
-        temperature: currentTemp,
-        amm: amm,
-        lastUpdate: lastUpdate,
-        municipality: municipality,
-        county: county,
-        sourceInfo: sourceInfo,
-        sourceUrl: sourceUrl 
-      );
-      favoritesList.add(output);
-    });
+        var output = new Post(
+          title: locationTitle,
+          id: locationId,
+          temperature: currentTemp,
+          amm: amm,
+          lastUpdate: lastUpdate,
+          municipality: municipality,
+          county: county,
+          sourceInfo: sourceInfo,
+          sourceUrl: sourceUrl 
+        );
+        favoritesList.add(output);
+      });
+
+      return favoritesList;
+    }
+    else {
+      throw Exception('Misslyckades med att hämta data.');
+    }
+  }
+  on TimeoutException catch (e) {
+    var output = new Post(
+      title: "Hämtning av data tog för lång tid",
+      sourceInfo: e.toString(),
+      lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
+    );
+    favoritesList.add(output);
 
     return favoritesList;
   }
-  else {
-    throw Exception('Misslyckades med att hämta data.');
+  on SocketException catch (e) {
+    var output = new Post(
+      title: "Kunde inte att nå nätverket",
+      sourceInfo: e.toString(),
+      lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
+    );
+    favoritesList.add(output);
+
+    return favoritesList;
+  }
+  catch (e) {
+    var output =  new Post(
+      title: "Något gick snett",
+      sourceInfo: e.toString(),
+      lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
+    );
+
+    favoritesList.add(output);
+
+    return favoritesList;
   }
 }
 
@@ -216,13 +271,19 @@ Future<List> fetchNearbyLocations() async {
 
   // Create empty list for later
   List nearbyLocations = new List();
+  Position position;
 
-  Position position = await fetchPosition();
+  try {
+    position = await fetchPosition();
+  }
+  catch (e) {
+    position = null;
+  }
 
   if (position != null) {
     url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
 
-    final response = await http.get(url);
+    final response = await http.get(url).timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 200) {
       // If server returns OK, parse XML result
@@ -261,8 +322,14 @@ Future<List> fetchNearbyLocations() async {
       return nearbyLocations;
     }
   }
+  else if (position == null) {
+    nearbyLocations.add(new Post(title: "Kunde inte hämta din position"));
+    return nearbyLocations;
+  }
   else {
-    throw Exception('Misslyckades med att hämta position');
+    //throw Exception('Misslyckades med att hämta position');
+    nearbyLocations.add(new Post(title: "Något gick snett",));
+    return nearbyLocations;
   }
 
   return nearbyLocations;
@@ -272,31 +339,57 @@ Future<List> fetchLocationList() async {
   // Set up API URL
   String urlOptions = "?cli=" + Utils.createCryptoRandomString();
   String url = baseUrl + urlOptions;
+  List locationList = new List();
 
   // Collect data from API
-  final response = await http.get(url);
+  try {
+    final response = await http.get(url).timeout(const Duration(seconds: 15));
 
-  if (response.statusCode == 200) {
-    // If server responds with OK, parse XML result
-    var content = xml.parse(response.body);
-    List locationList = new List();
+    if (response.statusCode == 200) {
+      // If server responds with OK, parse XML result
+      var content = xml.parse(response.body);
 
-    // Iterate results and make into list
-    content.findAllElements('item').forEach((row) {
-      var locationTitle = row.findElements('title').single.text.trim().toString();
-      var locationId = row.findElements('id').single.text.trim().toString();
-      var locationTemperature = row.findElements('temp').single.text.trim().toString();
-      var output  = new LocationListItem(
-        title: locationTitle, 
-        id: locationId, 
-        temperature: locationTemperature
-      );
-      locationList.add(output);
-    });
-  
+      // Iterate results and make into list
+      content.findAllElements('item').forEach((row) {
+        var locationTitle = row.findElements('title').single.text.trim().toString();
+        var locationId = row.findElements('id').single.text.trim().toString();
+        var locationTemperature = row.findElements('temp').single.text.trim().toString();
+        var output  = new LocationListItem(
+          title: locationTitle, 
+          id: locationId, 
+          temperature: locationTemperature
+        );
+        locationList.add(output);
+      });
+    
+      return locationList;
+    }
+    else {
+      throw Exception('Misslyckades med att hämta data.');
+    }
+  }
+  on TimeoutException {
+    var output = new LocationListItem(
+      title: "Hämtning av data tog för lång tid",
+    );
+    locationList.add(output);
+
     return locationList;
   }
-  else {
-    throw Exception('Misslyckades med att hämta data.');
+  on SocketException {
+    var output = new LocationListItem(
+      title: "Kunde inte att nå nätverket",
+    );
+    locationList.add(output);
+    
+    return locationList;
+  }
+  catch (e) {
+    var output = new LocationListItem(
+      title: "Något gick snett",
+    );
+    locationList.add(output);
+    
+    return locationList;
   }
 }

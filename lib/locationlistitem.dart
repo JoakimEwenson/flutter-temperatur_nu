@@ -4,8 +4,8 @@ class LocationListItem {
     String temperature;
 
     LocationListItem({
-      this.title, 
-      this.id,
-      this.temperature
+      this.title = " ", 
+      this.id = "empty",
+      this.temperature = "N/A"
     });
 }

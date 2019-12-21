@@ -248,7 +248,14 @@ class _MyHomePageState extends State<MyHomePage> {
           foregroundColor: Theme.of(context).accentColor,
           onPressed: () {
             setState(() {
-              post = fetchSinglePost('gps');
+              try {
+                post = fetchSinglePost('gps');
+              }
+              catch (e) {
+                Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text(e.toString()),
+                ));
+              }
             });
           },
           tooltip: 'Hämta position',
