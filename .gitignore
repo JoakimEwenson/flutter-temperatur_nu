@@ -105,3 +105,23 @@ coverage/
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+ios/Flutter/App 2.framework/App
+ios/Flutter/App 2.framework/Info.plist
+ios/Flutter/App 2.framework/flutter_assets/AssetManifest.json
+ios/Flutter/App 2.framework/flutter_assets/FontManifest.json
+ios/Flutter/App 2.framework/flutter_assets/isolate_snapshot_data
+ios/Flutter/App 2.framework/flutter_assets/kernel_blob.bin
+ios/Flutter/App 2.framework/flutter_assets/LICENSE
+ios/Flutter/App 2.framework/flutter_assets/vm_snapshot_data
+ios/Flutter/App 2.framework/flutter_assets/fonts/MaterialIcons-Regular.ttf
+ios/Flutter/App 2.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+ios/Flutter/App 3.framework/App
+ios/Flutter/App 3.framework/Info.plist
+ios/Flutter/App 3.framework/flutter_assets/AssetManifest.json
+ios/Flutter/App 3.framework/flutter_assets/FontManifest.json
+ios/Flutter/App 3.framework/flutter_assets/isolate_snapshot_data
+ios/Flutter/App 3.framework/flutter_assets/kernel_blob.bin
+ios/Flutter/App 3.framework/flutter_assets/LICENSE
+ios/Flutter/App 3.framework/flutter_assets/vm_snapshot_data
+ios/Flutter/App 3.framework/flutter_assets/fonts/MaterialIcons-Regular.ttf
+ios/Flutter/App 3.framework/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
