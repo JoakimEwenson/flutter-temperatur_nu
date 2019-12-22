@@ -51,9 +51,11 @@ addToFavorites(String locationId) async {
   if (favList.length < 5) {
     favList.add(locationId);
     saveLocalFavorites(favList.toSet().toList());
+    return true;
   }
   else {
-    throw Exception('För många favoriter sparad, max antal är 5.');
+    //throw Exception('För många favoriter sparad, max antal är 5.');
+    return false;
   }
 }
 
@@ -64,9 +66,11 @@ removeFromFavorites(String locationId) async {
 
   if (favList.remove(locationId)) {
     saveLocalFavorites(favList);
+    return true;
   }
   else {
-    throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
+    //throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
+    return false;
   }
 }
 
