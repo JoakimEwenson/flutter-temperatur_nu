@@ -19,7 +19,7 @@ Future<List> getFavoritesString() async {
 }
 
 // List of favorites, maximum 5 returns!
-List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
+//List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
 
 class FavoritesPage extends StatefulWidget {
   FavoritesPage({Key key, this.title}) : super(key: key);
@@ -38,14 +38,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
     super.initState();
     Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
-        favorites = fetchFavorites(tempFav);
+        favorites = fetchFavorites();
       });
     });
   }
 
   Future<void> _refreshList() async {
     setState(() {
-      favorites = fetchFavorites(tempFav);
+      favorites = fetchFavorites();
     });
   }
 
@@ -55,7 +55,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       appBar: AppBar(title: Text('Favoriter'),),
       drawer: AppDrawer(),
       body: RefreshIndicator(
-        child: favoritesList(tempFav),
+        child: favoritesList(),
         color: Theme.of(context).primaryColor,
         backgroundColor: Theme.of(context).accentColor,
         key: _refreshFavoritesKey,
@@ -64,7 +64,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
-  Widget favoritesList(List favSearch) {
+  Widget favoritesList() {
     return FutureBuilder(
       future: favorites,
       builder: (context, snapshot) {

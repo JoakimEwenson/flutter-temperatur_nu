@@ -190,10 +190,12 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           RaisedButton(
                             child: Text('Lägg till ' + snapshot.data.id),
+                            // TODO: Add some kind of verification of success and/or failure
                             onPressed: () => addToFavorites(snapshot.data.id),
                           ),
                           RaisedButton(
                             child: Text('Ta bort ' + snapshot.data.id),
+                            // TODO: Add some kind of verification of success and/or failure
                             onPressed: () => removeFromFavorites(snapshot.data.id),
                           )
                         ],

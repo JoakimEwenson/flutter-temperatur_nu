@@ -44,13 +44,13 @@ saveLocalFavorites(List favorites) async {
 }
 
 // Add location id to local stored favorites
-// TODO: Check for null
 addToFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
+  favList = await cleanupFavoritesList(favList);
 
   if (favList.length < 5) {
     favList.add(locationId);
-    saveLocalFavorites(favList);
+    saveLocalFavorites(favList.toSet().toList());
   }
   else {
     throw Exception('För många favoriter sparad, max antal är 5.');
@@ -60,6 +60,7 @@ addToFavorites(String locationId) async {
 // Remove location id from local saved favorites
 removeFromFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
+  favList = await cleanupFavoritesList(favList);
 
   if (favList.remove(locationId)) {
     saveLocalFavorites(favList);
@@ -67,6 +68,12 @@ removeFromFavorites(String locationId) async {
   else {
     throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
   }
+}
+
+// Clear empty list result
+cleanupFavoritesList(List favorites) async {
+  favorites.removeWhere((item) => item == "" || item == null);
+  return favorites;
 }
 
 // Saving location for start screen
@@ -215,7 +222,7 @@ Future<Post> fetchSinglePost(String location) async {
   }
 }
 
-Future<List> fetchFavorites(List favlist) async {
+Future<List> fetchFavorites() async {
   // Save and fetch locally saved data
   // saveFavoritesLocally(favlist);
   // var localFavs = fetchLocalFavorites();
