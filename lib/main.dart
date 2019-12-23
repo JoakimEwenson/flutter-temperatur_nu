@@ -193,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () async {
                               if(await addToFavorites(snapshot.data.id)) {
                                 Scaffold.of(context).showSnackBar(SnackBar(
-                                  backgroundColor: Theme.of(context).accentColor,
                                   content: Text('La till ' + snapshot.data.title + ' i favoriter.'),
                                 ));
                               }
@@ -209,7 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () async {
                               if(await removeFromFavorites(snapshot.data.id)) {
                                 Scaffold.of(context).showSnackBar(SnackBar(
-                                  backgroundColor: Theme.of(context).accentColor,
                                   content: Text('Tog bort ' + snapshot.data.title + ' från favoriter.',),
                                 ));
                               }
