@@ -189,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           ),
                           RaisedButton(
-                            child: Text('Lägg till ' + snapshot.data.id),
+                            child: Text('Lägg till ' + snapshot.data.title),
                             onPressed: () async {
                               if(await addToFavorites(snapshot.data.id)) {
                                 Scaffold.of(context).showSnackBar(SnackBar(
@@ -204,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             },
                           ),
                           RaisedButton(
-                            child: Text('Ta bort ' + snapshot.data.id),
+                            child: Text('Ta bort ' + snapshot.data.title),
                             onPressed: () async {
                               if(await removeFromFavorites(snapshot.data.id)) {
                                 Scaffold.of(context).showSnackBar(SnackBar(

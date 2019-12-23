@@ -87,10 +87,29 @@ class _LocationListPageState extends State<LocationListPage> {
                         leading: Icon(Icons.ac_unit),
                         title: Text(listItem.title),
                         trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                        //onTap: () => Scaffold.of(context).showSnackBar(SnackBar(content: Text("Mätstationens id: " + listItem.id),)),
                         onTap: () {
                           saveLocationId(listItem.id);
                           Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                        },
+                        onLongPress: () async {
+                          await showMenu(
+                            position: RelativeRect.fromLTRB(100, 100, 100, 400),
+                            context: context,
+                            items: [
+                              PopupMenuItem(
+                                child: Text('Test 1'),
+                                value: 1,
+                              ),
+                              PopupMenuItem(
+                                child: Text('Test 2'),
+                                value: 2,
+                              ),
+                              PopupMenuItem(
+                                child: Text('Test 3'),
+                                value: 3,
+                              )
+                            ]
+                          );
                         },
                       )
                     )
