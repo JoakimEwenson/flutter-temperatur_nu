@@ -190,24 +190,33 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           RaisedButton(
                             child: Text('Lägg till ' + snapshot.data.id),
-                            // TODO: Add some kind of verification of success and/or failure
-                            onPressed: () {
-                              addToFavorites(snapshot.data.id);
+                            onPressed: () async {
+                              if(await addToFavorites(snapshot.data.id)) {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  backgroundColor: Theme.of(context).accentColor,
+                                  content: Text('La till ' + snapshot.data.title + ' i favoriter.'),
+                                ));
+                              }
+                              else {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text('Det gick inte att lägga till ' + snapshot.data.title + ' i favoriter.'),
+                                ));
+                              }
                             },
                           ),
                           RaisedButton(
                             child: Text('Ta bort ' + snapshot.data.id),
-                            // TODO: Add some kind of verification of success and/or failure
-                            onPressed: () {
-                              // TODO: Fix this!?
-                              if(removeFromFavorites(snapshot.data.id)) {
-                                final snackBar = SnackBar(
-                                  content: Text('Gick fint du!'),
-                                );
-                                Scaffold.of(context).showSnackBar(snackBar);
+                            onPressed: () async {
+                              if(await removeFromFavorites(snapshot.data.id)) {
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  backgroundColor: Theme.of(context).accentColor,
+                                  content: Text('Tog bort ' + snapshot.data.title + ' från favoriter.',),
+                                ));
                               }
                               else {
-                                Scaffold.of(context).showSnackBar(SnackBar(content: Text('Fan, det gick åt skogen du!'),));
+                                Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text('Det gick inte att ta bort ' + snapshot.data.title + ' från favoriter.'),
+                                ));
                               }
                             },
                           )

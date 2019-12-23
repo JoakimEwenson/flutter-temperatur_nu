@@ -44,10 +44,11 @@ saveLocalFavorites(List favorites) async {
 }
 
 // Add location id to local stored favorites
-addToFavorites(String locationId) async {
+Future<bool> addToFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
   favList = await cleanupFavoritesList(favList);
 
+  // TODO: This should return false if locationId already exists
   if (favList.length < 5) {
     favList.add(locationId);
     saveLocalFavorites(favList.toSet().toList());
@@ -60,7 +61,7 @@ addToFavorites(String locationId) async {
 }
 
 // Remove location id from local saved favorites
-removeFromFavorites(String locationId) async {
+Future<bool> removeFromFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
   favList = await cleanupFavoritesList(favList);
 
