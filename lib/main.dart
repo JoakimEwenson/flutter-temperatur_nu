@@ -17,12 +17,14 @@ import 'post.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
+bool isFavorite;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
+  isFavorite = await existsInFavorites(locationId);
 
   runApp(MyApp());
 }
@@ -32,7 +34,6 @@ String locationId = 'default';
 
 // Prepare future data
 Future<Post> post;
-Future<List> testList;
 
 // Begin app
 class MyApp extends StatelessWidget {
@@ -81,7 +82,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    //post = fetchSinglePost(locationId);
     Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
         post = fetchSinglePost(locationId);
@@ -133,8 +133,6 @@ class _MyHomePageState extends State<MyHomePage> {
           {
             if (snapshot.hasData) {
               return LayoutBuilder(
-                // alignment: Alignment.topCenter,
-                // margin: EdgeInsets.symmetric(horizontal: 20),
                 builder: (BuildContext context, BoxConstraints viewportConstraints) {
                   return SingleChildScrollView(
                     padding: EdgeInsets.symmetric(horizontal: 20),
@@ -185,39 +183,43 @@ class _MyHomePageState extends State<MyHomePage> {
                           FittedBox(
                             fit: BoxFit.fitWidth,
                             child: Container(
-                              child: Text("Uppdaterad " + snapshot.data.lastUpdate,style: Theme.of(context).textTheme.caption,),
+                              child: Text('Uppdaterad ${snapshot.data.lastUpdate}',style: Theme.of(context).textTheme.caption,),
                             ),
                           ),
-                          RaisedButton(
-                            child: Text('Lägg till ' + snapshot.data.title),
-                            onPressed: () async {
-                              if(await addToFavorites(snapshot.data.id)) {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('La till ' + snapshot.data.title + ' i favoriter.'),
-                                ));
+                          SizedBox(height: 10,),
+                          GestureDetector(
+                            child: isFavorite ? Icon(Icons.favorite, color: Colors.red ,size: 50.0,) : Icon(Icons.favorite_border, size: 50,),
+                            onTap: () async {
+                              if (isFavorite) {
+                                if(await removeFromFavorites(snapshot.data.id)) {
+                                  isFavorite = await _checkFavoriteStatus();
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text('Tog bort ${snapshot.data.title} från favoriter.',),
+                                  ));
+                                }
+                                else {
+                                  isFavorite = await _checkFavoriteStatus();
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text('Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
+                                  ));
+                                }
                               }
                               else {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('Det gick inte att lägga till ' + snapshot.data.title + ' i favoriter.'),
-                                ));
+                                if(await addToFavorites(snapshot.data.id)) {
+                                  isFavorite = await _checkFavoriteStatus();
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text('La till ${snapshot.data.title} i favoriter.'),
+                                  ));
+                                }
+                                else {
+                                  isFavorite = await _checkFavoriteStatus();
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                    content: Text('Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
+                                  ));
+                                }
                               }
                             },
                           ),
-                          RaisedButton(
-                            child: Text('Ta bort ' + snapshot.data.title),
-                            onPressed: () async {
-                              if(await removeFromFavorites(snapshot.data.id)) {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('Tog bort ' + snapshot.data.title + ' från favoriter.',),
-                                ));
-                              }
-                              else {
-                                Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('Det gick inte att ta bort ' + snapshot.data.title + ' från favoriter.'),
-                                ));
-                              }
-                            },
-                          )
                         ],
                       ),
                     ),
@@ -240,6 +242,12 @@ class _MyHomePageState extends State<MyHomePage> {
         return loadingView();
       }
     );
+  }
+
+  _checkFavoriteStatus() async {
+    isFavorite = await existsInFavorites(locationId);
+
+    return isFavorite;
   }
 
   // Loading indicator

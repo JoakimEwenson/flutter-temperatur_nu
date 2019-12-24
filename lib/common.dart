@@ -48,8 +48,7 @@ Future<bool> addToFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
   favList = await cleanupFavoritesList(favList);
 
-  // TODO: This should return false if locationId already exists
-  if (favList.length < 5) {
+  if (!(await existsInFavorites(locationId)) && (favList.length < 5)) {
     favList.add(locationId);
     saveLocalFavorites(favList.toSet().toList());
     return true;
@@ -58,6 +57,13 @@ Future<bool> addToFavorites(String locationId) async {
     //throw Exception('För många favoriter sparad, max antal är 5.');
     return false;
   }
+}
+
+Future<bool> existsInFavorites(String locationId) async {
+  var favList = await fetchLocalFavorites();
+  favList = await cleanupFavoritesList(favList);
+
+  return favList.contains(locationId);
 }
 
 // Remove location id from local saved favorites

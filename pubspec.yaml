@@ -14,7 +14,8 @@ description: Temperatur.nu-app.
 version: 1.0.0+3
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  # >=2.1.0 original
+  sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
   flutter:
