@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 // Import views
 import 'views/drawer.dart';
 import 'views/favoritespage.dart';
@@ -17,14 +16,12 @@ import 'post.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
-bool isFavorite;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
-  isFavorite = await existsInFavorites(locationId);
 
   runApp(MyApp());
 }
@@ -78,10 +75,15 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  bool isFavorite = false;
 
   @override
   void initState() {
     super.initState();
+    locationId = sp.getString('location');
+    existsInFavorites(locationId).then((exists) { 
+      isFavorite = exists;
+    });
     Future.delayed(const Duration(milliseconds: 1000), () {
       setState(() {
         post = fetchSinglePost(locationId);
@@ -91,6 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _refreshList() async {
     _mainRefreshIndicatorKey.currentState?.show();
+    locationId = sp.getString('location');
+    existsInFavorites(locationId).then((exists) { 
+      isFavorite = exists;
+    });
     
     setState(() {
       post = fetchSinglePost(locationId);
@@ -196,12 +202,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Scaffold.of(context).showSnackBar(SnackBar(
                                     content: Text('Tog bort ${snapshot.data.title} från favoriter.',),
                                   ));
+                                  setState(() {
+                                    isFavorite = false;
+                                  });
                                 }
                                 else {
                                   isFavorite = await _checkFavoriteStatus();
                                   Scaffold.of(context).showSnackBar(SnackBar(
                                     content: Text('Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
                                   ));
+                                  setState(() {
+                                    isFavorite = false;
+                                  });
                                 }
                               }
                               else {
@@ -210,13 +222,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Scaffold.of(context).showSnackBar(SnackBar(
                                     content: Text('La till ${snapshot.data.title} i favoriter.'),
                                   ));
+                                  setState(() {
+                                    isFavorite = true;
+                                  });
                                 }
                                 else {
                                   isFavorite = await _checkFavoriteStatus();
                                   Scaffold.of(context).showSnackBar(SnackBar(
                                     content: Text('Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
                                   ));
+                                  setState(() {
+                                    isFavorite = false;
+                                  });
                                 }
+                                setState(() {
+                                });
                               }
                             },
                           ),
@@ -246,8 +266,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _checkFavoriteStatus() async {
     isFavorite = await existsInFavorites(locationId);
-
-    return isFavorite;
   }
 
   // Loading indicator
