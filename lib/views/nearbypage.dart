@@ -32,7 +32,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 250), () {
       setState(() {
         locationList = fetchNearbyLocations();
       });

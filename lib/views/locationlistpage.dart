@@ -7,22 +7,13 @@ import 'package:temperatur.nu/locationlistitem.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
+// Set up ScrollController for saving list position
+ScrollController _controller;
+
 
 // Prepare future data
 Future<List> locations;
 
-/* 
-class OldLocationListPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Mätstationer'),),
-      drawer: AppDrawer(),
-      body: locationList(),
-    );
-  }
-}
- */
 
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
@@ -36,12 +27,23 @@ class LocationListPage extends StatefulWidget {
 class _LocationListPageState extends State<LocationListPage> {
   final GlobalKey<RefreshIndicatorState> _refreshLocationsKey = new GlobalKey<RefreshIndicatorState>();
 
+  _scrollPosition() async {
+    sp = await SharedPreferences.getInstance();
+    sp.setDouble('position', _controller.position.pixels);
+  }
+
   @override 
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 1000), () {
+
+    _scrollPosition();
+
+    Future.delayed(const Duration(milliseconds: 250), () {
       setState(() {
         locations = fetchLocationList();
+        _controller = ScrollController(initialScrollOffset: sp.getDouble('position') ?? 0.0);
+        _controller.addListener(_scrollPosition);
+        setTimeStamp();
       });
     });
   }
@@ -67,6 +69,12 @@ class _LocationListPageState extends State<LocationListPage> {
     );
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   Widget locationList() {
     return FutureBuilder(
       future: locations,
@@ -78,6 +86,7 @@ class _LocationListPageState extends State<LocationListPage> {
           case ConnectionState.done: {
             if (snapshot.hasData) {
               return ListView.builder(
+                controller: _controller,
                 itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
                   LocationListItem listItem = snapshot.data[index];

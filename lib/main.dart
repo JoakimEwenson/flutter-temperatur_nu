@@ -84,9 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
     existsInFavorites(locationId).then((exists) { 
       isFavorite = exists;
     });
-    Future.delayed(const Duration(milliseconds: 1000), () {
+    Future.delayed(const Duration(milliseconds: 250), () {
+      if(!sp.containsKey('timestamp')) {
+        setTimeStamp();
+      }
       setState(() {
         post = fetchSinglePost(locationId);
+        setTimeStamp();
       });
     });
   }
@@ -99,7 +103,17 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     
     setState(() {
-      post = fetchSinglePost(locationId);
+      num timestamp = int.tryParse(sp.getString('timestamp'));
+      num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+      if (timediff > 300000) {
+        post = fetchSinglePost(locationId);
+        print('Mer än 5 minuter har passerat sedan senaste uppdateringen.');
+        setTimeStamp();
+      }
+      else {
+        var time = (timediff / 60000).toStringAsFixed(1);
+        print('Det har passerat $time minuter sedan senaste uppdateringen.');
+      }
     });
   }
 

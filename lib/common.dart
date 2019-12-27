@@ -90,6 +90,23 @@ cleanupFavoritesList(List favorites) async {
   return favorites;
 }
 
+// Setting and getting timestamps
+setTimeStamp() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  sp.setString('timestamp', DateTime.now().millisecondsSinceEpoch.toString());
+}
+
+Future<String> getTimeStamp() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  String timestamp = sp.getString('timestamp');
+
+  return timestamp;
+}
+
+num compareTimeStamp(num saved, num current) {
+  return current - saved;
+}
+
 // Saving location for start screen
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
