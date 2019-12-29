@@ -89,9 +89,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           saveLocationId(tempData.id);
                           Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                         },
-                        onLongPress: () {
-                          // Add popup menu...
-                        },
                       )
                     )
                   );

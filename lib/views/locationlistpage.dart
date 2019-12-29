@@ -27,7 +27,17 @@ class LocationListPage extends StatefulWidget {
 class _LocationListPageState extends State<LocationListPage> {
   final GlobalKey<RefreshIndicatorState> _refreshLocationsKey = new GlobalKey<RefreshIndicatorState>();
 
-  _scrollPosition() async {
+  double scrollPosition = 0.0;
+
+
+  _getScrollPosition() async {
+    sp = await SharedPreferences.getInstance();
+    if(sp.containsKey('position')) {
+      scrollPosition = sp.getDouble('position');
+    }
+  }
+
+  _setScrollPosition() async {
     sp = await SharedPreferences.getInstance();
     sp.setDouble('position', _controller.position.pixels);
   }
@@ -35,15 +45,14 @@ class _LocationListPageState extends State<LocationListPage> {
   @override 
   void initState() {
     super.initState();
+    _getScrollPosition();
 
-    _scrollPosition();
 
     Future.delayed(const Duration(milliseconds: 250), () {
+      _controller = ScrollController(initialScrollOffset: scrollPosition ?? 0.0);
+      _controller.addListener(_setScrollPosition);
       setState(() {
         locations = fetchLocationList();
-        _controller = ScrollController(initialScrollOffset: sp.getDouble('position') ?? 0.0);
-        _controller.addListener(_scrollPosition);
-        setTimeStamp();
       });
     });
   }
@@ -100,7 +109,8 @@ class _LocationListPageState extends State<LocationListPage> {
                           saveLocationId(listItem.id);
                           Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
                         },
-                        onLongPress: () async {
+/*
+                         onLongPress: () async {
                           await showMenu(
                             position: RelativeRect.fromLTRB(100, 100, 100, 400),
                             context: context,
@@ -119,7 +129,8 @@ class _LocationListPageState extends State<LocationListPage> {
                               )
                             ]
                           );
-                        },
+                        }, 
+*/
                       )
                     )
                   );
