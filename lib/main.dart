@@ -332,23 +332,6 @@ class _MyHomePageState extends State<MyHomePage> {
           child: new Icon(Icons.location_searching),
           heroTag: 'gpsFAB',
         ),
-        /*
-        SizedBox(
-          height: 10,
-        ),
-        FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).accentColor,
-          onPressed: () {
-            setState(() {
-              post = fetchSinglePost(locationId);
-            });
-          },
-          tooltip: 'Uppdatera temperaturdata',
-          child: Icon(Icons.update),
-          heroTag: 'updateFAB',
-        ),
-        */
       ],
     );
   }

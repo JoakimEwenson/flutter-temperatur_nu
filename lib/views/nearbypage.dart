@@ -87,7 +87,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                         trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                         onTap: () {
                           saveLocationId(tempData.id);
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                          Navigator.pushNamed(context, '/');
                         },
                       ),
                     ),

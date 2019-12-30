@@ -107,7 +107,7 @@ class _LocationListPageState extends State<LocationListPage> {
                         trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                         onTap: () {
                           saveLocationId(listItem.id);
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+                          Navigator.pushNamed(context, '/');
                         },
 /*
                          onLongPress: () async {
