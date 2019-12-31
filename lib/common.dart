@@ -91,14 +91,14 @@ cleanupFavoritesList(List favorites) async {
 }
 
 // Setting and getting timestamps
-setTimeStamp() async {
+setTimeStamp(String title) async {
   SharedPreferences sp = await SharedPreferences.getInstance();
-  sp.setString('timestamp', DateTime.now().millisecondsSinceEpoch.toString());
+  sp.setString(title, DateTime.now().millisecondsSinceEpoch.toString());
 }
 
-Future<String> getTimeStamp() async {
+Future<String> getTimeStamp(String title) async {
   SharedPreferences sp = await SharedPreferences.getInstance();
-  String timestamp = sp.getString('timestamp');
+  String timestamp = sp.getString(title);
 
   return timestamp;
 }

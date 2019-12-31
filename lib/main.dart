@@ -85,12 +85,12 @@ class _MyHomePageState extends State<MyHomePage> {
       isFavorite = exists;
     });
     Future.delayed(const Duration(milliseconds: 250), () {
-      if(!sp.containsKey('timestamp')) {
-        setTimeStamp();
+      if(!sp.containsKey('mainScreenTimeout')) {
+        setTimeStamp('mainScreenTimeout');
       }
       setState(() {
         post = fetchSinglePost(locationId);
-        setTimeStamp();
+        setTimeStamp('mainScreenTimeout');
       });
     });
   }
@@ -103,12 +103,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     
     setState(() {
-      num timestamp = int.tryParse(sp.getString('timestamp'));
+      num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
       num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
       if (timediff > 300000) {
         post = fetchSinglePost(locationId);
         print('Mer än 5 minuter har passerat sedan senaste uppdateringen.');
-        setTimeStamp();
+        setTimeStamp('mainScreenTimeout');
       }
       else {
         var time = (timediff / 60000).toStringAsFixed(1);
