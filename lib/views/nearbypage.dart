@@ -32,17 +32,35 @@ class _NearbyListPageState extends State<NearbyListPage> {
   @override
   void initState() {
     super.initState();
+    _fetchSharedPreferences();
     Future.delayed(const Duration(milliseconds: 250), () {
+      if(!sp.containsKey('nearbyListTimeout')) {
+        setTimeStamp('nearbyListTimeout');
+      }
       setState(() {
         locationList = fetchNearbyLocations();
+        setTimeStamp('nearbyListTimeout');
       });
     });
   }
 
+  Future<void> _fetchSharedPreferences() async {
+    sp = await SharedPreferences.getInstance();
+  }
+
   Future<void> _refreshList() async {
-    setState(() {
-      locationList = fetchNearbyLocations();
-    });
+    num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
+    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    if (timediff > 300000) {
+      setState(() {
+        locationList = fetchNearbyLocations();
+        setTimeStamp('nearbyListTimeout');
+      });
+    }
+    else {
+      var time = (timediff / 60000).toStringAsFixed(1);
+      print('Det har passerat $time minuter sedan senaste uppdateringen.');
+    }
   }
 
   @override

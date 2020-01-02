@@ -48,19 +48,33 @@ class _LocationListPageState extends State<LocationListPage> {
     _getScrollPosition();
 
 
+
     Future.delayed(const Duration(milliseconds: 250), () {
       _controller = ScrollController(initialScrollOffset: scrollPosition ?? 0.0);
       _controller.addListener(_setScrollPosition);
+      if(!sp.containsKey('locationListTimeout')) {
+        setTimeStamp('locationListTimeout');
+      }
       setState(() {
         locations = fetchLocationList();
+        setTimeStamp('locationListTimeout');
       });
     });
   }
 
   Future<void> _refreshList() async {
-    setState(() {
-      locations = fetchLocationList();
-    });
+    num timestamp = int.tryParse(sp.getString('locationListTimeout'));
+    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    if (timediff > 300000) {
+      setState(() {
+        locations = fetchLocationList();
+        setTimeStamp('locationListTimeout');
+      });
+    }
+    else {
+      var time = (timediff / 60000).toStringAsFixed(1);
+      print('Det har passerat $time minuter sedan senaste uppdateringen.');
+    }
   }
 
   @override

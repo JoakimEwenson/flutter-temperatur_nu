@@ -36,17 +36,35 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   void initState() {
     super.initState();
+    _fetchSharedPreferences();
     Future.delayed(const Duration(milliseconds: 250), () {
+      if(!sp.containsKey('favoritesListTimeout')) {
+        setTimeStamp('favoritesListTimeout');
+      }
       setState(() {
         favorites = fetchFavorites();
+        setTimeStamp('favoritesListTimeout');
       });
     });
   }
 
+  Future<void> _fetchSharedPreferences() async {
+    sp = await SharedPreferences.getInstance();
+  }
+
   Future<void> _refreshList() async {
-    setState(() {
-      favorites = fetchFavorites();
-    });
+    num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
+    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    if (timediff > 300000) {
+      setState(() {
+        favorites = fetchFavorites();
+        setTimeStamp('favoritesListTimeout');
+      });
+    }
+    else {
+      var time = (timediff / 60000).toStringAsFixed(1);
+      print('Det har passerat $time minuter sedan senaste uppdateringen.'); 
+    }
   }
 
   @override

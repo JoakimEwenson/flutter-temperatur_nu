@@ -107,3 +107,4 @@ coverage/
 !/dev/ci/**/Gemfile.lock
 android/app/release/app-release.aab
 android/app/release/app-release.aab
+ios/Flutter/flutter_export_environment.sh
