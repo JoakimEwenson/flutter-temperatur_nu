@@ -213,7 +213,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               if (isFavorite) {
                                 if(await removeFromFavorites(snapshot.data.id)) {
                                   isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
                                     content: Text('Tog bort ${snapshot.data.title} från favoriter.',),
                                   ));
                                   setState(() {
@@ -222,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 }
                                 else {
                                   isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
                                     content: Text('Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
                                   ));
                                   setState(() {
@@ -233,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               else {
                                 if(await addToFavorites(snapshot.data.id)) {
                                   isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
                                     content: Text('La till ${snapshot.data.title} i favoriter.'),
                                   ));
                                   setState(() {
@@ -242,7 +242,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 }
                                 else {
                                   isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
                                     content: Text('Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
                                   ));
                                   setState(() {

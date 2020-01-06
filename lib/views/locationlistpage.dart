@@ -123,28 +123,6 @@ class _LocationListPageState extends State<LocationListPage> {
                           saveLocationId(listItem.id);
                           Navigator.pushNamed(context, '/');
                         },
-/*
-                         onLongPress: () async {
-                          await showMenu(
-                            position: RelativeRect.fromLTRB(100, 100, 100, 400),
-                            context: context,
-                            items: [
-                              PopupMenuItem(
-                                child: Text('Test 1'),
-                                value: 1,
-                              ),
-                              PopupMenuItem(
-                                child: Text('Test 2'),
-                                value: 2,
-                              ),
-                              PopupMenuItem(
-                                child: Text('Test 3'),
-                                value: 3,
-                              )
-                            ]
-                          );
-                        }, 
-*/
                       )
                     )
                   );
