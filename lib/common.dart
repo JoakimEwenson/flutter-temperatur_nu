@@ -27,6 +27,20 @@ class Utils {
   }
 }
 
+class CustomError {
+  final String message;
+
+  CustomError(this.message);
+
+  @override
+  String toString() => message;
+
+  // USAGE:
+  // on SocketException {
+  //   throw Failing('message');
+  // }
+}
+
 // Fetch saved favorites from local storage
 Future<List> fetchLocalFavorites() async {
   var sp = await SharedPreferences.getInstance();
