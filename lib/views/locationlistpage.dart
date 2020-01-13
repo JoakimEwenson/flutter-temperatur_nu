@@ -47,8 +47,6 @@ class _LocationListPageState extends State<LocationListPage> {
     super.initState();
     _getScrollPosition();
 
-
-
     Future.delayed(const Duration(milliseconds: 250), () {
       _controller = ScrollController(initialScrollOffset: scrollPosition ?? 0.0);
       _controller.addListener(_setScrollPosition);
@@ -120,8 +118,8 @@ class _LocationListPageState extends State<LocationListPage> {
                         title: Text(listItem.title),
                         trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                         onTap: () {
-                          saveLocationId(listItem.id);
-                          Navigator.pushNamed(context, '/');
+                          //saveLocationId(listItem.id);
+                          Navigator.pushNamed(context, '/', arguments: LocationArguments(listItem.id));
                         },
                       )
                     )

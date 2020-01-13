@@ -82,7 +82,9 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     locationId = sp.getString('location');
     existsInFavorites(locationId).then((exists) { 
-      isFavorite = exists;
+      setState(() {
+        isFavorite = exists;
+      });
     });
     Future.delayed(const Duration(milliseconds: 250), () {
       if(!sp.containsKey('mainScreenTimeout')) {
@@ -99,7 +101,9 @@ class _MyHomePageState extends State<MyHomePage> {
     _mainRefreshIndicatorKey.currentState?.show();
     locationId = sp.getString('location');
     existsInFavorites(locationId).then((exists) { 
-      isFavorite = exists;
+      setState(() {
+        isFavorite = exists;
+      });
     });
     
     num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
@@ -137,6 +141,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _singlePostPage() {
+    final LocationArguments args = ModalRoute.of(context).settings.arguments;
+    if (args != null) {
+      locationId = args.locationId;
+      sp.setString('location',locationId);
+    }
+    else {
+      locationId = sp.getString('location');
+    }
     return FutureBuilder(
       future: post,
       builder: (context, snapshot) {
@@ -168,6 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           SizedBox(height: 25,),
+                          Text("Location ID: " + locationId),
                           FittedBox(
                             fit: BoxFit.fitWidth,
                             child: Container(
