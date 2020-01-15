@@ -112,16 +112,17 @@ class _MyHomePageState extends State<MyHomePage> {
     
     num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    var now = DateTime.now();
     if (timediff > 300000) {
       setState(() {
           post = fetchSinglePost(locationId);
-          print('Mer än 5 minuter har passerat sedan senaste uppdateringen.');
+          print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
           setTimeStamp('mainScreenTimeout');
       });
     }
     else {
       var time = (timediff / 60000).toStringAsFixed(1);
-      print('Det har passerat $time minuter sedan senaste uppdateringen.');
+      print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
