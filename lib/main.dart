@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
         brightness: Brightness.light,
@@ -180,45 +181,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
                           SizedBox(height: 25,),
+                          Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4, textAlign: TextAlign.center,),
+                          Text(snapshot.data.title,style: Theme.of(context).textTheme.display3, textAlign: TextAlign.center,),
+                          Text(snapshot.data.county,style: Theme.of(context).textTheme.display1, textAlign: TextAlign.center,),
                           Text("Location ID: " + locationId),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4),
-                            ), 
-                          ),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text(snapshot.data.title,style: Theme.of(context).textTheme.display3,),
-                            ),
-                          ),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text(snapshot.data.county,style: Theme.of(context).textTheme.display1,),
-                              ),
-                          ),
                           SizedBox(height: 20),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2,),
-                            ),
-                          ),
+                          Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2, textAlign: TextAlign.center,),
                           SizedBox(height: 10,),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text(snapshot.data.sourceInfo,style: Theme.of(context).textTheme.caption,),
-                            ),
-                          ),
-                          FittedBox(
-                            fit: BoxFit.fitWidth,
-                            child: Container(
-                              child: Text('Uppdaterad ${snapshot.data.lastUpdate}',style: Theme.of(context).textTheme.caption,),
-                            ),
-                          ),
+                          Text(snapshot.data.sourceInfo,style: Theme.of(context).textTheme.caption, textAlign: TextAlign.center,),
+                          Text('Uppdaterad ${snapshot.data.lastUpdate}',style: Theme.of(context).textTheme.caption, textAlign: TextAlign.center,),
                           SizedBox(height: 10,),
                           GestureDetector(
                             child: isFavorite ? Icon(Icons.favorite, color: Colors.red ,size: 50.0,) : Icon(Icons.favorite_border, size: 50,),
