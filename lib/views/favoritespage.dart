@@ -1,9 +1,9 @@
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:temperatur.nu/common.dart';
+import 'package:temperatur.nu/controller/common.dart';
 import 'package:temperatur.nu/views/drawer.dart';
-import 'package:temperatur.nu/post.dart';
+import 'package:temperatur.nu/model/post.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
@@ -105,7 +105,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
                         onTap: () {
                           //saveLocationId(tempData.id);
-                          Navigator.pushNamed(context, '/', arguments: LocationArguments(tempData.id));
+                          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(tempData.id));
                         },
                       )
                     )

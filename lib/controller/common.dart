@@ -9,8 +9,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart' as xml;
 
-import 'post.dart';
-import 'locationlistitem.dart';
+import '../model/post.dart';
+import '../model/locationlistitem.dart';
 
 // Make global base URL for API
 String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
@@ -209,8 +209,9 @@ Future<Post> fetchSinglePost(String location) async {
 
     if (response.statusCode == 200) {
       // If server returns OK, parse XML result
-
       var content = xml.parse(response.body);
+      // Save XML string as cache  
+      prefs.setString('singlePostCache', response.body);
 
       var locationTitle = content.findAllElements("item").map((node) => node.findElements("title").single.text);
       var locationId = content.findAllElements("item").map((node) => node.findElements("id").single.text);
@@ -243,8 +244,10 @@ Future<Post> fetchSinglePost(String location) async {
       // Save location id to local storage for later
       prefs.setString('location', output.id);
 
-      return output;
-    } else {
+      //return output;
+      return Post.fromXml(content);
+    } 
+    else {
       throw Exception('Misslyckades med att hämta data');
     }
   }

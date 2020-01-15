@@ -11,8 +11,8 @@ import 'views/locationlistpage.dart';
 import 'views/settingspage.dart';
 
 // Import local files
-import 'common.dart';
-import 'post.dart';
+import 'controller/common.dart';
+import 'model/post.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
@@ -22,6 +22,9 @@ Future<Null> main() async {
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
+  if(sp.containsKey('singlePostCache')) {
+    //print("Cached string:\n" + sp.getString('singlePostCache'));
+  }
 
   runApp(MyApp());
 }
@@ -82,11 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     locationId = sp.getString('location');
-    existsInFavorites(locationId).then((exists) { 
-      setState(() {
-        isFavorite = exists;
-      });
-    });
     Future.delayed(const Duration(milliseconds: 250), () {
       if(!sp.containsKey('mainScreenTimeout')) {
         setTimeStamp('mainScreenTimeout');
@@ -94,6 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         post = fetchSinglePost(locationId);
         setTimeStamp('mainScreenTimeout');
+      });
+    });
+    existsInFavorites(locationId).then((exists) { 
+      setState(() {
+        isFavorite = exists;
       });
     });
   }
@@ -122,6 +125,19 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _getGpsLocation() async {
+    _mainRefreshIndicatorKey.currentState?.show();
+    post = fetchSinglePost('gps');
+    isFavorite = false;
+    fetchSinglePost('gps').then((data) {
+      existsInFavorites(data.id.toString()).then((exists) { 
+        setState(() {
+          isFavorite = exists;
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -142,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _singlePostPage() {
+    // Get and check if arguments is passed to the screen
     final LocationArguments args = ModalRoute.of(context).settings.arguments;
     if (args != null) {
       locationId = args.locationId;
@@ -150,6 +167,11 @@ class _MyHomePageState extends State<MyHomePage> {
     else {
       locationId = sp.getString('location');
     }
+    // Check if location is in favorites
+    existsInFavorites(locationId).then((exists) { 
+      isFavorite = exists;
+    });
+
     return FutureBuilder(
       future: post,
       builder: (context, snapshot) {
@@ -182,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
                           SizedBox(height: 25,),
                           Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4, textAlign: TextAlign.center,),
-                          Text(snapshot.data.title,style: Theme.of(context).textTheme.display3, textAlign: TextAlign.center,),
+                          Text(snapshot.data.title,style: Theme.of(context).textTheme.display2, textAlign: TextAlign.center,),
                           Text(snapshot.data.county,style: Theme.of(context).textTheme.display1, textAlign: TextAlign.center,),
                           Text("Location ID: " + locationId),
                           SizedBox(height: 20),
@@ -303,7 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             setState(() {
               try {
-                post = fetchSinglePost('gps');
+                _getGpsLocation();
               }
               catch (e) {
                 Scaffold.of(context).showSnackBar(SnackBar(
