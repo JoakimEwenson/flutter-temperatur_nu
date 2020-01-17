@@ -128,14 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getGpsLocation() async {
     _mainRefreshIndicatorKey.currentState?.show();
-    post = fetchSinglePost('gps');
-    isFavorite = false;
     fetchSinglePost('gps').then((data) {
-      existsInFavorites(data.id.toString()).then((exists) { 
-        setState(() {
-          isFavorite = exists;
-        });
-      });
+      Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(data.id));
     });
   }
 
@@ -207,7 +201,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text(snapshot.data.temperature + "°C",style: Theme.of(context).textTheme.display4, textAlign: TextAlign.center,),
                           Text(snapshot.data.title,style: Theme.of(context).textTheme.display2, textAlign: TextAlign.center,),
                           Text(snapshot.data.county,style: Theme.of(context).textTheme.display1, textAlign: TextAlign.center,),
-                          Text("Location ID: " + locationId),
                           SizedBox(height: 20),
                           Text(snapshot.data.amm,style: Theme.of(context).textTheme.body2, textAlign: TextAlign.center,),
                           SizedBox(height: 10,),
