@@ -152,6 +152,18 @@ Future<Position> fetchPosition() async {
     return position;
 }
 
+// Fetch cached single post data
+Future<Post> fetchSinglePostCache() async {
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.containsKey('singlePostCache')) {
+    var content = xml.parse(prefs.getString('singlePostCache'));
+    return Post.fromXml(content);
+  }
+  else {
+    return new Post();
+  }
+}
+
 // Another fetch API function
 Future<Post> fetchSinglePost(String location) async {
   // Set up API URL
@@ -213,36 +225,36 @@ Future<Post> fetchSinglePost(String location) async {
       // Save XML string as cache  
       prefs.setString('singlePostCache', response.body);
 
-      var locationTitle = content.findAllElements("item").map((node) => node.findElements("title").single.text);
+      // var locationTitle = content.findAllElements("item").map((node) => node.findElements("title").single.text);
       var locationId = content.findAllElements("item").map((node) => node.findElements("id").single.text);
-      var currentTemp = content.findAllElements("item").map((node) => node.findElements("temp").single.text);
-      var lastUpdated = content.findAllElements("item").map((node) => node.findElements("lastUpdate").single.text);
-      var municipality = content.findAllElements("item").map((node) => node.findElements("kommun").single.text);
-      var county = content.findAllElements("item").map((node) => node.findElements("lan").single.text);
-      var sourceInfo = content.findAllElements("item").map((node) => node.findElements("sourceInfo").single.text);
-      var sourceUrl = content.findAllElements("item").map((node) => node.findElements("url").single.text);
+      // var currentTemp = content.findAllElements("item").map((node) => node.findElements("temp").single.text);
+      // var lastUpdated = content.findAllElements("item").map((node) => node.findElements("lastUpdate").single.text);
+      // var municipality = content.findAllElements("item").map((node) => node.findElements("kommun").single.text);
+      // var county = content.findAllElements("item").map((node) => node.findElements("lan").single.text);
+      // var sourceInfo = content.findAllElements("item").map((node) => node.findElements("sourceInfo").single.text);
+      // var sourceUrl = content.findAllElements("item").map((node) => node.findElements("url").single.text);
       // Average, min, max data
-      var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
-      var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
-      var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
+      // var averageTemp = content.findAllElements("item").map((node) => node.findElements("average").single.text);
+      // var minTemp = content.findAllElements("item").map((node) => node.findElements("min").single.text);
+      // var maxTemp = content.findAllElements("item").map((node) => node.findElements("max").single.text);
       // Currently not used but available data
       // var minTime = content.findAllElements("item").map((node) => node.findElements("minTime").single.text);
       // var maxTime = content.findAllElements("item").map((node) => node.findElements("maxTime").single.text);
 
-      var output = new Post(
-        title: locationTitle.single.trim().toString(),
-        id: locationId.single.trim().toString(),
-        temperature: currentTemp.single.toString(),
-        amm: "min " + minTemp.single.toString() + "°C ◦ medel " + averageTemp.single.toString() + "°C ◦ max " + maxTemp.single.toString() + "°C",
-        lastUpdate: lastUpdated.single.toString(),
-        municipality: municipality.single.toString(),
-        county: county.single.toString(),
-        sourceInfo: sourceInfo.single.toString(),
-        sourceUrl: sourceUrl.single.toString(),
-      );
+      // var output = new Post(
+      //   title: locationTitle.single.trim().toString(),
+      //   id: locationId.single.trim().toString(),
+      //   temperature: currentTemp.single.toString(),
+      //   amm: "min " + minTemp.single.toString() + "°C ◦ medel " + averageTemp.single.toString() + "°C ◦ max " + maxTemp.single.toString() + "°C",
+      //   lastUpdate: lastUpdated.single.toString(),
+      //   municipality: municipality.single.toString(),
+      //   county: county.single.toString(),
+      //   sourceInfo: sourceInfo.single.toString(),
+      //   sourceUrl: sourceUrl.single.toString(),
+      // );
 
       // Save location id to local storage for later
-      prefs.setString('location', output.id);
+      prefs.setString('location', locationId.single.trim().toString());
 
       //return output;
       return Post.fromXml(content);
@@ -279,9 +291,6 @@ Future<Post> fetchSinglePost(String location) async {
 
 Future<List> fetchFavorites() async {
   // Save and fetch locally saved data
-  // saveFavoritesLocally(favlist);
-  // var localFavs = fetchLocalFavorites();
-  //String searchLocations = favlist.join(',');
   List searchLocationList = await fetchLocalFavorites();
   String searchLocations = searchLocationList.join(',');
   String urlOptions = "&amm=true&dc=true&verbose=true&cli=" + Utils.createCryptoRandomString();
@@ -441,6 +450,9 @@ Future<List> fetchLocationList() async {
 
     if (response.statusCode == 200) {
       // If server responds with OK, parse XML result
+      // Save XML string as cache
+      final prefs = await SharedPreferences.getInstance();
+      prefs.setString('locationListCache', response.body);
       var content = xml.parse(response.body);
 
       // Iterate results and make into list

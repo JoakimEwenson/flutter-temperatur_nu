@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _refreshList() async {
-    _mainRefreshIndicatorKey.currentState?.show();
+    //_mainRefreshIndicatorKey.currentState?.show();
     locationId = sp.getString('location');
     existsInFavorites(locationId).then((exists) { 
       setState(() {
@@ -121,15 +121,16 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
     else {
+      post = fetchSinglePostCache();
       var time = (timediff / 60000).toStringAsFixed(1);
       print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
   Future<void> _getGpsLocation() async {
-    _mainRefreshIndicatorKey.currentState?.show();
     fetchSinglePost('gps').then((data) {
-      Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(data.id));
+      //Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(data.id));
+      Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
     });
   }
 
