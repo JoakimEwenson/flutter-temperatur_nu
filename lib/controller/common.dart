@@ -438,64 +438,87 @@ Future<List> fetchNearbyLocations() async {
   return nearbyLocations;
 }
 
-Future<List> fetchLocationList() async {
-  // Set up API URL
-  String urlOptions = "?cli=" + Utils.createCryptoRandomString();
-  String url = baseUrl + urlOptions;
+Future<List> fetchLocationList(bool getCache) async {
+  final prefs = await SharedPreferences.getInstance();
   List locationList = new List();
 
-  // Collect data from API
-  try {
-    final response = await http.get(url).timeout(const Duration(seconds: 15));
-
-    if (response.statusCode == 200) {
-      // If server responds with OK, parse XML result
-      // Save XML string as cache
-      final prefs = await SharedPreferences.getInstance();
-      prefs.setString('locationListCache', response.body);
-      var content = xml.parse(response.body);
+  if (getCache) {
+    if (prefs.containsKey('locationListCache')) {
+      locationList = new List();
+      // Fetch locally saved cache and turn into XML
+      var content = xml.parse(prefs.getString('locationListCache'));
 
       // Iterate results and make into list
       content.findAllElements('item').forEach((row) {
-        var locationTitle = row.findElements('title').single.text.trim().toString();
-        var locationId = row.findElements('id').single.text.trim().toString();
-        var locationTemperature = row.findElements('temp').single.text.trim().toString();
-        var output  = new LocationListItem(
-          title: locationTitle, 
-          id: locationId, 
-          temperature: locationTemperature
+        var output = new LocationListItem(
+          title: row.findElements('title').single.text.trim().toString(),
+          id: row.findElements('id').single.text.trim().toString(),
+          temperature: row.findElements('temp').single.text.trim().toString(),
         );
         locationList.add(output);
       });
-    
+
       return locationList;
     }
     else {
-      throw Exception('Misslyckades med att hämta data.');
+      return new List();
     }
   }
-  on TimeoutException {
-    var output = new LocationListItem(
-      title: "Hämtning av data tog för lång tid",
-    );
-    locationList.add(output);
+  else {
+    // Set up API URL
+    String urlOptions = "?cli=" + Utils.createCryptoRandomString();
+    String url = baseUrl + urlOptions;
 
-    return locationList;
-  }
-  on SocketException {
-    var output = new LocationListItem(
-      title: "Kunde inte att nå nätverket",
-    );
-    locationList.add(output);
-    
-    return locationList;
-  }
-  catch (e) {
-    var output = new LocationListItem(
-      title: "Något gick snett",
-    );
-    locationList.add(output);
-    
-    return locationList;
+    // Collect data from API
+    try {
+      final response = await http.get(url).timeout(const Duration(seconds: 15));
+
+      if (response.statusCode == 200) {
+        // If server responds with OK, parse XML result
+        // Save XML string as cache
+        prefs.setString('locationListCache', response.body);
+        var content = xml.parse(response.body);
+        locationList = new List();
+
+        // Iterate results and make into list
+        content.findAllElements('item').forEach((row) {
+          var output  = new LocationListItem(
+            title: row.findElements('title').single.text.trim().toString(), 
+            id: row.findElements('id').single.text.trim().toString(), 
+            temperature: row.findElements('temp').single.text.trim().toString(),
+          );
+          locationList.add(output);
+        });
+      
+        return locationList;
+      }
+      else {
+        throw Exception('Misslyckades med att hämta data.');
+      }
+    }
+    on TimeoutException {
+      var output = new LocationListItem(
+        title: "Hämtning av data tog för lång tid",
+      );
+      locationList.add(output);
+
+      return locationList;
+    }
+    on SocketException {
+      var output = new LocationListItem(
+        title: "Kunde inte att nå nätverket",
+      );
+      locationList.add(output);
+      
+      return locationList;
+    }
+    catch (e) {
+      var output = new LocationListItem(
+        title: "Något gick snett",
+      );
+      locationList.add(output);
+      
+      return locationList;
+    }
   }
 }

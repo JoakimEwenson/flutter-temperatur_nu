@@ -28,6 +28,8 @@ class _LocationListPageState extends State<LocationListPage> {
   final GlobalKey<RefreshIndicatorState> _refreshLocationsKey = new GlobalKey<RefreshIndicatorState>();
 
   double scrollPosition = 0.0;
+  num timestamp;
+  num timediff;
 
 
   _getScrollPosition() async {
@@ -53,23 +55,40 @@ class _LocationListPageState extends State<LocationListPage> {
       if(!sp.containsKey('locationListTimeout')) {
         setTimeStamp('locationListTimeout');
       }
-      setState(() {
-        locations = fetchLocationList();
-        setTimeStamp('locationListTimeout');
-      });
+      else {
+        timestamp = int.tryParse(sp.getString('locationListTimeout'));
+        timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+        if (timediff > 900000) {
+          setState(() {
+            // Fetch list of locations, getCache false
+            locations = fetchLocationList(false);
+            setTimeStamp('locationListTimeout');
+            print("Fetch location list from server");
+          });
+        }
+        else {
+          setState(() {
+            locations = fetchLocationList(true);
+            print("Fetch location list from cache");
+          });
+        }
+      }
     });
   }
 
   Future<void> _refreshList() async {
-    num timestamp = int.tryParse(sp.getString('locationListTimeout'));
-    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > 300000) {
+    timestamp = int.tryParse(sp.getString('locationListTimeout'));
+    timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    if (timediff > 900000) {
       setState(() {
-        locations = fetchLocationList();
+        // Fetch list of locations, getCache false
+        locations = fetchLocationList(false);
         setTimeStamp('locationListTimeout');
       });
     }
     else {
+      // Fetch list of locations, getCache true
+      locations = fetchLocationList(true);
       var time = (timediff / 60000).toStringAsFixed(1);
       print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
