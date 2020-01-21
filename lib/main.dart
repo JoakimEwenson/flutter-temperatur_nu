@@ -23,7 +23,7 @@ Future<Null> main() async {
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
   if(sp.containsKey('singlePostCache')) {
-    //print("Cached string:\n" + sp.getString('singlePostCache'));
+    print("Cached string:\n" + sp.getString('singlePostCache'));
   }
 
   runApp(MyApp());
