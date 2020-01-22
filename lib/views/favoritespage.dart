@@ -42,7 +42,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
         setTimeStamp('favoritesListTimeout');
       }
       setState(() {
-        favorites = fetchFavorites();
+        favorites = fetchFavorites(false);
         setTimeStamp('favoritesListTimeout');
       });
     });
@@ -57,12 +57,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
     num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > 300000) {
       setState(() {
-        favorites = fetchFavorites();
+        favorites = fetchFavorites(false);
         setTimeStamp('favoritesListTimeout');
       });
     }
     else {
-      var time = (timediff / 60000).toStringAsFixed(1);
+      setState(() {
+        favorites = fetchFavorites(true);
+      });
+      //var time = (timediff / 60000).toStringAsFixed(1);
       //print('Det har passerat $time minuter sedan senaste uppdateringen.'); 
     }
   }

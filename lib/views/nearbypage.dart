@@ -38,7 +38,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
         setTimeStamp('nearbyListTimeout');
       }
       setState(() {
-        locationList = fetchNearbyLocations();
+        locationList = fetchNearbyLocations(false);
         setTimeStamp('nearbyListTimeout');
       });
     });
@@ -53,12 +53,15 @@ class _NearbyListPageState extends State<NearbyListPage> {
     num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > 300000) {
       setState(() {
-        locationList = fetchNearbyLocations();
+        locationList = fetchNearbyLocations(false);
         setTimeStamp('nearbyListTimeout');
       });
     }
     else {
-      var time = (timediff / 60000).toStringAsFixed(1);
+      setState(() {
+        locationList = fetchNearbyLocations(true);
+      });
+      //var time = (timediff / 60000).toStringAsFixed(1);
       //print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }

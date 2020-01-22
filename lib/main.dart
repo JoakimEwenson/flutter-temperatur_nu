@@ -80,6 +80,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
   bool isFavorite = false;
+  num timestamp;
+  num timediff;
 
   @override
   void initState() {
@@ -110,9 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     
-    num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
-    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    var now = DateTime.now();
+    timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
+    timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    //var now = DateTime.now();
     if (timediff > 300000) {
       setState(() {
           post = fetchSinglePost(locationId);
@@ -122,15 +124,22 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     else {
       post = fetchSinglePostCache();
-      var time = (timediff / 60000).toStringAsFixed(1);
+      //var time = (timediff / 60000).toStringAsFixed(1);
       //print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
   Future<void> _getGpsLocation() async {
+    // Reset post data
     post = null;
-    fetchSinglePost('gps').then((data) {
-      Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
+    // Fetch new post data
+    post = fetchSinglePost('gps').then((data) {
+      //Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
+      // Check if favorite
+      existsInFavorites(data.id).then((exists) {
+        isFavorite = exists;
+      });
+      return data;
     });
   }
 

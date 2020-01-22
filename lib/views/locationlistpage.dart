@@ -89,7 +89,7 @@ class _LocationListPageState extends State<LocationListPage> {
     else {
       // Fetch list of locations, getCache true
       locations = fetchLocationList(true);
-      var time = (timediff / 60000).toStringAsFixed(1);
+      //var time = (timediff / 60000).toStringAsFixed(1);
       //print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
