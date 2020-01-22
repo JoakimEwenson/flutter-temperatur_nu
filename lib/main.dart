@@ -128,8 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _getGpsLocation() async {
+    _mainRefreshIndicatorKey.currentState?.show();
+    
     fetchSinglePost('gps').then((data) {
-      //Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(data.id));
       Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
     });
   }
