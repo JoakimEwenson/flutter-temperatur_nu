@@ -23,7 +23,7 @@ Future<Null> main() async {
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
   if(sp.containsKey('singlePostCache')) {
-    print("Cached string:\n" + sp.getString('singlePostCache'));
+    //print("Cached string:\n" + sp.getString('singlePostCache'));
   }
 
   runApp(MyApp());
@@ -116,20 +116,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (timediff > 300000) {
       setState(() {
           post = fetchSinglePost(locationId);
-          print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
+          //print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
           setTimeStamp('mainScreenTimeout');
       });
     }
     else {
       post = fetchSinglePostCache();
       var time = (timediff / 60000).toStringAsFixed(1);
-      print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
+      //print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
   Future<void> _getGpsLocation() async {
-    _mainRefreshIndicatorKey.currentState?.show();
-    
+    post = null;
     fetchSinglePost('gps').then((data) {
       Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
     });

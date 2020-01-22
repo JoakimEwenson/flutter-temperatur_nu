@@ -63,13 +63,13 @@ class _LocationListPageState extends State<LocationListPage> {
             // Fetch list of locations, getCache false
             locations = fetchLocationList(false);
             setTimeStamp('locationListTimeout');
-            print("Fetch location list from server");
+            //print("Fetch location list from server");
           });
         }
         else {
           setState(() {
             locations = fetchLocationList(true);
-            print("Fetch location list from cache");
+            //print("Fetch location list from cache");
           });
         }
       }
@@ -90,7 +90,7 @@ class _LocationListPageState extends State<LocationListPage> {
       // Fetch list of locations, getCache true
       locations = fetchLocationList(true);
       var time = (timediff / 60000).toStringAsFixed(1);
-      print('Det har passerat $time minuter sedan senaste uppdateringen.');
+      //print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 

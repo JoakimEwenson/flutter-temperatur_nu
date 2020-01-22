@@ -59,7 +59,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
     }
     else {
       var time = (timediff / 60000).toStringAsFixed(1);
-      print('Det har passerat $time minuter sedan senaste uppdateringen.');
+      //print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 

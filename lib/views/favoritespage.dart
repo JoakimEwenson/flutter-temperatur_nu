@@ -63,7 +63,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }
     else {
       var time = (timediff / 60000).toStringAsFixed(1);
-      print('Det har passerat $time minuter sedan senaste uppdateringen.'); 
+      //print('Det har passerat $time minuter sedan senaste uppdateringen.'); 
     }
   }
 

@@ -443,7 +443,7 @@ Future<List> fetchLocationList(bool getCache) async {
   List locationList = new List();
 
   if (getCache) {
-    if (prefs.containsKey('locationListCache')) {
+    if (prefs.containsKey('locationListCache') && prefs.getString('locationListCache') != "") {
       locationList = new List();
       // Fetch locally saved cache and turn into XML
       var content = xml.parse(prefs.getString('locationListCache'));
@@ -461,7 +461,7 @@ Future<List> fetchLocationList(bool getCache) async {
       return locationList;
     }
     else {
-      return new List();
+      return fetchLocationList(false);
     }
   }
   else {
