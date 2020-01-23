@@ -54,6 +54,9 @@ class _LocationListPageState extends State<LocationListPage> {
       _controller.addListener(_setScrollPosition);
       if(!sp.containsKey('locationListTimeout')) {
         setTimeStamp('locationListTimeout');
+        setState(() {
+          locations = fetchLocationList(false);
+        });
       }
       else {
         timestamp = int.tryParse(sp.getString('locationListTimeout'));
