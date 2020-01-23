@@ -108,5 +108,4 @@ coverage/
 android/app/release/app-release.aab
 android/app/release/app-release.aab
 ios/Flutter/flutter_export_environment.sh
-android/app/release/app-release.aab
-android/app/release/app-release.aab
+android/app/release/*
