@@ -145,11 +145,13 @@ Future<String> fetchLocallySavedData() async {
 
 // Get location
 Future<Position> fetchPosition() async {
-  Position position = await Geolocator().getCurrentPosition().timeout(Duration(seconds: 15)).then((position) {
+  Position position = await Geolocator().getCurrentPosition().timeout(Duration(seconds: 15)).then((pos) {
     //getting position without problems
-    return position;
+    return pos;
+  }).catchError((e) {
+    return null;
   });
-    return position;
+  return position;
 }
 
 // Fetch cached single post data
@@ -177,44 +179,33 @@ Future<Post> fetchSinglePost(String location) async {
   // Setting up local data
   final prefs = await SharedPreferences.getInstance();
 
-  if (location == 'gps') {
-    // Collect position
-    Position position;
-    try {
-      position = await fetchPosition();
-    }
-    catch (e) {
-      position = null;
-    }
 
-    if (position != null) {
-      url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
+  try {
+    // Check if GPS search or location ID search
+    if (location == 'gps') {
+      // Collect position (will return null if unable)
+      Position position = await fetchPosition();
+
+      if (position != null) {
+        url = baseUrl + "?lat=" + position.latitude.toString() + "&lon=" + position.longitude.toString() + urlOptions;
+      }
+      else {
+        throw TimeoutException("Kunde inte hämta position");
+      }
+    }
+    else if (location == 'default') {
+      url = baseUrl + "?p=" + defaultLocation + urlOptions;
     }
     else {
+      // Check if location id is stored in local storage or else, use default
       if (prefs.getString('location') != null) {
         locationId = prefs.getString('location');
       } 
       else {
         locationId = defaultLocation;
       }
-    url = baseUrl + "?p=" + locationId + urlOptions;
+      url = baseUrl + "?p=" + locationId + urlOptions;
     }
-  }
-  else if (location == 'default') {
-    url = baseUrl + "?p=" + defaultLocation + urlOptions;
-  }
-  else {
-    // Check if location id is stored in local storage or else, use default
-    if (prefs.getString('location') != null) {
-      locationId = prefs.getString('location');
-    } 
-    else {
-      locationId = defaultLocation;
-    }
-    url = baseUrl + "?p=" + locationId + urlOptions;
-  }
-
-  try {
     // Get data from API
     final response = await 
     http.get(url).timeout(const Duration(seconds: 15));
@@ -264,21 +255,18 @@ Future<Post> fetchSinglePost(String location) async {
     }
   }
   on TimeoutException catch (e) {
-    var output = new Post(
-      title: "Hämtning av data tog för lång tid",
+    return new Post(
+      title: "Begäran tog för lång tid",
       sourceInfo: e.toString(),
       lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
     );
-    return output;
   }
   on SocketException catch (e) {
-    var output = new Post(
+    return new Post(
       title: "Kunde inte att nå nätverket",
       sourceInfo: e.toString(),
       lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
     );
-
-    return output;
   }
   catch (e) {
     return new Post(
