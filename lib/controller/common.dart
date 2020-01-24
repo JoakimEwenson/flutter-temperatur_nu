@@ -268,6 +268,14 @@ Future<Post> fetchSinglePost(String location) async {
       lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
     );
   }
+  // Handle empty or no result
+  on StateError catch (e) {
+    return new Post(
+      title: "Tomt resultat",
+      sourceInfo: e.toString(),
+      lastUpdate: DateFormat("yyyy-MM-dd HH:mm:ss").format(new DateTime.now()),
+    );
+  }
   catch (e) {
     return new Post(
       title: "Något gick snett",
