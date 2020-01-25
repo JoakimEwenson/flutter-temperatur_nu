@@ -19,9 +19,6 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ],
               ),
-              decoration: BoxDecoration(
-                //color: Theme.of(context).primaryColor,
-              ),
             ),
           ),
           
