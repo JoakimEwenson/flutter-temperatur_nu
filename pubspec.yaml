@@ -26,7 +26,6 @@ dependencies:
   package_info: ^0.4.0+13
   shared_preferences: ^0.5.4+6
   xml: ^3.5.0
-  xml2json: ^4.1.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
