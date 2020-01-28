@@ -48,6 +48,12 @@ class CustomError {
   // }
 }
 
+class TooManyFavoritesException implements Exception {
+  String errorMsg() {
+    return 'För många favoriter sparade, max antal är 5.';
+  }
+}
+
 // Fetch saved favorites from local storage
 Future<List> fetchLocalFavorites() async {
   var sp = await SharedPreferences.getInstance();
@@ -78,8 +84,9 @@ Future<bool> addToFavorites(String locationId) async {
     return true;
   }
   else {
-    //throw Exception('För många favoriter sparad, max antal är 5.');
-    return false;
+    //throw Exception('För många favoriter sparade, max antal är 5.');
+    throw TooManyFavoritesException();
+    //return false;
   }
 }
 
@@ -100,8 +107,8 @@ Future<bool> removeFromFavorites(String locationId) async {
     return true;
   }
   else {
-    //throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
-    return false;
+    throw Exception('Kunde inte ta bort $locationId från listan över favoriter.');
+    //return false;
   }
 }
 

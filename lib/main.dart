@@ -220,47 +220,59 @@ class _MyHomePageState extends State<MyHomePage> {
                           GestureDetector(
                             child: isFavorite ? Icon(Icons.favorite, color: Colors.red ,size: 50.0,) : Icon(Icons.favorite_border, size: 50,),
                             onTap: () async {
-                              if (isFavorite) {
-                                if(await removeFromFavorites(snapshot.data.id)) {
-                                  isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
-                                    content: Text('Tog bort ${snapshot.data.title} från favoriter.',),
-                                  ));
-                                  setState(() {
-                                    isFavorite = false;
-                                  });
+                              try {
+                                if (isFavorite) {
+                                  if(await removeFromFavorites(snapshot.data.id)) {
+                                    isFavorite = await _checkFavoriteStatus();
+                                    Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                      content: Text('Tog bort ${snapshot.data.title} från favoriter.',),
+                                    ));
+                                    setState(() {
+                                      isFavorite = false;
+                                    });
+                                  }
+                                  else {
+                                    isFavorite = await _checkFavoriteStatus();
+                                    Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                      content: Text('Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
+                                    ));
+                                    setState(() {
+                                      isFavorite = false;
+                                    });
+                                  }
                                 }
                                 else {
-                                  isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
-                                    content: Text('Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
-                                  ));
+                                  if(await addToFavorites(snapshot.data.id)) {
+                                    isFavorite = await _checkFavoriteStatus();
+                                    Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                      content: Text('La till ${snapshot.data.title} i favoriter.'),
+                                    ));
+                                    setState(() {
+                                      isFavorite = true;
+                                    });
+                                  }
+                                  else {
+                                    isFavorite = await _checkFavoriteStatus();
+                                    Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                      content: Text('Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
+                                    ));
+                                    setState(() {
+                                      isFavorite = false;
+                                    });
+                                  }
                                   setState(() {
-                                    isFavorite = false;
                                   });
                                 }
                               }
-                              else {
-                                if(await addToFavorites(snapshot.data.id)) {
-                                  isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
-                                    content: Text('La till ${snapshot.data.title} i favoriter.'),
-                                  ));
-                                  setState(() {
-                                    isFavorite = true;
-                                  });
-                                }
-                                else {
-                                  isFavorite = await _checkFavoriteStatus();
-                                  Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
-                                    content: Text('Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
-                                  ));
-                                  setState(() {
-                                    isFavorite = false;
-                                  });
-                                }
-                                setState(() {
-                                });
+                              on TooManyFavoritesException catch (e) {
+                                Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                  content: Text(e.errorMsg()),
+                                ));
+                              }
+                              catch (e) {
+                                Scaffold.of(context)..removeCurrentSnackBar()..showSnackBar(SnackBar(
+                                  content: Text(e.toString()),
+                                ));
                               }
                             },
                           ),
