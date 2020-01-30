@@ -24,6 +24,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Appen behöver veta din plats för att fungera.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Du behöver inte tillåta appen att använda din plats i bakgrunden.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
