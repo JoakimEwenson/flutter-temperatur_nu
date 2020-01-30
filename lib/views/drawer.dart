@@ -9,12 +9,13 @@ class AppDrawer extends StatelessWidget {
         children: <Widget>[
           Container(
             color: Theme.of(context).primaryColor,
-            height: 135,
+            height: 120,
             child: DrawerHeader(
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: ExactAssetImage('icon/temperatur_nu.png'),
+                    //image: ExactAssetImage('icon/Solflinga.png'),
                     fit: BoxFit.contain
                   ),
                 ),
