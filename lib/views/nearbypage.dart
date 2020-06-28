@@ -16,7 +16,6 @@ saveLocationId(String savedId) async {
   sp.setString('location', savedId);
 }
 
-
 class NearbyListPage extends StatefulWidget {
   NearbyListPage({Key key, this.title}) : super(key: key);
 
@@ -27,14 +26,15 @@ class NearbyListPage extends StatefulWidget {
 }
 
 class _NearbyListPageState extends State<NearbyListPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = new GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
     _fetchSharedPreferences();
     Future.delayed(const Duration(milliseconds: 250), () {
-      if(!sp.containsKey('nearbyListTimeout')) {
+      if (!sp.containsKey('nearbyListTimeout')) {
         setTimeStamp('nearbyListTimeout');
       }
       setState(() {
@@ -50,14 +50,14 @@ class _NearbyListPageState extends State<NearbyListPage> {
 
   Future<void> _refreshList() async {
     num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
-    num timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    num timediff = compareTimeStamp(
+        timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > 300000) {
       setState(() {
         locationList = fetchNearbyLocations(false);
         setTimeStamp('nearbyListTimeout');
       });
-    }
-    else {
+    } else {
       setState(() {
         locationList = fetchNearbyLocations(true);
       });
@@ -69,7 +69,9 @@ class _NearbyListPageState extends State<NearbyListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Närliggande mätpunkter'),),
+      appBar: AppBar(
+        title: Text('Närliggande mätpunkter'),
+      ),
       drawer: AppDrawer(),
       //body: nearbyList(),
       body: RefreshIndicator(
@@ -81,58 +83,68 @@ class _NearbyListPageState extends State<NearbyListPage> {
       ),
     );
   }
+
   Widget nearbyList() {
     return FutureBuilder(
-      future: locationList,
-      builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.active: {
-            return loadingView();
-          }
-          case ConnectionState.done: {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                physics: AlwaysScrollableScrollPhysics(),
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  Post tempData = snapshot.data[index];
-                  return GestureDetector(
-                    child: Card(
-                      child: ListTile(
-                        leading: Icon(Icons.ac_unit),
-                        title: Text(tempData.title),
-                        subtitle: Text(
-                          "Avstånd " + tempData.distance + " km\n" + 
-                          tempData.municipality + " - " + tempData.county
+        future: locationList,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.active:
+              {
+                return loadingView();
+              }
+            case ConnectionState.done:
+              {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) {
+                      Post tempData = snapshot.data[index];
+                      return GestureDetector(
+                        child: Card(
+                          child: ListTile(
+                            leading: Icon(Icons.ac_unit),
+                            title: Text(tempData.title),
+                            subtitle: Text("Avstånd " +
+                                tempData.distance +
+                                " km\n" +
+                                tempData.municipality +
+                                " - " +
+                                tempData.county),
+                            trailing: Text(
+                              tempData.temperature + "°C",
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                            onTap: () {
+                              //saveLocationId(tempData.id);
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, '/', (Route<dynamic> route) => false,
+                                  arguments: LocationArguments(tempData.id));
+                            },
+                          ),
                         ),
-                        trailing: Text(tempData.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                        onTap: () {
-                          //saveLocationId(tempData.id);
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(tempData.id));
-                        },
-                      ),
-                    ),
+                      );
+                    },
                   );
-                },
-              );
-            }
-            else if (snapshot.hasError) {
-              return noDataView(snapshot.error);
-            }
+                } else if (snapshot.hasError) {
+                  return noDataView(snapshot.error);
+                }
 
-            break;
+                break;
+              }
+            case ConnectionState.none:
+              {
+                break;
+              }
+            case ConnectionState.waiting:
+              {
+                return loadingView();
+              }
           }
-          case ConnectionState.none: {
-            break;
-          }
-          case ConnectionState.waiting: {
-            return loadingView();
-          }
-        }
 
-        return loadingView();
-      }
-    );
+          return loadingView();
+        });
   }
 
   // Loading indicator
@@ -140,9 +152,16 @@ class _NearbyListPageState extends State<NearbyListPage> {
     return Center(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 25,),
-          CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
-          Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+          SizedBox(
+            height: 25,
+          ),
+          CircularProgressIndicator(
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+          Text(
+            'Hämtar data',
+            style: Theme.of(context).textTheme.headline3,
+          ),
         ],
       ),
     );
@@ -153,8 +172,14 @@ class _NearbyListPageState extends State<NearbyListPage> {
     return Center(
       child: Column(
         children: <Widget>[
-          Text('Något gick fel!', style: Theme.of(context).textTheme.display2,),
-          Text(msg, style: Theme.of(context).textTheme.body2,),
+          Text(
+            'Något gick fel!',
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          Text(
+            msg,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
         ],
       ),
     );

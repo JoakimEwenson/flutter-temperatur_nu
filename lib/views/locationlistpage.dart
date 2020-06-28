@@ -10,10 +10,8 @@ SharedPreferences sp;
 // Set up ScrollController for saving list position
 ScrollController _controller;
 
-
 // Prepare future data
 Future<List> locations;
-
 
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
@@ -25,16 +23,16 @@ class LocationListPage extends StatefulWidget {
 }
 
 class _LocationListPageState extends State<LocationListPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshLocationsKey = new GlobalKey<RefreshIndicatorState>();
+  final GlobalKey<RefreshIndicatorState> _refreshLocationsKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   double scrollPosition = 0.0;
   num timestamp;
   num timediff;
 
-
   _getScrollPosition() async {
     sp = await SharedPreferences.getInstance();
-    if(sp.containsKey('position')) {
+    if (sp.containsKey('position')) {
       scrollPosition = sp.getDouble('position');
     }
   }
@@ -44,23 +42,24 @@ class _LocationListPageState extends State<LocationListPage> {
     sp.setDouble('position', _controller.position.pixels);
   }
 
-  @override 
+  @override
   void initState() {
     super.initState();
     _getScrollPosition();
 
     Future.delayed(const Duration(milliseconds: 250), () {
-      _controller = ScrollController(initialScrollOffset: scrollPosition ?? 0.0);
+      _controller =
+          ScrollController(initialScrollOffset: scrollPosition ?? 0.0);
       _controller.addListener(_setScrollPosition);
-      if(!sp.containsKey('locationListTimeout')) {
+      if (!sp.containsKey('locationListTimeout')) {
         setTimeStamp('locationListTimeout');
         setState(() {
           locations = fetchLocationList(false);
         });
-      }
-      else {
+      } else {
         timestamp = int.tryParse(sp.getString('locationListTimeout'));
-        timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+        timediff = compareTimeStamp(
+            timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
         if (timediff > 900000) {
           setState(() {
             // Fetch list of locations, getCache false
@@ -68,8 +67,7 @@ class _LocationListPageState extends State<LocationListPage> {
             setTimeStamp('locationListTimeout');
             //print("Fetch location list from server");
           });
-        }
-        else {
+        } else {
           setState(() {
             locations = fetchLocationList(true);
             //print("Fetch location list from cache");
@@ -81,15 +79,15 @@ class _LocationListPageState extends State<LocationListPage> {
 
   Future<void> _refreshList() async {
     timestamp = int.tryParse(sp.getString('locationListTimeout'));
-    timediff = compareTimeStamp(timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
+    timediff = compareTimeStamp(
+        timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > 900000) {
       setState(() {
         // Fetch list of locations, getCache false
         locations = fetchLocationList(false);
         setTimeStamp('locationListTimeout');
       });
-    }
-    else {
+    } else {
       // Fetch list of locations, getCache true
       locations = fetchLocationList(true);
       //var time = (timediff / 60000).toStringAsFixed(1);
@@ -100,7 +98,18 @@ class _LocationListPageState extends State<LocationListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mätstationer'),),
+      appBar: AppBar(
+        title: Text('Mätstationer'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // TODO: Finish this...
+              showSearch(context: context, delegate: null);
+            },
+          )
+        ],
+      ),
       drawer: AppDrawer(),
       body: RefreshIndicator(
         child: locationList(),
@@ -123,44 +132,50 @@ class _LocationListPageState extends State<LocationListPage> {
       future: locations,
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
-          case ConnectionState.active: {
-            return loadingView();
-          }
-          case ConnectionState.done: {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                controller: _controller,
-                itemCount: snapshot.data.length,
-                itemBuilder: (context, index) {
-                  LocationListItem listItem = snapshot.data[index];
-                  return GestureDetector(
-                    child: Card(
-                      child: ListTile(
-                        leading: Icon(Icons.ac_unit),
-                        title: Text(listItem.title),
-                        trailing: Text(listItem.temperature + "°C", style: Theme.of(context).textTheme.display1,),
-                        onTap: () {
-                          //saveLocationId(listItem.id);
-                          Navigator.pushNamedAndRemoveUntil(context, '/', (Route<dynamic> route) => false, arguments: LocationArguments(listItem.id));
-                        },
-                      )
-                    )
-                  );
-                },
-              );
+          case ConnectionState.active:
+            {
+              return loadingView();
             }
-            else if (snapshot.hasError) {
-              return noDataView(snapshot.error);
-            }
+          case ConnectionState.done:
+            {
+              if (snapshot.hasData) {
+                return ListView.builder(
+                  controller: _controller,
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    LocationListItem listItem = snapshot.data[index];
+                    return GestureDetector(
+                        child: Card(
+                            child: ListTile(
+                      leading: Icon(Icons.ac_unit),
+                      title: Text(listItem.title),
+                      trailing: Text(
+                        listItem.temperature + "°C",
+                        style: Theme.of(context).textTheme.headline4,
+                      ),
+                      onTap: () {
+                        //saveLocationId(listItem.id);
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/', (Route<dynamic> route) => false,
+                            arguments: LocationArguments(listItem.id));
+                      },
+                    )));
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return noDataView(snapshot.error);
+              }
 
-            break;
-          }
-          case ConnectionState.none: {
-            break;
-          }
-          case ConnectionState.waiting: {
-            return loadingView();
-          }
+              break;
+            }
+          case ConnectionState.none:
+            {
+              break;
+            }
+          case ConnectionState.waiting:
+            {
+              return loadingView();
+            }
         }
 
         return loadingView();
@@ -173,9 +188,16 @@ class _LocationListPageState extends State<LocationListPage> {
     return Center(
       child: Column(
         children: <Widget>[
-          SizedBox(height: 25,),
-          CircularProgressIndicator(backgroundColor: Theme.of(context).primaryColor,),
-          Text('Hämtar data', style: Theme.of(context).textTheme.display2,),
+          SizedBox(
+            height: 25,
+          ),
+          CircularProgressIndicator(
+            backgroundColor: Theme.of(context).primaryColor,
+          ),
+          Text(
+            'Hämtar data',
+            style: Theme.of(context).textTheme.headline3,
+          ),
         ],
       ),
     );
@@ -186,8 +208,14 @@ class _LocationListPageState extends State<LocationListPage> {
     return Center(
       child: Column(
         children: <Widget>[
-          Text('Något gick fel!', style: Theme.of(context).textTheme.display2,),
-          Text(msg, style: Theme.of(context).textTheme.body2,),
+          Text(
+            'Något gick fel!',
+            style: Theme.of(context).textTheme.headline3,
+          ),
+          Text(
+            msg,
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
         ],
       ),
     );
