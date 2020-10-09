@@ -100,15 +100,7 @@ class _LocationListPageState extends State<LocationListPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Mätstationer'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              // TODO: Finish this...
-              showSearch(context: context, delegate: null);
-            },
-          )
-        ],
+        actions: <Widget>[],
       ),
       drawer: AppDrawer(),
       body: RefreshIndicator(
