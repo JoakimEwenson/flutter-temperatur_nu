@@ -13,7 +13,7 @@ import '../model/post.dart';
 import '../model/locationlistitem.dart';
 
 // Make global base URL for API
-String baseUrl = "https://api.temperatur.nu/tnu_1.16.php";
+String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
 
 // Constant for deciding amount of maximum favorites
 const int maxFavorites = 9999;
@@ -511,14 +511,14 @@ Future<List> fetchNearbyLocations(bool getCache) async {
   }
 }
 
-Future<List> fetchLocationList(bool getCache) async {
+Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();
-  List locationList = new List();
+  List<LocationListItem> locationList = [];
 
   if (getCache) {
     if (prefs.containsKey('locationListCache') &&
         prefs.getString('locationListCache') != "") {
-      locationList = new List();
+      locationList = [];
       // Fetch locally saved cache and turn into XML
       var content = xml.parse(prefs.getString('locationListCache'));
 
@@ -540,6 +540,7 @@ Future<List> fetchLocationList(bool getCache) async {
     // Set up API URL
     String urlOptions = "?cli=" + Utils.createCryptoRandomString();
     String url = baseUrl + urlOptions;
+    print(url);
 
     // Collect data from API
     try {
@@ -550,7 +551,7 @@ Future<List> fetchLocationList(bool getCache) async {
         // Save XML string as cache
         prefs.setString('locationListCache', response.body);
         var content = xml.parse(response.body);
-        locationList = new List();
+        locationList = [];
 
         // Iterate results and make into list
         content.findAllElements('item').forEach((row) {
