@@ -18,9 +18,6 @@ Future<List> getFavoritesString() async {
   return favList;
 }
 
-// List of favorites, maximum 5 returns!
-//List tempFav = ['romstad','chalmers','asbro','kungsholmen','jarvastaden'];
-
 class FavoritesPage extends StatefulWidget {
   FavoritesPage({Key key, this.title}) : super(key: key);
 
@@ -57,7 +54,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     num timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > 300000) {
+    if (timediff > cacheTimeout) {
       setState(() {
         favorites = fetchFavorites(false);
         setTimeStamp('favoritesListTimeout');

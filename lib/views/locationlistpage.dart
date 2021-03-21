@@ -60,7 +60,7 @@ class _LocationListPageState extends State<LocationListPage> {
         timestamp = int.tryParse(sp.getString('locationListTimeout'));
         timediff = compareTimeStamp(
             timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-        if (timediff > 900000) {
+        if (timediff > cacheTimeoutLong) {
           setState(() {
             // Fetch list of locations, getCache false
             locations = fetchLocationList(false);

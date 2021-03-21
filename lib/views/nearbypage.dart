@@ -52,7 +52,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
     num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     num timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > 300000) {
+    if (timediff > cacheTimeout) {
       setState(() {
         locationList = fetchNearbyLocations(false);
         setTimeStamp('nearbyListTimeout');
