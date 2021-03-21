@@ -22,9 +22,9 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Appen behöver veta din plats för att dess platstjänster ska fungera.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Appen behöver veta din plats för att dess platstjänster ska fungera.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Appen behöver veta din plats för att dess platstjänster ska fungera.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Appen behöver veta din plats för att dess platstjänster ska fungera.</string>
