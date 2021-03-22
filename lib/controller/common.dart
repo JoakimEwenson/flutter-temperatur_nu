@@ -527,7 +527,8 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
         var output = new LocationListItem(
           title: row.findElements('title').single.text.trim().toString(),
           id: row.findElements('id').single.text.trim().toString(),
-          temperature: row.findElements('temp').single.text.trim().toString(),
+          temperature:
+              double.tryParse(row.findElements('temp').single.text.trim()),
         );
         locationList.add(output);
       });
@@ -540,7 +541,7 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
     // Set up API URL
     String urlOptions = "?cli=" + Utils.createCryptoRandomString();
     String url = baseUrl + urlOptions;
-    print(url);
+    //print(url);
 
     // Collect data from API
     try {
@@ -558,7 +559,8 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
           var output = new LocationListItem(
             title: row.findElements('title').single.text.trim().toString(),
             id: row.findElements('id').single.text.trim().toString(),
-            temperature: row.findElements('temp').single.text.trim().toString(),
+            temperature:
+                double.tryParse(row.findElements('temp').single.text.trim()),
           );
           locationList.add(output);
         });

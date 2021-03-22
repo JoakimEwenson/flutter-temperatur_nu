@@ -40,9 +40,13 @@ class _LocationListPageState extends State<LocationListPage> {
     }
   }
 
-  _setScrollPosition() async {
+  _setScrollPosition({bool resetPosition = false}) async {
     sp = await SharedPreferences.getInstance();
-    sp.setDouble('position', _controller.position.pixels);
+    if (resetPosition) {
+      sp.setDouble('position', 0.0);
+    } else {
+      sp.setDouble('position', _controller.position.pixels);
+    }
   }
 
   @override
@@ -100,6 +104,7 @@ class _LocationListPageState extends State<LocationListPage> {
 
   @override
   Widget build(BuildContext context) {
+    List<LocationListItem> sortedLocationsList = [];
     return FutureBuilder(
         future: locations,
         builder: (context, snapshot) {
@@ -114,12 +119,72 @@ class _LocationListPageState extends State<LocationListPage> {
                           context: context,
                           delegate:
                               Search(snapshot.hasData ? snapshot.data : []));
-                    })
+                    }),
+                PopupMenuButton<SortingChoice>(
+                    onSelected: (SortingChoice choice) {
+                  if (snapshot.hasData) {
+                    sortedLocationsList = snapshot.data;
+                    switch (choice.id) {
+                      case 'alphabetical':
+                        print('Alfabetiskt!');
+                        setState(() {
+                          sortedLocationsList
+                              .sort((a, b) => a.title.compareTo(b.title));
+                        });
+                        break;
+                      case 'highest':
+                        print('Högst överst');
+                        setState(() {
+                          sortedLocationsList.sort((a, b) {
+                            if (a.temperature == null &&
+                                b.temperature == null) {
+                              return 0;
+                            }
+                            if (a.temperature == null) {
+                              return 1;
+                            }
+                            if (b.temperature == null) {
+                              return -1;
+                            } else {
+                              return b.temperature.compareTo(a.temperature);
+                            }
+                          });
+                        });
+                        break;
+                      case 'lowest':
+                        print('Lägst överst');
+                        setState(() {
+                          sortedLocationsList.sort((a, b) {
+                            if (a.temperature == null &&
+                                b.temperature == null) {
+                              return 0;
+                            }
+                            if (a.temperature == null) {
+                              return 1;
+                            }
+                            if (b.temperature == null) {
+                              return -1;
+                            } else {
+                              return a.temperature.compareTo(b.temperature);
+                            }
+                          });
+                        });
+                        break;
+                    }
+                  }
+                }, itemBuilder: (BuildContext context) {
+                  return sortingChoices.map((SortingChoice choice) {
+                    return PopupMenuItem<SortingChoice>(
+                      child: Text(choice.title),
+                      value: choice,
+                    );
+                  }).toList();
+                })
               ],
             ),
             drawer: AppDrawer(),
             body: RefreshIndicator(
-              child: locationList(),
+              child: locationList(sortedLocationsList),
               color: Theme.of(context).primaryColor,
               backgroundColor: Theme.of(context).accentColor,
               key: _refreshLocationsKey,
@@ -135,7 +200,8 @@ class _LocationListPageState extends State<LocationListPage> {
     super.dispose();
   }
 
-  Widget locationList() {
+  Widget locationList(List<LocationListItem> sortedLocationList) {
+    //inspect(sortedLocationList);
     return FutureBuilder(
       future: locations,
       builder: (context, snapshot) {
@@ -148,10 +214,6 @@ class _LocationListPageState extends State<LocationListPage> {
             {
               if (snapshot.hasData) {
                 titleList = [];
-                for (var i = 0; i < snapshot.data.length; i++) {
-                  titleList.add(snapshot.data[i].title.toString());
-                  print(snapshot.data[i]);
-                }
                 return ListView.builder(
                   controller: _controller,
                   itemCount: snapshot.data.length,
@@ -162,10 +224,15 @@ class _LocationListPageState extends State<LocationListPage> {
                             child: ListTile(
                       leading: Icon(Icons.ac_unit),
                       title: Text(listItem.title),
-                      trailing: Text(
-                        listItem.temperature + "°C",
-                        style: Theme.of(context).textTheme.headline4,
-                      ),
+                      trailing: listItem.temperature != null
+                          ? Text(
+                              "${listItem.temperature}°C",
+                              style: Theme.of(context).textTheme.headline4,
+                            )
+                          : Text(
+                              'N/A',
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
                       onTap: () {
                         //saveLocationId(listItem.id);
                         Navigator.pushNamed(context, '/',
@@ -233,6 +300,19 @@ class _LocationListPageState extends State<LocationListPage> {
     );
   }
 }
+
+class SortingChoice {
+  const SortingChoice({this.id, this.title});
+
+  final String title;
+  final String id;
+}
+
+const List<SortingChoice> sortingChoices = const <SortingChoice>[
+  const SortingChoice(id: 'alphabetical', title: 'Alfabetiskt'),
+  const SortingChoice(id: 'highest', title: 'Högsta temperatur överst'),
+  const SortingChoice(id: 'lowest', title: 'Lägsta temperatur överst')
+];
 
 class Search extends SearchDelegate {
   final List<LocationListItem> inputList;
