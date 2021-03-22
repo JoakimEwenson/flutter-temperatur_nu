@@ -10,9 +10,9 @@ Litet hobbyprojekt till app som rullar på såväl Android som iOS för att häm
 * Kunna välja ur en lista över samtliga sensorer aktiva på temperatur.nu
 * Kunna välja favoriter och visa samtliga resultat
 * Pull to refresh av diverse sidor
+* Kunna söka ur en lista över samtliga sensorer aktiva på temperatur.nu
 
 ## Tänkt funktionalitet
-* Kunna söka ur en lista över samtliga sensorer aktiva på temperatur.nu
 * Bättre felhantering
 
 ## Aktiva buggar
