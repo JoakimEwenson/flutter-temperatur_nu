@@ -118,8 +118,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                             ),
                             onTap: () {
                               //saveLocationId(tempData.id);
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/', (Route<dynamic> route) => false,
+                              Navigator.pushNamed(context, '/',
                                   arguments: LocationArguments(tempData.id));
                             },
                           ),

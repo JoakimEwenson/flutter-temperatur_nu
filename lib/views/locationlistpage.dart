@@ -168,8 +168,7 @@ class _LocationListPageState extends State<LocationListPage> {
                       ),
                       onTap: () {
                         //saveLocationId(listItem.id);
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/', (Route<dynamic> route) => false,
+                        Navigator.pushNamed(context, '/',
                             arguments: LocationArguments(listItem.id));
                       },
                     )));
@@ -301,8 +300,7 @@ class Search extends SearchDelegate {
             showResults(context);
             */
             inspect(suggestionList[index]);
-            Navigator.pushNamedAndRemoveUntil(
-                context, '/', (Route<dynamic> route) => false,
+            Navigator.pushNamed(context, '/',
                 arguments: LocationArguments(suggestionList[index].id));
           },
         );

@@ -393,7 +393,7 @@ Future<List> fetchFavorites(bool getCache) async {
 Future<List> fetchNearbyLocations(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();
   // Set up API URL
-  String urlOptions = "&num=5&amm=true&dc=true&verbose=true&cli=" +
+  String urlOptions = "&num=10&amm=true&dc=true&verbose=true&cli=" +
       Utils.createCryptoRandomString();
   String url;
 

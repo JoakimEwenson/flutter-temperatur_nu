@@ -114,8 +114,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         ),
                         onTap: () {
                           //saveLocationId(tempData.id);
-                          Navigator.pushNamedAndRemoveUntil(
-                              context, '/', (Route<dynamic> route) => false,
+                          Navigator.pushNamed(context, '/',
                               arguments: LocationArguments(tempData.id));
                         },
                       )));
