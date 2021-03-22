@@ -281,14 +281,14 @@ Future<List> fetchFavorites(bool getCache) async {
   String urlOptions =
       "&dc=true&verbose=true&cli=" + Utils.createCryptoRandomString();
   String url = baseUrl + "?p=" + searchLocations + urlOptions;
-  List favoritesList = new List();
+  List favoritesList = [];
 
   if (getCache) {
     if (prefs.containsKey('favoritesListCache') &&
         prefs.getString('favoritesListCache') != "") {
       // Fetch cached data
       var content = xml.parse(prefs.getString('favoritesListCache'));
-      favoritesList = new List();
+      favoritesList = [];
 
       // Iterate results and make into list
       content.findAllElements("item").forEach((row) {
@@ -314,7 +314,7 @@ Future<List> fetchFavorites(bool getCache) async {
       return fetchFavorites(false);
     }
   } else {
-    favoritesList = new List();
+    favoritesList = [];
     try {
       final response = await http.get(url).timeout(const Duration(seconds: 15));
 
@@ -405,7 +405,7 @@ Future<List> fetchNearbyLocations(bool getCache) async {
     if (prefs.containsKey('nearbyLocationListCache') &&
         prefs.getString('nearbyLocationListCache') != "") {
       var content = xml.parse(prefs.getString('nearbyLocationListCache'));
-      nearbyLocations = new List();
+      nearbyLocations = [];
 
       content.findAllElements("item").forEach((row) {
         var output = new Post(
@@ -431,7 +431,7 @@ Future<List> fetchNearbyLocations(bool getCache) async {
       return fetchNearbyLocations(false);
     }
   } else {
-    nearbyLocations = new List();
+    nearbyLocations = [];
     try {
       position = await fetchPosition();
     } catch (e) {
