@@ -207,19 +207,25 @@ class _MyHomePageState extends State<MyHomePage> {
                             SizedBox(
                               height: 25,
                             ),
-                            Text(
-                              snapshot.data.temperature + "°C",
-                              style: Theme.of(context).textTheme.headline1,
-                              textAlign: TextAlign.center,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                snapshot.data.temperature + "°C",
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                            Text(
-                              snapshot.data.title,
-                              style: Theme.of(context).textTheme.headline3,
-                              textAlign: TextAlign.center,
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                snapshot.data.title,
+                                style: Theme.of(context).textTheme.headline3,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                             Text(
                               snapshot.data.county,
-                              style: Theme.of(context).textTheme.headline4,
+                              style: Theme.of(context).textTheme.headline5,
                               textAlign: TextAlign.center,
                             ),
                             SizedBox(height: 20),
