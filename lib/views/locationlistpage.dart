@@ -175,7 +175,8 @@ class _LocationListPageState extends State<LocationListPage> {
                 }, itemBuilder: (BuildContext context) {
                   return sortingChoices.map((SortingChoice choice) {
                     return PopupMenuItem<SortingChoice>(
-                      child: Text(choice.title),
+                      child: ListTile(
+                          leading: choice.icon, title: Text(choice.title)),
                       value: choice,
                     );
                   }).toList();
@@ -302,16 +303,26 @@ class _LocationListPageState extends State<LocationListPage> {
 }
 
 class SortingChoice {
-  const SortingChoice({this.id, this.title});
+  const SortingChoice({this.id, this.title, this.icon});
 
   final String title;
   final String id;
+  final Icon icon;
 }
 
 const List<SortingChoice> sortingChoices = const <SortingChoice>[
-  const SortingChoice(id: 'alphabetical', title: 'Alfabetiskt'),
-  const SortingChoice(id: 'highest', title: 'Högsta temperatur överst'),
-  const SortingChoice(id: 'lowest', title: 'Lägsta temperatur överst')
+  const SortingChoice(
+      id: 'alphabetical',
+      title: 'Alfabetiskt',
+      icon: Icon(Icons.sort_by_alpha)),
+  const SortingChoice(
+      id: 'highest',
+      title: 'Högsta temperatur överst',
+      icon: Icon(Icons.trending_down)),
+  const SortingChoice(
+      id: 'lowest',
+      title: 'Lägsta temperatur överst',
+      icon: Icon(Icons.trending_up))
 ];
 
 class Search extends SearchDelegate {
