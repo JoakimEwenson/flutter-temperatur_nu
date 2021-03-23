@@ -19,7 +19,7 @@ String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
 const int maxFavorites = 9999;
 // Constant for setting cache timeout
 const int cacheTimeout = 60000;
-const int cacheTimeoutLong = 3000;
+const int cacheTimeoutLong = 300000;
 
 // Create a random CLI string until further notice.
 // This is to not be locked out from the API until a proper key can be put in place.
