@@ -81,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isFavorite = false;
   num timestamp;
   num timediff;
+  Icon userLocationIcon = Icon(Icons.gps_not_fixed);
 
   @override
   void initState() {
@@ -147,6 +148,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('temperatur.nu'),
+        actions: [
+          IconButton(
+            icon: userLocationIcon,
+            onPressed: () {
+              setState(() {
+                try {
+                  _getGpsLocation();
+                  userLocationIcon = Icon(Icons.gps_fixed);
+                } catch (e) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(e.toString()),
+                  ));
+                }
+              });
+            },
+          )
+        ],
       ),
       drawer: AppDrawer(),
       //body: _singleTemperatureView(),
@@ -157,7 +175,6 @@ class _MyHomePageState extends State<MyHomePage> {
         key: _mainRefreshIndicatorKey,
         onRefresh: () => _refreshList(),
       ),
-      floatingActionButton: _doubleFAB(),
     );
   }
 
@@ -394,7 +411,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Multiple Floating Action Buttons setup
-  _doubleFAB() {
+/*   _doubleFAB() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -419,5 +436,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-  }
+  } */
 }

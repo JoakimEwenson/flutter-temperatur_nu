@@ -141,6 +141,18 @@ num compareTimeStamp(num saved, num current) {
   return current - saved;
 }
 
+// Saving sorting order
+saveSortingOrder(String choice) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  sp.setString('sortingOrder', choice);
+}
+
+// Fetching sorting order
+Future<String> fetchSortingOrder() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  return sp.getString('sortingOrder');
+}
+
 // Saving location for start screen
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
