@@ -14,8 +14,6 @@ ScrollController _controller;
 // Prepare future data
 Future<List<LocationListItem>> locations;
 
-List<String> titleList = [];
-
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
 
@@ -32,6 +30,7 @@ class _LocationListPageState extends State<LocationListPage> {
   double scrollPosition = 0.0;
   num timestamp;
   num timediff;
+  String _sortingChoice = "alphabetical";
 
   _getScrollPosition() async {
     sp = await SharedPreferences.getInstance();
@@ -40,15 +39,30 @@ class _LocationListPageState extends State<LocationListPage> {
     }
   }
 
-  _setScrollPosition() async {
+  _setScrollPosition({bool resetPosition = false}) async {
     sp = await SharedPreferences.getInstance();
-    sp.setDouble('position', _controller.position.pixels);
+    if (resetPosition) {
+      _controller.animateTo(0.0,
+          duration: Duration(seconds: 1), curve: Curves.ease);
+      sp.setDouble('position', 0.0);
+    } else {
+      sp.setDouble('position', _controller.position.pixels);
+    }
+  }
+
+  _getSortingOrder() async {
+    sp = await SharedPreferences.getInstance();
+    if (sp.containsKey('sortingOrder')) {
+      print(sp.getString('sortingOrder'));
+      _sortingChoice = sp.getString('sortingOrder');
+    }
   }
 
   @override
   void initState() {
     super.initState();
     _getScrollPosition();
+    _getSortingOrder();
 
     Future.delayed(const Duration(milliseconds: 250), () {
       _controller =
@@ -81,6 +95,8 @@ class _LocationListPageState extends State<LocationListPage> {
   }
 
   Future<void> _refreshList() async {
+    _getSortingOrder();
+    _setScrollPosition(resetPosition: true);
     timestamp = int.tryParse(sp.getString('locationListTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
@@ -108,13 +124,55 @@ class _LocationListPageState extends State<LocationListPage> {
               title: Text('Mätstationer'),
               actions: <Widget>[
                 IconButton(
-                    icon: Icon(Icons.search),
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                        context: context,
+                        delegate:
+                            Search(snapshot.hasData ? snapshot.data : []));
+                  },
+                ),
+                IconButton(
+                    icon: Icon(Icons.arrow_upward),
                     onPressed: () {
-                      showSearch(
-                          context: context,
-                          delegate:
-                              Search(snapshot.hasData ? snapshot.data : []));
-                    })
+                      _setScrollPosition(resetPosition: true);
+                    }),
+                PopupMenuButton<SortingChoice>(
+                    onSelected: (SortingChoice choice) {
+                  if (snapshot.hasData) {
+                    switch (choice.id) {
+                      case 'alphabetical':
+                        setState(() {
+                          _sortingChoice = "alphabetical";
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
+                        break;
+                      case 'highest':
+                        setState(() {
+                          _sortingChoice = "highest";
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
+                        break;
+                      case 'lowest':
+                        setState(() {
+                          _sortingChoice = "lowest";
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
+                        break;
+                    }
+                  }
+                }, itemBuilder: (BuildContext context) {
+                  return sortingChoices.map((SortingChoice choice) {
+                    return PopupMenuItem<SortingChoice>(
+                      child: ListTile(
+                          leading: choice.icon, title: Text(choice.title)),
+                      value: choice,
+                    );
+                  }).toList();
+                })
               ],
             ),
             drawer: AppDrawer(),
@@ -147,31 +205,65 @@ class _LocationListPageState extends State<LocationListPage> {
           case ConnectionState.done:
             {
               if (snapshot.hasData) {
-                titleList = [];
-                for (var i = 0; i < snapshot.data.length; i++) {
-                  titleList.add(snapshot.data[i].title.toString());
-                  print(snapshot.data[i]);
+                List items = snapshot.data;
+                if (_sortingChoice == "alphabetical") {
+                  items.sort((a, b) => a.title.compareTo(b.title));
+                } else if (_sortingChoice == "highest") {
+                  items.sort((a, b) {
+                    if (a.temperature == null && b.temperature == null) {
+                      return 0;
+                    }
+                    if (a.temperature == null) {
+                      return 1;
+                    }
+                    if (b.temperature == null) {
+                      return -1;
+                    } else {
+                      return b.temperature.compareTo(a.temperature);
+                    }
+                  });
+                } else if (_sortingChoice == "lowest") {
+                  items.sort((a, b) {
+                    if (a.temperature == null && b.temperature == null) {
+                      return 0;
+                    }
+                    if (a.temperature == null) {
+                      return 1;
+                    }
+                    if (b.temperature == null) {
+                      return -1;
+                    } else {
+                      return a.temperature.compareTo(b.temperature);
+                    }
+                  });
                 }
                 return ListView.builder(
                   controller: _controller,
-                  itemCount: snapshot.data.length,
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
-                    LocationListItem listItem = snapshot.data[index];
+                    LocationListItem listItem = items[index];
                     return GestureDetector(
-                        child: Card(
-                            child: ListTile(
-                      leading: Icon(Icons.ac_unit),
-                      title: Text(listItem.title),
-                      trailing: Text(
-                        listItem.temperature + "°C",
-                        style: Theme.of(context).textTheme.headline4,
+                      child: Card(
+                        child: ListTile(
+                          leading: Icon(Icons.ac_unit),
+                          title: Text(listItem.title),
+                          trailing: listItem.temperature != null
+                              ? Text(
+                                  "${listItem.temperature}°C",
+                                  style: Theme.of(context).textTheme.headline4,
+                                )
+                              : Text(
+                                  'N/A',
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                          onTap: () {
+                            //saveLocationId(listItem.id);
+                            Navigator.pushNamed(context, '/',
+                                arguments: LocationArguments(listItem.id));
+                          },
+                        ),
                       ),
-                      onTap: () {
-                        //saveLocationId(listItem.id);
-                        Navigator.pushNamed(context, '/',
-                            arguments: LocationArguments(listItem.id));
-                      },
-                    )));
+                    );
                   },
                 );
               } else if (snapshot.hasError) {
@@ -233,6 +325,29 @@ class _LocationListPageState extends State<LocationListPage> {
     );
   }
 }
+
+class SortingChoice {
+  const SortingChoice({this.id, this.title, this.icon});
+
+  final String title;
+  final String id;
+  final Icon icon;
+}
+
+const List<SortingChoice> sortingChoices = const <SortingChoice>[
+  const SortingChoice(
+      id: 'alphabetical',
+      title: 'Alfabetiskt',
+      icon: Icon(Icons.sort_by_alpha)),
+  const SortingChoice(
+      id: 'highest',
+      title: 'Högsta temperatur överst',
+      icon: Icon(Icons.trending_down)),
+  const SortingChoice(
+      id: 'lowest',
+      title: 'Lägsta temperatur överst',
+      icon: Icon(Icons.trending_up))
+];
 
 class Search extends SearchDelegate {
   final List<LocationListItem> inputList;

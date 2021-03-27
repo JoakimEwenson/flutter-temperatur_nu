@@ -141,6 +141,18 @@ num compareTimeStamp(num saved, num current) {
   return current - saved;
 }
 
+// Saving sorting order
+saveSortingOrder(String choice) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  sp.setString('sortingOrder', choice);
+}
+
+// Fetching sorting order
+Future<String> fetchSortingOrder() async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  return sp.getString('sortingOrder');
+}
+
 // Saving location for start screen
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
@@ -527,7 +539,8 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
         var output = new LocationListItem(
           title: row.findElements('title').single.text.trim().toString(),
           id: row.findElements('id').single.text.trim().toString(),
-          temperature: row.findElements('temp').single.text.trim().toString(),
+          temperature:
+              double.tryParse(row.findElements('temp').single.text.trim()),
         );
         locationList.add(output);
       });
@@ -540,7 +553,7 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
     // Set up API URL
     String urlOptions = "?cli=" + Utils.createCryptoRandomString();
     String url = baseUrl + urlOptions;
-    print(url);
+    //print(url);
 
     // Collect data from API
     try {
@@ -558,7 +571,8 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
           var output = new LocationListItem(
             title: row.findElements('title').single.text.trim().toString(),
             id: row.findElements('id').single.text.trim().toString(),
-            temperature: row.findElements('temp').single.text.trim().toString(),
+            temperature:
+                double.tryParse(row.findElements('temp').single.text.trim()),
           );
           locationList.add(output);
         });

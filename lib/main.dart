@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Import views
@@ -19,6 +20,7 @@ SharedPreferences sp;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
@@ -44,9 +46,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(brightness: Brightness.dark),
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
+        primaryColorBrightness: Brightness.dark,
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(
@@ -81,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool isFavorite = false;
   num timestamp;
   num timediff;
+  Icon userLocationIcon = Icon(Icons.gps_not_fixed);
 
   @override
   void initState() {
@@ -147,6 +152,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('temperatur.nu'),
+        actions: [
+          IconButton(
+            icon: userLocationIcon,
+            onPressed: () {
+              setState(() {
+                try {
+                  _getGpsLocation();
+                  userLocationIcon = Icon(Icons.gps_fixed);
+                } catch (e) {
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(e.toString()),
+                  ));
+                }
+              });
+            },
+          )
+        ],
       ),
       drawer: AppDrawer(),
       //body: _singleTemperatureView(),
@@ -157,7 +179,6 @@ class _MyHomePageState extends State<MyHomePage> {
         key: _mainRefreshIndicatorKey,
         onRefresh: () => _refreshList(),
       ),
-      floatingActionButton: _doubleFAB(),
     );
   }
 
@@ -394,7 +415,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Multiple Floating Action Buttons setup
-  _doubleFAB() {
+/*   _doubleFAB() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.end,
@@ -419,5 +440,5 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-  }
+  } */
 }

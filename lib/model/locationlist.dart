@@ -11,10 +11,11 @@ class LocationList {
   factory LocationList.fromXml(content) {
     List<LocationListItem> list;
     content.findAllElements('item').forEach((row) {
-      var output  = new LocationListItem(
-        title: row.findElements('title').single.text.trim().toString(), 
-        id: row.findElements('id').single.text.trim().toString(), 
-        temperature: row.findElements('temp').single.text.trim().toString()
+      var output = new LocationListItem(
+        title: row.findElements('title').single.text.trim().toString(),
+        id: row.findElements('id').single.text.trim().toString(),
+        temperature:
+            double.tryParse(row.findElements('temp').single.text.trim()),
       );
       list.add(output);
     });
