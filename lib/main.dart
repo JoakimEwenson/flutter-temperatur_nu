@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Import views
@@ -19,6 +20,7 @@ SharedPreferences sp;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
@@ -44,9 +46,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(brightness: Brightness.dark),
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
+        primaryColorBrightness: Brightness.dark,
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(

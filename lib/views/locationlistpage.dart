@@ -42,9 +42,9 @@ class _LocationListPageState extends State<LocationListPage> {
   _setScrollPosition({bool resetPosition = false}) async {
     sp = await SharedPreferences.getInstance();
     if (resetPosition) {
-      sp.setDouble('position', 0.0);
       _controller.animateTo(0.0,
           duration: Duration(seconds: 1), curve: Curves.ease);
+      sp.setDouble('position', 0.0);
     } else {
       sp.setDouble('position', _controller.position.pixels);
     }
