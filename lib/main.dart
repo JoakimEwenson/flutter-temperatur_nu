@@ -148,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getGpsLocation() async {
     // Reset post data
-    post = fetchStation(locationId);
+    post = fetchStation('gps');
     // Fetch new post data
     String data = await fetchSinglePost('gps');
     print(data);
