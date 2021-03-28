@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:temperatur.nu/views/drawer.dart';
+import 'package:temperatur_nu/views/drawer.dart';
 
 Future<PackageInfo> getPackageInfo() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();

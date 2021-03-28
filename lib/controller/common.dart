@@ -1,19 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:xml/xml.dart' as xml;
 
 import '../model/post.dart';
 import '../model/locationlistitem.dart';
 
 // Make global base URL for API
-String baseUrl = "https://api.temperatur.nu/tnu_1.15.php";
+String baseUrl = "https://api.temperatur.nu/tnu_1.16.php";
+String apiUrl = "api.temperatur.nu";
+String apiVersion = "/tnu_1.16.php";
 
 // Constant for deciding amount of maximum favorites
 const int maxFavorites = 9999;
@@ -30,33 +34,6 @@ class Utils {
     var values = List<int>.generate(length, (i) => _random.nextInt(256));
 
     return base64Url.encode(values);
-  }
-}
-
-// Class for carrying locationId from one screen to another
-class LocationArguments {
-  final String locationId;
-
-  LocationArguments(this.locationId);
-}
-
-class CustomError {
-  final String message;
-
-  CustomError(this.message);
-
-  @override
-  String toString() => message;
-
-  // USAGE:
-  // on SocketException {
-  //   throw Failing('message');
-  // }
-}
-
-class TooManyFavoritesException implements Exception {
-  String errorMsg() {
-    return 'För många favoriter sparade, max antal är $maxFavorites.';
   }
 }
 
@@ -170,8 +147,7 @@ Future<String> fetchLocallySavedData() async {
 
 // Get location
 Future<Position> fetchPosition() async {
-  Position position = await Geolocator()
-      .getCurrentPosition()
+  Position position = await Geolocator.getCurrentPosition()
       .timeout(Duration(seconds: 15))
       .then((pos) {
     //getting position without problems
@@ -186,7 +162,7 @@ Future<Position> fetchPosition() async {
 Future<Post> fetchSinglePostCache() async {
   final prefs = await SharedPreferences.getInstance();
   if (prefs.containsKey('singlePostCache')) {
-    var content = xml.parse(prefs.getString('singlePostCache'));
+    var content = xml.XmlDocument.parse(prefs.getString('singlePostCache'));
     return Post.fromXml(content);
   } else {
     return new Post();
@@ -196,8 +172,17 @@ Future<Post> fetchSinglePostCache() async {
 // Another fetch API function
 Future<Post> fetchSinglePost(String location) async {
   // Set up API URL
-  String urlOptions = "&amm=true&dc=true&verbose=true&num=1&cli=" +
+  String urlOptions = "&json=true&amm=true&dc=true&verbose=true&num=1&cli=" +
       Utils.createCryptoRandomString();
+  Map urlParams = {
+    "json": "true",
+    "amm": "true",
+    "dc": "true",
+    "verbose": "true",
+    "num": "1",
+    "cli": Utils.createCryptoRandomString()
+  };
+  inspect(urlParams);
   String url;
 
   // Set up default location and empty location string for later use
@@ -235,11 +220,13 @@ Future<Post> fetchSinglePost(String location) async {
       url = baseUrl + "?p=" + locationId + urlOptions;
     }
     // Get data from API
-    final response = await http.get(url).timeout(const Duration(seconds: 15));
+    final response =
+        await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
     if (response.statusCode == 200) {
       // If server returns OK, parse XML result
-      var content = xml.parse(response.body);
+      var content = xml.XmlDocument.parse(response.body);
+      inspect(content);
       // Save XML string as cache
       prefs.setString('singlePostCache', response.body);
 
@@ -299,7 +286,8 @@ Future<List> fetchFavorites(bool getCache) async {
     if (prefs.containsKey('favoritesListCache') &&
         prefs.getString('favoritesListCache') != "") {
       // Fetch cached data
-      var content = xml.parse(prefs.getString('favoritesListCache'));
+      var content =
+          xml.XmlDocument.parse(prefs.getString('favoritesListCache'));
       favoritesList = [];
 
       // Iterate results and make into list
@@ -307,7 +295,8 @@ Future<List> fetchFavorites(bool getCache) async {
         var output = new Post(
           title: row.findElements("title").single.text.trim().toString(),
           id: row.findElements("id").single.text.trim().toString(),
-          temperature: row.findElements("temp").single.text.trim().toString(),
+          temperature:
+              double.tryParse(row.findElements("temp").single.text.trim()),
           amm: '',
           lastUpdate:
               row.findElements("lastUpdate").single.text.trim().toString(),
@@ -328,17 +317,18 @@ Future<List> fetchFavorites(bool getCache) async {
   } else {
     favoritesList = [];
     try {
-      final response = await http.get(url).timeout(const Duration(seconds: 15));
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
-        var content = xml.parse(response.body);
+        var content = xml.XmlDocument.parse(response.body);
 
         content.findAllElements("item").forEach((row) {
           var locationTitle =
               row.findElements('title').single.text.trim().toString();
           var locationId = row.findElements('id').single.text.trim().toString();
           var currentTemp =
-              row.findElements('temp').single.text.trim().toString();
+              double.tryParse(row.findElements('temp').single.text.trim());
           var amm = "";
           var lastUpdate =
               row.findElements('lastUpdate').single.text.trim().toString();
@@ -416,14 +406,16 @@ Future<List> fetchNearbyLocations(bool getCache) async {
   if (getCache) {
     if (prefs.containsKey('nearbyLocationListCache') &&
         prefs.getString('nearbyLocationListCache') != "") {
-      var content = xml.parse(prefs.getString('nearbyLocationListCache'));
+      var content =
+          xml.XmlDocument.parse(prefs.getString('nearbyLocationListCache'));
       nearbyLocations = [];
 
       content.findAllElements("item").forEach((row) {
         var output = new Post(
           title: row.findElements("title").single.text.trim().toString(),
           id: row.findElements("id").single.text.trim().toString(),
-          temperature: row.findElements("temp").single.text.trim().toString(),
+          temperature:
+              double.tryParse(row.findElements("temp").single.text.trim()),
           distance: row.findElements("dist").single.text.trim().toString(),
           lastUpdate:
               row.findElements("lastUpdate").single.text.trim().toString(),
@@ -458,18 +450,19 @@ Future<List> fetchNearbyLocations(bool getCache) async {
           position.longitude.toString() +
           urlOptions;
 
-      final response = await http.get(url).timeout(const Duration(seconds: 15));
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         // If server returns OK, parse XML result
-        var content = xml.parse(response.body);
+        var content = xml.XmlDocument.parse(response.body);
 
         content.findAllElements("item").forEach((row) {
           var locationTitle =
               row.findElements("title").single.text.trim().toString();
           var locationId = row.findElements("id").single.text.trim().toString();
           var currentTemp =
-              row.findElements("temp").single.text.trim().toString();
+              double.tryParse(row.findElements("temp").single.text.trim());
           var distance = row.findElements("dist").single.text.trim().toString();
           var lastUpdated =
               row.findElements("lastUpdate").single.text.trim().toString();
@@ -492,11 +485,11 @@ Future<List> fetchNearbyLocations(bool getCache) async {
             distance: distance,
             amm: "min " +
                 minTemp +
-                "°C ◦ medel " +
+                "° ◦ medel " +
                 averageTemp +
-                "°C ◦ max " +
+                "° ◦ max " +
                 maxTemp +
-                "°C",
+                "°",
             lastUpdate: lastUpdated,
             municipality: municipality,
             county: county,
@@ -532,7 +525,7 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
         prefs.getString('locationListCache') != "") {
       locationList = [];
       // Fetch locally saved cache and turn into XML
-      var content = xml.parse(prefs.getString('locationListCache'));
+      var content = xml.XmlDocument.parse(prefs.getString('locationListCache'));
 
       // Iterate results and make into list
       content.findAllElements('item').forEach((row) {
@@ -557,13 +550,14 @@ Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
 
     // Collect data from API
     try {
-      final response = await http.get(url).timeout(const Duration(seconds: 15));
+      final response =
+          await http.get(Uri.parse(url)).timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
         // If server responds with OK, parse XML result
         // Save XML string as cache
         prefs.setString('locationListCache', response.body);
-        var content = xml.parse(response.body);
+        var content = xml.XmlDocument.parse(response.body);
         locationList = [];
 
         // Iterate results and make into list

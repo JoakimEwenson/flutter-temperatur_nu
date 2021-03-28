@@ -1,4 +1,4 @@
-import 'package:temperatur.nu/model/locationlistitem.dart';
+import 'package:temperatur_nu/model/locationlistitem.dart';
 
 class LocationList {
   List<LocationListItem> locationList;

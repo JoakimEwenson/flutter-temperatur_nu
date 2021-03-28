@@ -2,9 +2,10 @@ import 'dart:core';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:temperatur.nu/controller/common.dart';
-import 'package:temperatur.nu/views/drawer.dart';
-import 'package:temperatur.nu/model/locationlistitem.dart';
+import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/views/drawer.dart';
+import 'package:temperatur_nu/model/locationlistitem.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;

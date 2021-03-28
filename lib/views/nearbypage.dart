@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:temperatur.nu/controller/common.dart';
-import 'package:temperatur.nu/model/post.dart';
-import 'package:temperatur.nu/views/drawer.dart';
+import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/post.dart';
+import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
@@ -113,7 +114,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                                 " - " +
                                 tempData.county),
                             trailing: Text(
-                              tempData.temperature + "°C",
+                              "${tempData.temperature}°",
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             onTap: () {

@@ -3,6 +3,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 
 // Import views
 import 'views/drawer.dart';
@@ -161,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _getGpsLocation();
                   userLocationIcon = Icon(Icons.gps_fixed);
                 } catch (e) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(e.toString()),
                   ));
                 }
@@ -230,11 +232,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
-                              child: Text(
-                                snapshot.data.temperature + "°C",
-                                style: Theme.of(context).textTheme.headline1,
-                                textAlign: TextAlign.center,
-                              ),
+                              child: snapshot.data.temperature != null
+                                  ? Text(
+                                      "${snapshot.data.temperature}°",
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Text(" "),
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
@@ -288,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     if (await removeFromFavorites(
                                         snapshot.data.id)) {
                                       isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
+                                      ScaffoldMessenger.of(context)
                                         ..removeCurrentSnackBar()
                                         ..showSnackBar(SnackBar(
                                           content: Text(
@@ -300,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       });
                                     } else {
                                       isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
+                                      ScaffoldMessenger.of(context)
                                         ..removeCurrentSnackBar()
                                         ..showSnackBar(SnackBar(
                                           content: Text(
@@ -314,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     if (await addToFavorites(
                                         snapshot.data.id)) {
                                       isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
+                                      ScaffoldMessenger.of(context)
                                         ..removeCurrentSnackBar()
                                         ..showSnackBar(SnackBar(
                                           content: Text(
@@ -325,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       });
                                     } else {
                                       isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
+                                      ScaffoldMessenger.of(context)
                                         ..removeCurrentSnackBar()
                                         ..showSnackBar(SnackBar(
                                           content: Text(
@@ -338,13 +343,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                     setState(() {});
                                   }
                                 } on TooManyFavoritesException catch (e) {
-                                  Scaffold.of(context)
+                                  ScaffoldMessenger.of(context)
                                     ..removeCurrentSnackBar()
                                     ..showSnackBar(SnackBar(
                                       content: Text(e.errorMsg()),
                                     ));
                                 } catch (e) {
-                                  Scaffold.of(context)
+                                  ScaffoldMessenger.of(context)
                                     ..removeCurrentSnackBar()
                                     ..showSnackBar(SnackBar(
                                       content: Text(e.toString()),
@@ -428,7 +433,7 @@ class _MyHomePageState extends State<MyHomePage> {
               try {
                 _getGpsLocation();
               } catch (e) {
-                Scaffold.of(context).showSnackBar(SnackBar(
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(e.toString()),
                 ));
               }
