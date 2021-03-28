@@ -2,6 +2,8 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/controller/fetchFavorites.dart';
+import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 import 'package:temperatur_nu/model/post.dart';

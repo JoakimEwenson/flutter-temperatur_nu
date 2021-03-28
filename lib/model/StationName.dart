@@ -13,7 +13,7 @@ class StationName {
     this.uptime,
     this.start,
     this.moh,
-    this.url,
+    this.url = "https://www.temperatur.nu",
     this.ammRange,
     this.average,
     this.min,
@@ -24,22 +24,79 @@ class StationName {
 
   String title;
   String id;
-  String temp;
+  double temp;
   String lat;
   String lon;
-  DateTime lastUpdate;
+  String lastUpdate;
   String kommun;
   String lan;
   String sourceInfo;
   String forutsattning;
   String uptime;
-  DateTime start;
+  String start;
   String moh;
   String url;
   String ammRange;
-  String average;
-  String min;
+  double average;
+  double min;
   String minTime;
-  String max;
+  double max;
   String maxTime;
+
+  factory StationName.fromRawJson(var json) {
+    return StationName(
+      title: json["title"],
+      id: json["id"],
+      temp: double.tryParse(json["temp"]) ?? null,
+      lat: json["lat"],
+      lon: json["lon"],
+      lastUpdate: json["lastUpdate"],
+      kommun: json["kommun"],
+      lan: json["lan"],
+      sourceInfo: json["sourceInfo"],
+      forutsattning: json["forutsattning"],
+      uptime: json["uptime"],
+      start: json["start"],
+      moh: json["moh"],
+      url: json["url"],
+      ammRange: json["ammRange"],
+      average: double.tryParse(json["average"]),
+      min: double.tryParse(json["min"]),
+      minTime: json["minTime"],
+      max: double.tryParse(json["max"]),
+      maxTime: json["maxTime"],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "title": title,
+        "id": id,
+        "temp": temp,
+        "lat": lat,
+        "lon": lon,
+        "lastUpdate": lastUpdate,
+        "kommun": kommun,
+        "lan": lan,
+        "sourceInfo": sourceInfo,
+        "forutsattning": forutsattning,
+        "uptime": uptime,
+        "start": start,
+        "moh": moh,
+        "url": url,
+        "ammRange": ammRange,
+        "average": average,
+        "min": min,
+        "minTime": minTime,
+        "max": max,
+        "maxTime": maxTime,
+      };
+}
+
+List<StationName> stationNameList(var json) {
+  List<StationName> output = [];
+  for (var row in json["stations"].values) {
+    output.add(StationName.fromRawJson(row));
+  }
+
+  return output;
 }

@@ -1,21 +1,24 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 
 // Import views
+import 'controller/favorites.dart';
+import 'controller/fetchSinglePost.dart';
 import 'views/drawer.dart';
 import 'views/favoritespage.dart';
 import 'views/nearbypage.dart';
 import 'views/locationlistpage.dart';
 import 'views/settingspage.dart';
-
-// Import local files
-import 'controller/common.dart';
-import 'model/post.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
@@ -37,7 +40,7 @@ Future<Null> main() async {
 String locationId = 'default';
 
 // Prepare future data
-Future<Post> post;
+Future<StationName> post;
 
 // Begin app
 class MyApp extends StatelessWidget {
@@ -93,12 +96,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     locationId = sp.getString('location');
-    Future.delayed(const Duration(milliseconds: 250), () {
+    Future.delayed(const Duration(milliseconds: 250), () async {
       if (!sp.containsKey('mainScreenTimeout')) {
         setTimeStamp('mainScreenTimeout');
       }
+
       setState(() {
-        post = fetchSinglePost(locationId);
+        post = fetchStation(locationId);
         setTimeStamp('mainScreenTimeout');
       });
     });
@@ -122,14 +126,21 @@ class _MyHomePageState extends State<MyHomePage> {
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     //var now = DateTime.now();
-    if (timediff > 300000) {
-      setState(() {
-        post = fetchSinglePost(locationId);
+    if (timediff > cacheTimeoutLong) {
+      String data = await fetchSinglePost(locationId);
+      var json = await jsonDecode(data);
+      print(json);
+      setState(() async {
+        post = null;
         //print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
         setTimeStamp('mainScreenTimeout');
       });
     } else {
-      post = fetchSinglePostCache();
+      String data = await fetchSinglePostCache();
+      var json = jsonDecode(data);
+      print(json);
+
+      post = fetchStation(locationId);
       //var time = (timediff / 60000).toStringAsFixed(1);
       //print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
@@ -137,16 +148,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getGpsLocation() async {
     // Reset post data
-    post = null;
+    post = fetchStation(locationId);
     // Fetch new post data
-    post = fetchSinglePost('gps').then((data) {
-      //Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
-      // Check if favorite
-      existsInFavorites(data.id).then((exists) {
-        isFavorite = exists;
-      });
-      return data;
-    });
+    String data = await fetchSinglePost('gps');
+    print(data);
+    return data;
   }
 
   @override
@@ -213,155 +219,163 @@ class _MyHomePageState extends State<MyHomePage> {
             case ConnectionState.done:
               {
                 if (snapshot.hasData) {
-                  return LayoutBuilder(builder: (BuildContext context,
-                      BoxConstraints viewportConstraints) {
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      physics: AlwaysScrollableScrollPhysics(),
-                      dragStartBehavior: DragStartBehavior.down,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
+                  return LayoutBuilder(
+                    builder: (BuildContext context,
+                        BoxConstraints viewportConstraints) {
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        physics: AlwaysScrollableScrollPhysics(),
+                        dragStartBehavior: DragStartBehavior.down,
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
                             minHeight: viewportConstraints.maxHeight,
-                            minWidth: viewportConstraints.maxWidth),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            SizedBox(
-                              height: 25,
-                            ),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: snapshot.data.temperature != null
-                                  ? Text(
-                                      "${snapshot.data.temperature}°",
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  : Text(" "),
-                            ),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                snapshot.data.title,
-                                style: Theme.of(context).textTheme.headline3,
+                            minWidth: viewportConstraints.maxWidth,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              SizedBox(
+                                height: 25,
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: snapshot.data.temp != null
+                                    ? Text(
+                                        "${snapshot.data.temp}°",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                        textAlign: TextAlign.center,
+                                      )
+                                    : Text(" "),
+                              ),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  snapshot.data.title,
+                                  style: Theme.of(context).textTheme.headline3,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Text(
+                                snapshot.data.kommun,
+                                style: Theme.of(context).textTheme.headline5,
                                 textAlign: TextAlign.center,
                               ),
-                            ),
-                            Text(
-                              snapshot.data.county,
-                              style: Theme.of(context).textTheme.headline5,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              snapshot.data.amm,
-                              style: Theme.of(context).textTheme.bodyText1,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              snapshot.data.sourceInfo,
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              'Uppdaterad ${snapshot.data.lastUpdate}',
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            GestureDetector(
-                              child: isFavorite
-                                  ? Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                      size: 50.0,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border,
-                                      size: 50,
-                                    ),
-                              onTap: () async {
-                                try {
-                                  if (isFavorite) {
-                                    if (await removeFromFavorites(
-                                        snapshot.data.id)) {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                            'Tog bort ${snapshot.data.title} från favoriter.',
-                                          ),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
+                              SizedBox(height: 20),
+                              Text(
+                                "min ${snapshot.data.min}° ◦ medel ${snapshot.data.average}° ◦ max ${snapshot.data.max}°",
+                                style: Theme.of(context).textTheme.bodyText1,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                snapshot.data.sourceInfo,
+                                style: Theme.of(context).textTheme.caption,
+                                textAlign: TextAlign.center,
+                              ),
+                              Text(
+                                'Uppdaterad ${snapshot.data.lastUpdate}',
+                                style: Theme.of(context).textTheme.caption,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              GestureDetector(
+                                child: isFavorite
+                                    ? Icon(
+                                        Icons.favorite,
+                                        color: Colors.red,
+                                        size: 50.0,
+                                      )
+                                    : Icon(
+                                        Icons.favorite_border,
+                                        size: 50,
+                                      ),
+                                onTap: () async {
+                                  try {
+                                    if (isFavorite) {
+                                      if (await removeFromFavorites(
+                                          snapshot.data.id)) {
+                                        isFavorite =
+                                            await _checkFavoriteStatus();
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(SnackBar(
+                                            content: Text(
+                                              'Tog bort ${snapshot.data.title} från favoriter.',
+                                            ),
+                                          ));
+                                        setState(() {
+                                          isFavorite = false;
+                                        });
+                                      } else {
+                                        isFavorite =
+                                            await _checkFavoriteStatus();
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(SnackBar(
+                                            content: Text(
+                                                'Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
+                                          ));
+                                        setState(() {
+                                          isFavorite = false;
+                                        });
+                                      }
                                     } else {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
+                                      if (await addToFavorites(
+                                          snapshot.data.id)) {
+                                        isFavorite =
+                                            await _checkFavoriteStatus();
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(SnackBar(
+                                            content: Text(
+                                                'La till ${snapshot.data.title} i favoriter.'),
+                                          ));
+                                        setState(() {
+                                          isFavorite = true;
+                                        });
+                                      } else {
+                                        isFavorite =
+                                            await _checkFavoriteStatus();
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(SnackBar(
+                                            content: Text(
+                                                'Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
+                                          ));
+                                        setState(() {
+                                          isFavorite = false;
+                                        });
+                                      }
+                                      setState(() {});
                                     }
-                                  } else {
-                                    if (await addToFavorites(
-                                        snapshot.data.id)) {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'La till ${snapshot.data.title} i favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = true;
-                                      });
-                                    } else {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
-                                    }
-                                    setState(() {});
+                                  } on TooManyFavoritesException catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(SnackBar(
+                                        content: Text(e.errorMsg()),
+                                      ));
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(SnackBar(
+                                        content: Text(e.toString()),
+                                      ));
                                   }
-                                } on TooManyFavoritesException catch (e) {
-                                  ScaffoldMessenger.of(context)
-                                    ..removeCurrentSnackBar()
-                                    ..showSnackBar(SnackBar(
-                                      content: Text(e.errorMsg()),
-                                    ));
-                                } catch (e) {
-                                  ScaffoldMessenger.of(context)
-                                    ..removeCurrentSnackBar()
-                                    ..showSnackBar(SnackBar(
-                                      content: Text(e.toString()),
-                                    ));
-                                }
-                              },
-                            ),
-                          ],
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  });
+                      );
+                    },
+                  );
                 } else if (snapshot.hasError) {
                   return noDataView(snapshot.error);
                 }
@@ -402,20 +416,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Error/No data view
-  noDataView(String msg) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Något gick fel!',
-            style: Theme.of(context).textTheme.headline3,
+  noDataView(var msg) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints viewportConstraints) {
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          physics: AlwaysScrollableScrollPhysics(),
+          dragStartBehavior: DragStartBehavior.down,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: viewportConstraints.maxHeight,
+              maxWidth: viewportConstraints.maxWidth,
+            ),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Något gick fel!',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "$msg",
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              ],
+            ),
           ),
-          Text(
-            msg,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

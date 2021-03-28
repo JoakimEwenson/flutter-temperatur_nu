@@ -33,9 +33,11 @@ class Post {
     var locationId = content
         .findAllElements("item")
         .map((node) => node.findElements("id").single.text);
-    var currentTemp = double.tryParse(content
+    var currentTemp = content
         .findAllElements("item")
-        .map((node) => node.findElements("temp").single.text));
+        .map((node) => node.findElements("temp").single.text)
+        .trim()
+        .toString();
     var lastUpdated = content
         .findAllElements("item")
         .map((node) => node.findElements("lastUpdate").single.text);
@@ -68,7 +70,7 @@ class Post {
     return Post(
       title: locationTitle.single.trim().toString(),
       id: locationId.single.trim().toString(),
-      temperature: currentTemp,
+      temperature: double.tryParse(currentTemp),
       amm: "min " +
           minTemp.single.toString() +
           "° ◦ medel " +

@@ -1,8 +1,10 @@
 import 'dart:core';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/controller/fetchLocationList.dart';
+import 'package:temperatur_nu/controller/sorting.dart';
+import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 import 'package:temperatur_nu/model/locationlistitem.dart';
@@ -54,7 +56,6 @@ class _LocationListPageState extends State<LocationListPage> {
   _getSortingOrder() async {
     sp = await SharedPreferences.getInstance();
     if (sp.containsKey('sortingOrder')) {
-      print(sp.getString('sortingOrder'));
       _sortingChoice = sp.getString('sortingOrder');
     }
   }
@@ -250,7 +251,7 @@ class _LocationListPageState extends State<LocationListPage> {
                           title: Text(listItem.title),
                           trailing: listItem.temperature != null
                               ? Text(
-                                  "${listItem.temperature}°C",
+                                  "${listItem.temperature}°",
                                   style: Theme.of(context).textTheme.headline4,
                                 )
                               : Text(
@@ -415,7 +416,7 @@ class Search extends SearchDelegate {
                 "${suggestionList[index].title} (${suggestionList[index].id})";
             showResults(context);
             */
-            inspect(suggestionList[index]);
+            //inspect(suggestionList[index]);
             Navigator.pushNamed(context, '/',
                 arguments: LocationArguments(suggestionList[index].id));
           },
