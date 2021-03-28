@@ -40,15 +40,24 @@ class SettingsPage extends StatelessWidget {
                     height: 25,
                   ),
                   Text(
-                    'Version ' +
-                        packInfo.version +
-                        ' (build ' +
-                        packInfo.buildNumber +
-                        ')',
+                    'Version ${packInfo.version}',
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
-                  //SizedBox(height: 10,),
-                  //Text('https://www.ewenson.se', style: Theme.of(context).textTheme.body1),
+                  Text(
+                    'build ${packInfo.buildNumber}',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Text(
+                    'Skapat av: Joakim Ewenson',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                  Text(
+                    'https://www.ewenson.se',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
                 ],
               )));
             }
