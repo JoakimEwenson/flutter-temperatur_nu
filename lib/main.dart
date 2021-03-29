@@ -448,32 +448,4 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
-
-  // Multiple Floating Action Buttons setup
-/*   _doubleFAB() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).accentColor,
-          onPressed: () {
-            setState(() {
-              try {
-                _getGpsLocation();
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(e.toString()),
-                ));
-              }
-            });
-          },
-          tooltip: 'Hämta position',
-          child: new Icon(Icons.location_searching),
-          heroTag: 'gpsFAB',
-        ),
-      ],
-    );
-  } */
 }

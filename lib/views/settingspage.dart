@@ -16,69 +16,88 @@ class SettingsPage extends StatelessWidget {
         title: Text('Om appen'),
       ),
       drawer: AppDrawer(),
-      body: FutureBuilder(
-          future: getPackageInfo(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              PackageInfo packInfo = snapshot.data;
-              return Center(
-                  child: Container(
-                      child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 25,
+      body:
+          LayoutBuilder(builder: (context, BoxConstraints viewportConstraints) {
+        return FutureBuilder(
+            future: getPackageInfo(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                PackageInfo packInfo = snapshot.data;
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: viewportConstraints.maxHeight,
+                    maxWidth: viewportConstraints.maxWidth,
                   ),
-                  Image.asset(
-                    'icon/Solflinga.png',
-                    height: 100,
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Image.asset(
+                        'icon/Solflinga.png',
+                        height: 100,
+                      ),
+                      Text(
+                        'temperatur.nu',
+                        style: Theme.of(context).textTheme.headline3,
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Text(
+                        'Version ${packInfo.version}',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      Text(
+                        'build ${packInfo.buildNumber}',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Text(
+                                'Appen skapad av Joakim Ewenson',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              Text(
+                                'https://www.ewenson.se',
+                                style: Theme.of(context).textTheme.caption,
+                              ),
+                              SizedBox(
+                                height: 50,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                  Text(
-                    'temperatur.nu',
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Text(
-                    'Version ${packInfo.version}',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  Text(
-                    'build ${packInfo.buildNumber}',
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Text(
-                    'Skapat av: Joakim Ewenson',
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                  Text(
-                    'https://www.ewenson.se',
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ],
-              )));
-            }
+                );
+              }
 
-            return Center(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: 25,
-                  ),
-                  CircularProgressIndicator(
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                  Text(
-                    'Hämtar data',
-                    style: Theme.of(context).textTheme.headline3,
-                  )
-                ],
-              ),
-            );
-          }),
+              return Center(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: 25,
+                    ),
+                    CircularProgressIndicator(
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    Text(
+                      'Hämtar data',
+                      style: Theme.of(context).textTheme.headline3,
+                    )
+                  ],
+                ),
+              );
+            });
+      }),
     );
   }
 }
