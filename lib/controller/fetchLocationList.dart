@@ -3,9 +3,12 @@ import 'dart:io';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/model/locationlistitem.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart' as xml;
+
+Future<List<StationName>> newFetchLocationList(bool getCache) async {}
 
 Future<List<LocationListItem>> fetchLocationList(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();

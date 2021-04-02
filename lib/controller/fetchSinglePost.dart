@@ -1,20 +1,23 @@
 import 'dart:async';
 import 'dart:convert';
-// ignore: unused_import
-import 'dart:developer';
 import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/controller/apiCaller.dart';
 import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchPosition.dart';
-import 'package:http/http.dart' as http;
 import 'package:temperatur_nu/model/StationName.dart';
 
 // Fetch data and return a single StationName object
 Future<StationName> fetchStation(locationId) async {
+  final prefs = await SharedPreferences.getInstance();
+
   String data = await fetchSinglePost(locationId);
   var json = await jsonDecode(data);
   var stationList = json["stations"].values.toList();
+
+  // Save location id to local storage for later, including gps if that was last requested
+  prefs.setString('location', locationId);
 
   return StationName.fromRawJson(stationList[0]);
 }
@@ -32,7 +35,7 @@ Future<String> fetchSinglePostCache() async {
 // Fetching API data and return as string
 Future<String> fetchSinglePost(String location) async {
   // Set up url parameters
-  Map<String, dynamic> urlParams = {
+  Map<String, dynamic> settingsParams = {
     "json": "true",
     "amm": "true",
     "verbose": "true",
@@ -77,33 +80,19 @@ Future<String> fetchSinglePost(String location) async {
         "p": locationId,
       };
     }
+
+    // Combine url parameters with location
+    Map<String, dynamic> urlParams = {};
     urlParams.addAll(locationParams);
-    Uri url = new Uri.https(apiUrl, apiVersion, urlParams);
-    print("Fetching from $url");
+    urlParams.addAll(settingsParams);
+
     // Get data from API
-    final response = await http.get(url).timeout(const Duration(seconds: 15));
+    var content = await apiCaller(urlParams);
+    // Save response string as cache
+    prefs.setString('singlePostCache', content);
 
-    if (response.statusCode == 200) {
-      // If server returns OK, parse response
-      var content = response.body;
-      // Save response string as cache
-      prefs.setString('singlePostCache', content);
-
-      // TODO: Fix saving of location id
-      /*
-      var locationId = content
-          .findAllElements("item")
-          .map((node) => node.findElements("id").single.text);
-
-      // Save location id to local storage for later
-      prefs.setString('location', locationId.single.trim().toString());
-      */
-
-      //return output;
-      return content;
-    } else {
-      throw Exception('Misslyckades med att hämta data');
-    }
+    //return output;
+    return content;
   } on TimeoutException catch (e) {
     return e.toString();
   } on SocketException catch (e) {

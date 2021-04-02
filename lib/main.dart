@@ -62,7 +62,6 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         accentColor: Colors.grey[100],
       ),
-      //home: MyHomePage(title: 'temperatur.nu'),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (context) => MyHomePage(),
@@ -114,7 +113,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _refreshList() async {
-    //_mainRefreshIndicatorKey.currentState?.show();
     locationId = sp.getString('location');
     existsInFavorites(locationId).then((exists) {
       setState(() {
@@ -125,34 +123,18 @@ class _MyHomePageState extends State<MyHomePage> {
     timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    //var now = DateTime.now();
     if (timediff > cacheTimeoutLong) {
-      String data = await fetchSinglePost(locationId);
-      var json = await jsonDecode(data);
-      print(json);
-      setState(() async {
-        post = null;
-        //print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
+      setState(() {
+        post = fetchStation(locationId);
         setTimeStamp('mainScreenTimeout');
       });
     } else {
-      String data = await fetchSinglePostCache();
-      var json = jsonDecode(data);
-      print(json);
-
       post = fetchStation(locationId);
-      //var time = (timediff / 60000).toStringAsFixed(1);
-      //print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
   Future<void> _getGpsLocation() async {
-    // Reset post data
     post = fetchStation('gps');
-    // Fetch new post data
-    String data = await fetchSinglePost('gps');
-    print(data);
-    return data;
   }
 
   @override

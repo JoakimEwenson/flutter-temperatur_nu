@@ -5,13 +5,14 @@ import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 import 'package:temperatur_nu/model/post.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
 
-Future<List> favorites;
+Future<List<StationName>> favorites;
 
 Future<List> getFavoritesString() async {
   sp = await SharedPreferences.getInstance();
@@ -103,16 +104,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   return ListView.builder(
                     itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
-                      Post tempData = snapshot.data[index];
+                      StationName tempData = snapshot.data[index];
                       return GestureDetector(
                           child: Card(
                               child: ListTile(
                         leading: Icon(Icons.ac_unit),
                         title: Text(tempData.title),
-                        subtitle: Text(
-                            tempData.municipality + " - " + tempData.county),
+                        subtitle: Text("${tempData.kommun} - ${tempData.lan}"),
                         trailing: Text(
-                          "${tempData.temperature}°",
+                          "${tempData.temp}°",
                           style: Theme.of(context).textTheme.headline4,
                         ),
                         onTap: () {

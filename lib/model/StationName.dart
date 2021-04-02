@@ -47,7 +47,7 @@ class StationName {
     return StationName(
       title: json["title"],
       id: json["id"],
-      temp: double.tryParse(json["temp"]) ?? null,
+      temp: json["temp"] != null ? double.tryParse(json["temp"]) : null,
       lat: json["lat"],
       lon: json["lon"],
       lastUpdate: json["lastUpdate"],
@@ -60,10 +60,11 @@ class StationName {
       moh: json["moh"],
       url: json["url"],
       ammRange: json["ammRange"],
-      average: double.tryParse(json["average"]),
-      min: double.tryParse(json["min"]),
+      average:
+          json["average"] != null ? double.tryParse(json["average"]) : null,
+      min: json["min"] != null ? double.tryParse(json["min"]) : null,
       minTime: json["minTime"],
-      max: double.tryParse(json["max"]),
+      max: json["max"] != null ? double.tryParse(json["max"]) : null,
       maxTime: json["maxTime"],
     );
   }
