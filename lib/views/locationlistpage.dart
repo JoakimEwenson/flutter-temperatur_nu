@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
@@ -6,6 +7,7 @@ import 'package:temperatur_nu/controller/fetchLocationList.dart';
 import 'package:temperatur_nu/controller/sorting.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 import 'package:temperatur_nu/model/locationlistitem.dart';
 
@@ -15,7 +17,7 @@ SharedPreferences sp;
 ScrollController _controller;
 
 // Prepare future data
-Future<List<LocationListItem>> locations;
+Future<List<StationName>> locations;
 
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
@@ -212,30 +214,30 @@ class _LocationListPageState extends State<LocationListPage> {
                   items.sort((a, b) => a.title.compareTo(b.title));
                 } else if (_sortingChoice == "highest") {
                   items.sort((a, b) {
-                    if (a.temperature == null && b.temperature == null) {
+                    if (a.temp == null && b.temp == null) {
                       return 0;
                     }
-                    if (a.temperature == null) {
+                    if (a.temp == null) {
                       return 1;
                     }
-                    if (b.temperature == null) {
+                    if (b.temp == null) {
                       return -1;
                     } else {
-                      return b.temperature.compareTo(a.temperature);
+                      return b.temp.compareTo(a.temp);
                     }
                   });
                 } else if (_sortingChoice == "lowest") {
                   items.sort((a, b) {
-                    if (a.temperature == null && b.temperature == null) {
+                    if (a.temp == null && b.temp == null) {
                       return 0;
                     }
-                    if (a.temperature == null) {
+                    if (a.temp == null) {
                       return 1;
                     }
-                    if (b.temperature == null) {
+                    if (b.temp == null) {
                       return -1;
                     } else {
-                      return a.temperature.compareTo(b.temperature);
+                      return a.temp.compareTo(b.temp);
                     }
                   });
                 }
@@ -243,15 +245,16 @@ class _LocationListPageState extends State<LocationListPage> {
                   controller: _controller,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    LocationListItem listItem = items[index];
+                    inspect(items);
+                    StationName listItem = items[index];
                     return GestureDetector(
                       child: Card(
                         child: ListTile(
                           leading: Icon(Icons.ac_unit),
                           title: Text(listItem.title),
-                          trailing: listItem.temperature != null
+                          trailing: listItem.temp != null
                               ? Text(
-                                  "${listItem.temperature}°",
+                                  "${listItem.temp}°",
                                   style: Theme.of(context).textTheme.headline4,
                                 )
                               : Text(
