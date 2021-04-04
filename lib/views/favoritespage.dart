@@ -7,7 +7,6 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/views/drawer.dart';
-import 'package:temperatur_nu/model/post.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;

@@ -14,6 +14,7 @@ class StationName {
     this.start,
     this.moh,
     this.url = "https://www.temperatur.nu",
+    this.dist,
     this.ammRange,
     this.average,
     this.min,
@@ -36,6 +37,7 @@ class StationName {
   String start;
   String moh;
   String url;
+  double dist;
   String ammRange;
   double average;
   double min;
@@ -59,6 +61,7 @@ class StationName {
       start: json["start"],
       moh: json["moh"],
       url: json["url"],
+      dist: json["dist"] != null ? double.tryParse(json["dist"]) : null,
       ammRange: json["ammRange"],
       average:
           json["average"] != null ? double.tryParse(json["average"]) : null,
