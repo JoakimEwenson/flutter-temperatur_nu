@@ -1,5 +1,4 @@
 import 'dart:core';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
@@ -166,6 +165,19 @@ class _LocationListPageState extends State<LocationListPage> {
                           saveSortingOrder(_sortingChoice);
                         });
                         break;
+                      case 'north':
+                        setState(() {
+                          _sortingChoice = "north";
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
+                        break;
+                      case 'south':
+                        setState(() {
+                          _sortingChoice = 'south';
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
                     }
                   }
                 }, itemBuilder: (BuildContext context) {
@@ -240,12 +252,39 @@ class _LocationListPageState extends State<LocationListPage> {
                       return a.temp.compareTo(b.temp);
                     }
                   });
+                } else if (_sortingChoice == "north") {
+                  items.sort((a, b) {
+                    if (a.lat == null && b.lat == null) {
+                      return 0;
+                    }
+                    if (a.lat == null) {
+                      return 1;
+                    }
+                    if (b.lat == null) {
+                      return -1;
+                    } else {
+                      return b.lat.compareTo(a.lat);
+                    }
+                  });
+                } else if (_sortingChoice == "south") {
+                  items.sort((a, b) {
+                    if (a.lat == null && b.lat == null) {
+                      return 0;
+                    }
+                    if (a.lat == null) {
+                      return 1;
+                    }
+                    if (b.lat == null) {
+                      return -1;
+                    } else {
+                      return a.lat.compareTo(b.lat);
+                    }
+                  });
                 }
                 return ListView.builder(
                   controller: _controller,
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    inspect(items);
                     StationName listItem = items[index];
                     return GestureDetector(
                       child: Card(
@@ -341,17 +380,30 @@ class SortingChoice {
 
 const List<SortingChoice> sortingChoices = const <SortingChoice>[
   const SortingChoice(
-      id: 'alphabetical',
-      title: 'Alfabetiskt',
-      icon: Icon(Icons.sort_by_alpha)),
+    id: 'alphabetical',
+    title: 'Alfabetiskt',
+    icon: Icon(Icons.sort_by_alpha),
+  ),
   const SortingChoice(
-      id: 'highest',
-      title: 'Högsta temperatur överst',
-      icon: Icon(Icons.trending_down)),
+    id: 'highest',
+    title: 'Högsta temperatur överst',
+    icon: Icon(Icons.trending_down),
+  ),
   const SortingChoice(
-      id: 'lowest',
-      title: 'Lägsta temperatur överst',
-      icon: Icon(Icons.trending_up))
+    id: 'lowest',
+    title: 'Lägsta temperatur överst',
+    icon: Icon(Icons.trending_up),
+  ),
+  const SortingChoice(
+    id: 'north',
+    title: 'Norr till söder',
+    icon: Icon(Icons.south),
+  ),
+  const SortingChoice(
+    id: 'south',
+    title: 'Söder till norr',
+    icon: Icon(Icons.north),
+  )
 ];
 
 class Search extends SearchDelegate {
