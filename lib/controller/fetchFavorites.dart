@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
@@ -18,34 +19,44 @@ Future<List<StationName>> fetchFavorites(bool getCache) async {
   if (getCache &&
       (prefs.containsKey('favoritesListCache') &&
           prefs.getString('favoritesListCache') != "")) {
-    var json = jsonDecode(prefs.getString('favoritesListCache'));
-    List<dynamic> response = json["stations"].values.toList();
-    response.forEach((row) {
-      output.add(StationName.fromRawJson(row));
-    });
+    try {
+      var json = jsonDecode(prefs.getString('favoritesListCache'));
+      List<dynamic> response = json["stations"].values.toList();
+      response.forEach((row) {
+        output.add(StationName.fromRawJson(row));
+      });
+    } catch (e) {
+      inspect(e);
+      output = null;
+    }
   } else {
-    // Save and fetch locally saved data
-    List searchLocationList = await fetchLocalFavorites();
-    String searchLocations = searchLocationList.join(',');
-    // JSON based response
-    Map<String, dynamic> settingsParams = {
-      "json": "true",
-      "verbose": "true",
-      "cli": Utils.createCryptoRandomString()
-    };
-    Map<String, String> locationParams = {
-      "p": searchLocations,
-    };
-    Map<String, dynamic> urlParams = {};
-    urlParams.addAll(locationParams);
-    urlParams.addAll(settingsParams);
+    try {
+      // Save and fetch locally saved data
+      List searchLocationList = await fetchLocalFavorites();
+      String searchLocations = searchLocationList.join(',');
+      // JSON based response
+      Map<String, dynamic> settingsParams = {
+        "json": "true",
+        "verbose": "true",
+        "cli": Utils.createCryptoRandomString()
+      };
+      Map<String, String> locationParams = {
+        "p": searchLocations,
+      };
+      Map<String, dynamic> urlParams = {};
+      urlParams.addAll(locationParams);
+      urlParams.addAll(settingsParams);
 
-    String data = await apiCaller(urlParams);
+      String data = await apiCaller(urlParams);
 
-    // Write response to cache
-    prefs.setString('favoritesListCache', data);
+      // Write response to cache
+      prefs.setString('favoritesListCache', data);
 
-    output = responseTranslator(data);
+      output = responseTranslator(data);
+    } catch (e) {
+      inspect(e);
+      output = null;
+    }
   }
 
   return output;

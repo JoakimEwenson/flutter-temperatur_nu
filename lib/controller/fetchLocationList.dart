@@ -19,7 +19,7 @@ Future<List<StationName>> fetchLocationList(bool getCache) async {
   } else {
     Map<String, dynamic> urlParams = {
       "json": "true",
-      "verbose": "true",
+      "coordinates": "true",
       "cli": Utils.createCryptoRandomString(),
     };
 

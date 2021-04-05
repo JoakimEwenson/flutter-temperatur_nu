@@ -4,11 +4,6 @@ import 'dart:core';
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Make global base URL for API
-String baseUrl = "https://api.temperatur.nu/tnu_1.16.php";
-String apiUrl = "api.temperatur.nu";
-String apiVersion = "/tnu_1.16.php";
-
 // Constant for deciding amount of maximum favorites
 const int maxFavorites = 9999;
 // Constant for setting cache timeout

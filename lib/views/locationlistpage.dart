@@ -8,7 +8,6 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/views/drawer.dart';
-import 'package:temperatur_nu/model/locationlistitem.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
@@ -407,11 +406,11 @@ const List<SortingChoice> sortingChoices = const <SortingChoice>[
 ];
 
 class Search extends SearchDelegate {
-  final List<LocationListItem> inputList;
+  final List<StationName> inputList;
   Search(this.inputList);
   final String searchFieldLabel = 'Sök mätstation';
 
-  List<LocationListItem> recentList = [];
+  List<StationName> recentList = [];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -448,7 +447,7 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<LocationListItem> suggestionList = [];
+    List<StationName> suggestionList = [];
     query.isEmpty
         ? suggestionList = recentList //In the true case
         : suggestionList.addAll(inputList.where(

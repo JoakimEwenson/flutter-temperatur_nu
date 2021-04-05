@@ -2,6 +2,7 @@ import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
@@ -99,29 +100,74 @@ class _FavoritesPageState extends State<FavoritesPage> {
               }
             case ConnectionState.done:
               {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      StationName tempData = snapshot.data[index];
-                      return GestureDetector(
-                          child: Card(
-                              child: ListTile(
-                        leading: Icon(Icons.ac_unit),
-                        title: Text(tempData.title),
-                        subtitle: Text("${tempData.kommun} - ${tempData.lan}"),
-                        trailing: Text(
-                          "${tempData.temp}°",
-                          style: Theme.of(context).textTheme.headline4,
-                        ),
-                        onTap: () {
-                          //saveLocationId(tempData.id);
-                          Navigator.pushNamed(context, '/',
-                              arguments: LocationArguments(tempData.id));
-                        },
-                      )));
-                    },
-                  );
+                if (!snapshot.hasData) {
+                  return noDataView('Du har inga sparade favoriter än.');
+                } else if (snapshot.hasData) {
+                  if (snapshot.data.length > 0) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        StationName tempData = snapshot.data[index];
+                        return GestureDetector(
+                            child: Card(
+                          child: ListTile(
+                            leading: Icon(Icons.ac_unit),
+                            title: Text(tempData.title),
+                            subtitle:
+                                Text("${tempData.kommun} - ${tempData.lan}"),
+                            trailing: Text(
+                              "${tempData.temp}°",
+                              style: Theme.of(context).textTheme.headline4,
+                            ),
+                            onTap: () {
+                              //saveLocationId(tempData.id);
+                              Navigator.pushNamed(context, '/',
+                                  arguments: LocationArguments(tempData.id));
+                            },
+                            onLongPress: () async {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text("Ta bort favorit?"),
+                                      content: Text(
+                                          "Är du säker på att du vill ta bort ${tempData.title} som favorit?"),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () async {
+                                              if (await removeFromFavorites(
+                                                  tempData.id)) {
+                                                ScaffoldMessenger.of(context)
+                                                  ..removeCurrentSnackBar()
+                                                  ..showSnackBar(SnackBar(
+                                                    content: Text(
+                                                      'Tog bort ${tempData.title} från favoriter.',
+                                                    ),
+                                                  ));
+                                                setState(() {
+                                                  favorites =
+                                                      fetchFavorites(false);
+                                                });
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                            child: Text('Ja')),
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Nej'))
+                                      ],
+                                    );
+                                  });
+                            },
+                          ),
+                        ));
+                      },
+                    );
+                  } else {
+                    return noDataView('Du har inga sparade favoriter än.');
+                  }
                 } else if (snapshot.hasError) {
                   return noDataView(snapshot.error);
                 }
@@ -167,9 +213,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Center(
       child: Column(
         children: <Widget>[
-          Text(
-            'Något gick fel!',
-            style: Theme.of(context).textTheme.headline3,
+          SizedBox(
+            height: 25,
           ),
           Text(
             msg,

@@ -33,9 +33,9 @@ class StationName {
   String lan;
   String sourceInfo;
   String forutsattning;
-  String uptime;
+  num uptime;
   String start;
-  String moh;
+  num moh;
   String url;
   double dist;
   String ammRange;
@@ -57,9 +57,9 @@ class StationName {
       lan: json["lan"],
       sourceInfo: json["sourceInfo"],
       forutsattning: json["forutsattning"],
-      uptime: json["uptime"],
+      uptime: json["uptime"] != null ? json["uptime"] : null,
       start: json["start"],
-      moh: json["moh"],
+      moh: json["moh"] != null ? json["moh"] : null,
       url: json["url"],
       dist: json["dist"] != null ? double.tryParse(json["dist"]) : null,
       ammRange: json["ammRange"],
