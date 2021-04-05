@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,19 +6,20 @@ import 'package:temperatur_nu/controller/apiCaller.dart';
 import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchPosition.dart';
 import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/controller/responseTranslator.dart';
 
 // Fetch data and return a single StationName object
 Future<StationName> fetchStation(locationId) async {
   final prefs = await SharedPreferences.getInstance();
 
   String data = await fetchSinglePost(locationId);
-  var json = await jsonDecode(data);
-  var stationList = json["stations"].values.toList();
+  var stationList = await responseTranslator(data);
+  var output = stationList[0];
 
   // Save location id to local storage for later, including gps if that was last requested
   prefs.setString('location', locationId);
 
-  return StationName.fromRawJson(stationList[0]);
+  return output;
 }
 
 // Fetch cached single post data

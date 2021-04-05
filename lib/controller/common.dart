@@ -7,7 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Constant for deciding amount of maximum favorites
 const int maxFavorites = 9999;
 // Constant for setting cache timeout
-const int cacheTimeout = 300000;
+// const int cacheTimeout = 300000;
+const int cacheTimeout = 1000;
 const int cacheTimeoutLong = cacheTimeout;
 
 // Create a random CLI string until further notice.

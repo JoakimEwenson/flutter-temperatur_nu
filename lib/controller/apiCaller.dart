@@ -3,11 +3,11 @@ import 'package:http/http.dart' as http;
 
 // Make global base URL for API
 String baseUrl = "api.temperatur.nu";
-String apiVersion = "/tnu_1.17.php";
+String apiVersion = "/tnu_1.17b.php";
 
 Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   Uri url = new Uri.https(baseUrl, apiVersion, urlParams);
-  //print("Fetching from $url");
+  print("Fetching from $url");
 
   // Prepare empty content string
   String content;

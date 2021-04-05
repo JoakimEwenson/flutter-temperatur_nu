@@ -12,7 +12,7 @@ Future<List<StationName>> responseTranslator(String input) async {
   try {
     // Translate input to json, iterate JSON response into list
     var json = await jsonDecode(input);
-    List<dynamic> response = json["stations"].values.toList();
+    List<dynamic> response = json["stations"];
 
     response.forEach((row) {
       output.add(StationName.fromRawJson(row));
@@ -20,6 +20,8 @@ Future<List<StationName>> responseTranslator(String input) async {
   } catch (e) {
     inspect(e);
   }
+
+  inspect(output);
 
   return output;
 }
