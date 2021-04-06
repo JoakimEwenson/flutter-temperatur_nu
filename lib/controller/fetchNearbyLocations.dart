@@ -3,12 +3,11 @@ import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
-import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchPosition.dart';
 import 'package:temperatur_nu/controller/responseTranslator.dart';
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
-Future<List<StationName>> fetchNearbyLocations(bool getCache) async {
+Future<StationNameVerbose> fetchNearbyLocations(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();
 
   // Initialize empty list of locations for now
@@ -32,7 +31,6 @@ Future<List<StationName>> fetchNearbyLocations(bool getCache) async {
           "amm": "true",
           "verbose": "true",
           "num": "10",
-          "cli": Utils.createCryptoRandomString()
         };
         Map<String, String> locationParams = {
           "lat": position.latitude.toString(),

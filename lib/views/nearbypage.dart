@@ -5,14 +5,14 @@ import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
 
 // Prepare future data
-Future<List> locationList;
+Future<StationNameVerbose> locationList;
 
 saveLocationId(String savedId) async {
   sp = await SharedPreferences.getInstance();
@@ -99,26 +99,27 @@ class _NearbyListPageState extends State<NearbyListPage> {
             case ConnectionState.done:
               {
                 if (snapshot.hasData) {
+                  List<Station> stations = snapshot.data.stations;
                   return ListView.builder(
                     physics: AlwaysScrollableScrollPhysics(),
-                    itemCount: snapshot.data.length,
+                    itemCount: stations.length,
                     itemBuilder: (context, index) {
-                      StationName tempData = snapshot.data[index];
+                      Station station = stations[index];
                       return GestureDetector(
                         child: Card(
                           child: ListTile(
                             leading: Icon(Icons.ac_unit),
-                            title: Text(tempData.title),
+                            title: Text(station.title),
                             subtitle: Text(
-                                "Avstånd ${tempData.dist} km\n${tempData.kommun}, ${tempData.lan}"),
+                                "Avstånd ${station.dist} km\n${station.kommun}, ${station.lan}"),
                             trailing: Text(
-                              "${tempData.temp}°",
+                              "${station.temp}°",
                               style: Theme.of(context).textTheme.headline4,
                             ),
                             onTap: () {
-                              //saveLocationId(tempData.id);
+                              //saveLocationId(station.id);
                               Navigator.pushNamed(context, '/',
-                                  arguments: LocationArguments(tempData.id));
+                                  arguments: LocationArguments(station.id));
                             },
                           ),
                         ),

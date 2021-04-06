@@ -1,12 +1,12 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
-import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/responseTranslator.dart';
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
-Future<List<StationName>> fetchLocationList(bool getCache) async {
+Future<StationNameVerbose> fetchLocationList(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();
   var output;
 
@@ -17,17 +17,21 @@ Future<List<StationName>> fetchLocationList(bool getCache) async {
       output = responseTranslator(data);
     }
   } else {
-    Map<String, dynamic> urlParams = {
-      "json": "true",
-      "coordinates": "true",
-      "cli": Utils.createCryptoRandomString(),
-    };
+    try {
+      Map<String, dynamic> urlParams = {
+        "json": "true",
+        "coordinates": "true",
+      };
 
-    String data = await apiCaller(urlParams);
-    prefs.setString('locationListCache', data);
+      String data = await apiCaller(urlParams);
 
-    output = responseTranslator(data);
+      prefs.setString('locationListCache', data);
+
+      output = responseTranslator(data);
+    } catch (e) {
+      inspect(e);
+      output = null;
+    }
   }
-
   return output;
 }

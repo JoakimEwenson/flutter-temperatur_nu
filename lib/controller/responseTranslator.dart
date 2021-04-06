@@ -1,27 +1,16 @@
-import 'dart:convert';
 import 'dart:developer';
-
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
 /// This function takes in JSON string, translates it into JSON and does
 /// some magic to end up with a list of StationName objects
 
-Future<List<StationName>> responseTranslator(String input) async {
+Future<StationNameVerbose> responseTranslator(String input) async {
   // Intizialize empty output list and fill it with StationName objects
-  List<StationName> output = [];
   try {
-    // Translate input to json, iterate JSON response into list
-    var json = await jsonDecode(input);
-    List<dynamic> response = json["stations"];
-
-    response.forEach((row) {
-      output.add(StationName.fromRawJson(row));
-    });
+    StationNameVerbose output = stationNameVerboseFromJson(input);
+    return output;
   } catch (e) {
     inspect(e);
   }
-
-  inspect(output);
-
-  return output;
+  return null;
 }

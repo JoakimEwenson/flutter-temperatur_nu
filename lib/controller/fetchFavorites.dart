@@ -4,12 +4,11 @@ import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
-import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/controller/responseTranslator.dart';
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
-Future<List<StationName>> fetchFavorites(bool getCache) async {
+Future<StationNameVerbose> fetchFavorites(bool getCache) async {
   final prefs = await SharedPreferences.getInstance();
 
   // Output list of favorites
@@ -21,10 +20,7 @@ Future<List<StationName>> fetchFavorites(bool getCache) async {
           prefs.getString('favoritesListCache') != "")) {
     try {
       var json = jsonDecode(prefs.getString('favoritesListCache'));
-      List<dynamic> response = json["stations"].values.toList();
-      response.forEach((row) {
-        output.add(StationName.fromRawJson(row));
-      });
+      output = responseTranslator(json);
     } catch (e) {
       inspect(e);
       output = null;
@@ -38,7 +34,6 @@ Future<List<StationName>> fetchFavorites(bool getCache) async {
       Map<String, dynamic> settingsParams = {
         "json": "true",
         "verbose": "true",
-        "cli": Utils.createCryptoRandomString()
       };
       Map<String, String> locationParams = {
         "p": searchLocations,

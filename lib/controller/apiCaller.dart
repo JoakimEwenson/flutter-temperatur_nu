@@ -1,11 +1,19 @@
-import 'dart:developer';
 import 'package:http/http.dart' as http;
+
+import 'common.dart';
 
 // Make global base URL for API
 String baseUrl = "api.temperatur.nu";
-String apiVersion = "/tnu_1.17b.php";
+String apiVersion = "/tnu_1.17.php";
+String apiCli = "ewenson";
+String apiToken = "75bc346ecd42428015caa1cdf40150ea";
 
 Future<String> apiCaller(Map<String, dynamic> urlParams) async {
+  Map<String, dynamic> authParams = {
+    "cli": Utils.createCryptoRandomString(),
+    "token": apiToken,
+  };
+  urlParams.addAll(authParams);
   Uri url = new Uri.https(baseUrl, apiVersion, urlParams);
   print("Fetching from $url");
 
@@ -16,7 +24,7 @@ Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   if (response.statusCode == 200) {
     content = response.body;
   } else {
-    inspect(response.statusCode);
+    print("HTTP Status: ${response.statusCode}");
     throw Exception("HTTP Status: ${response.statusCode}");
   }
   return content;

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
-import 'package:temperatur_nu/model/StationName.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 
 // Import views
@@ -38,7 +38,7 @@ Future<Null> main() async {
 String locationId = 'default';
 
 // Prepare future data
-Future<StationName> post;
+Future<StationNameVerbose> post;
 
 // Begin app
 class MyApp extends StatelessWidget {
@@ -199,6 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
             case ConnectionState.done:
               {
                 if (snapshot.hasData) {
+                  Station station = snapshot.data.stations[0];
                   return LayoutBuilder(
                     builder: (BuildContext context,
                         BoxConstraints viewportConstraints) {
@@ -220,45 +221,55 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
-                                child: snapshot.data.temp != null
+                                child: station.temp != null
                                     ? Text(
-                                        "${snapshot.data.temp}°",
+                                        "${station.temp}°",
                                         style: Theme.of(context)
                                             .textTheme
                                             .headline1,
                                         textAlign: TextAlign.center,
                                       )
-                                    : Text(" "),
+                                    : Text(
+                                        "N/A",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline1,
+                                        textAlign: TextAlign.center,
+                                      ),
                               ),
                               FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  snapshot.data.title,
+                                  station.title,
                                   style: Theme.of(context).textTheme.headline3,
                                   textAlign: TextAlign.center,
                                 ),
                               ),
                               Text(
-                                snapshot.data.kommun,
+                                station.kommun,
                                 style: Theme.of(context).textTheme.headline5,
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: 20),
-                              Text(
-                                "min ${snapshot.data.min}° ◦ medel ${snapshot.data.average}° ◦ max ${snapshot.data.max}°",
-                                style: Theme.of(context).textTheme.bodyText1,
-                                textAlign: TextAlign.center,
-                              ),
+                              if (station.amm != null &&
+                                  station.amm.min != null &&
+                                  station.amm.average != null &&
+                                  station.amm.max != null)
+                                Text(
+                                  "min ${station.amm.min}° ◦ medel ${station.amm.average}° ◦ max ${station.amm.max}°",
+                                  style: Theme.of(context).textTheme.bodyText1,
+                                  textAlign: TextAlign.center,
+                                ),
                               SizedBox(
                                 height: 10,
                               ),
                               Text(
-                                snapshot.data.sourceInfo,
+                                station.sourceInfo,
                                 style: Theme.of(context).textTheme.caption,
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                'Uppdaterad ${snapshot.data.lastUpdate}',
+                                'Uppdaterad ${station.lastUpdate}',
                                 style: Theme.of(context).textTheme.caption,
                                 textAlign: TextAlign.center,
                               ),
@@ -280,14 +291,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                   try {
                                     if (isFavorite) {
                                       if (await removeFromFavorites(
-                                          snapshot.data.id)) {
+                                          station.id)) {
                                         isFavorite =
                                             await _checkFavoriteStatus();
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
                                             content: Text(
-                                              'Tog bort ${snapshot.data.title} från favoriter.',
+                                              'Tog bort ${station.title} från favoriter.',
                                             ),
                                           ));
                                         setState(() {
@@ -300,22 +311,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
                                             content: Text(
-                                                'Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
+                                                'Det gick inte att ta bort ${station.title} från favoriter.'),
                                           ));
                                         setState(() {
                                           isFavorite = false;
                                         });
                                       }
                                     } else {
-                                      if (await addToFavorites(
-                                          snapshot.data.id)) {
+                                      if (await addToFavorites(station.id)) {
                                         isFavorite =
                                             await _checkFavoriteStatus();
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
                                             content: Text(
-                                                'La till ${snapshot.data.title} i favoriter.'),
+                                                'La till ${station.title} i favoriter.'),
                                           ));
                                         setState(() {
                                           isFavorite = true;
@@ -327,7 +337,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
                                             content: Text(
-                                                'Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
+                                                'Det gick inte att lägga till ${station.title} i favoriter.'),
                                           ));
                                         setState(() {
                                           isFavorite = false;

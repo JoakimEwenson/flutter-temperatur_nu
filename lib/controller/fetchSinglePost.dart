@@ -3,19 +3,16 @@ import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
-import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchPosition.dart';
-import 'package:temperatur_nu/model/StationName.dart';
 import 'package:temperatur_nu/controller/responseTranslator.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
 // Fetch data and return a single StationName object
-Future<StationName> fetchStation(locationId) async {
+Future<StationNameVerbose> fetchStation(locationId) async {
   final prefs = await SharedPreferences.getInstance();
 
   String data = await fetchSinglePost(locationId);
-  var stationList = await responseTranslator(data);
-  var output = stationList[0];
-
+  var output = await responseTranslator(data);
   // Save location id to local storage for later, including gps if that was last requested
   prefs.setString('location', locationId);
 
@@ -40,7 +37,6 @@ Future<String> fetchSinglePost(String location) async {
     "amm": "true",
     "verbose": "true",
     "num": "1",
-    "cli": Utils.createCryptoRandomString()
   };
   Map<String, dynamic> locationParams;
 
