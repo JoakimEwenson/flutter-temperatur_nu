@@ -73,6 +73,8 @@ class _NearbyListPageState extends State<NearbyListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text('Närliggande mätpunkter'),
       ),
       drawer: AppDrawer(),
@@ -92,6 +94,10 @@ class _NearbyListPageState extends State<NearbyListPage> {
         future: locationList,
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              {
+                return loadingView();
+              }
             case ConnectionState.active:
               {
                 return loadingView();
@@ -136,12 +142,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
               {
                 break;
               }
-            case ConnectionState.waiting:
-              {
-                return loadingView();
-              }
           }
-
           return loadingView();
         });
   }
@@ -167,7 +168,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
   }
 
   // Error/No data view
-  noDataView(String msg) {
+  noDataView(var msg) {
     return Center(
       child: Column(
         children: <Widget>[
@@ -176,7 +177,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
             style: Theme.of(context).textTheme.headline3,
           ),
           Text(
-            msg,
+            "$msg",
             style: Theme.of(context).textTheme.bodyText1,
           ),
         ],

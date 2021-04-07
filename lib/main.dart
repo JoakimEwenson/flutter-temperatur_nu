@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,6 +39,9 @@ Future<Null> main() async {
 // Set up global String for location
 String locationId = 'default';
 
+// Set title
+String pageTitle = "temperatur.nu";
+
 // Prepare future data
 Future<StationNameVerbose> post;
 
@@ -47,14 +51,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(brightness: Brightness.dark),
+        appBarTheme: AppBarTheme(brightness: Brightness.light),
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
-        primaryColorBrightness: Brightness.dark,
+        primaryColorBrightness: Brightness.light,
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(
@@ -122,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
     timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > cacheTimeoutLong) {
+    if (timediff > cacheTimeout) {
       setState(() {
         post = fetchStation(locationId);
         setTimeStamp('mainScreenTimeout');
@@ -133,14 +137,20 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _getGpsLocation() async {
-    post = fetchStation('gps');
+    try {
+      post = fetchStation('gps');
+    } catch (e) {
+      inspect(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('temperatur.nu'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(pageTitle),
         actions: [
           IconButton(
             icon: userLocationIcon,
@@ -148,7 +158,9 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 try {
                   _getGpsLocation();
-                  userLocationIcon = Icon(Icons.gps_fixed);
+                  userLocationIcon = Icon(
+                    Icons.gps_fixed,
+                  );
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(e.toString()),

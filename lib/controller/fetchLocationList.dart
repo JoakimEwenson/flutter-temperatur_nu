@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
@@ -17,20 +16,15 @@ Future<StationNameVerbose> fetchLocationList(bool getCache) async {
       output = responseTranslator(data);
     }
   } else {
-    try {
-      Map<String, dynamic> urlParams = {
-        "coordinates": "true",
-      };
+    Map<String, dynamic> urlParams = {
+      "coordinates": "true",
+    };
 
-      String data = await apiCaller(urlParams);
+    String data = await apiCaller(urlParams);
 
-      prefs.setString('locationListCache', data);
+    prefs.setString('locationListCache', data);
 
-      output = responseTranslator(data);
-    } catch (e) {
-      inspect(e);
-      output = null;
-    }
+    output = responseTranslator(data);
   }
   return output;
 }

@@ -8,27 +8,26 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-            color: Theme.of(context).primaryColor,
+            //color: Theme.of(context).primaryColor,
             height: 120,
             child: DrawerHeader(
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: ExactAssetImage('icon/temperatur_nu.png'),
-                    //image: ExactAssetImage('icon/Solflinga.png'),
-                    fit: BoxFit.contain
-                  ),
+                      image: ExactAssetImage('icon/temperatur_nu.png'),
+                      //image: ExactAssetImage('icon/Solflinga.png'),
+                      fit: BoxFit.contain),
                 ),
               ),
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: <Widget>[
-          //         ListTile(
-          //           leading: Icon(Icons.ac_unit, ),
-          //           title: Text('temperatur.nu', style: Theme.of(context).textTheme.title, ),
-          //         ),
-          //       ],
-          //     ),
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: <Widget>[
+              //         ListTile(
+              //           leading: Icon(Icons.ac_unit, ),
+              //           title: Text('temperatur.nu', style: Theme.of(context).textTheme.title, ),
+              //         ),
+              //       ],
+              //     ),
             ),
           ),
           ListTile(

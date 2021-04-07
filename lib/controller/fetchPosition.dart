@@ -1,4 +1,6 @@
 // Get location
+import 'dart:developer';
+
 import 'package:geolocator/geolocator.dart';
 
 Future<Position> fetchPosition() async {
@@ -8,6 +10,7 @@ Future<Position> fetchPosition() async {
     //getting position without problems
     return pos;
   }).catchError((e) {
+    inspect(e);
     return null;
   });
   return position;

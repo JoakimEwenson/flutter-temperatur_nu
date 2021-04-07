@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
@@ -46,57 +45,45 @@ Future<String> fetchSinglePost(String location) async {
   // Setting up local data
   final prefs = await SharedPreferences.getInstance();
 
-  try {
-    // Check if GPS search or location ID search
-    if (location == 'gps') {
-      // Collect position (will return null if unable)
-      Position position = await fetchPosition();
+  // Check if GPS search or location ID search
+  if (location == 'gps') {
+    // Collect position (will return null if unable)
+    Position position = await fetchPosition();
 
-      if (position != null) {
-        locationParams = {
-          "lat": position.latitude.toString(),
-          "lon": position.longitude.toString()
-        };
-      } else {
-        throw TimeoutException("Kunde inte hämta position");
-      }
-    } else if (location == 'default') {
+    if (position != null) {
       locationParams = {
-        "p": defaultLocation,
+        "lat": position.latitude.toString(),
+        "lon": position.longitude.toString()
       };
     } else {
-      // Check if location id is stored in local storage or else, use default
-      if (prefs.getString('location') != null) {
-        locationId = prefs.getString('location');
-      } else {
-        locationId = defaultLocation;
-      }
-      locationParams = {
-        "p": locationId,
-      };
+      throw TimeoutException("Kunde inte hitta din position.");
     }
-
-    // Combine url parameters with location
-    Map<String, dynamic> urlParams = {};
-    urlParams.addAll(locationParams);
-    urlParams.addAll(settingsParams);
-
-    // Get data from API
-    var content = await apiCaller(urlParams);
-    // Save response string as cache
-    prefs.setString('singlePostCache', content);
-
-    //return output;
-    return content;
-  } on TimeoutException catch (e) {
-    return e.toString();
-  } on SocketException catch (e) {
-    return e.toString();
+  } else if (location == 'default') {
+    locationParams = {
+      "p": defaultLocation,
+    };
+  } else {
+    // Check if location id is stored in local storage or else, use default
+    if (prefs.getString('location') != null) {
+      locationId = prefs.getString('location');
+    } else {
+      locationId = defaultLocation;
+    }
+    locationParams = {
+      "p": locationId,
+    };
   }
-  // Handle empty or no result
-  on StateError catch (e) {
-    return e.toString();
-  } catch (e) {
-    return e.toString();
-  }
+
+  // Combine url parameters with location
+  Map<String, dynamic> urlParams = {};
+  urlParams.addAll(locationParams);
+  urlParams.addAll(settingsParams);
+
+  // Get data from API
+  var content = await apiCaller(urlParams);
+  // Save response string as cache
+  prefs.setString('singlePostCache', content);
+
+  //return output;
+  return content;
 }

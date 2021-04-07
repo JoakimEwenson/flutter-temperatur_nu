@@ -79,7 +79,7 @@ class _LocationListPageState extends State<LocationListPage> {
         timestamp = int.tryParse(sp.getString('locationListTimeout'));
         timediff = compareTimeStamp(
             timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-        if (timediff > cacheTimeoutLong) {
+        if (timediff > cacheTimeout) {
           setState(() {
             // Fetch list of locations, getCache false
             locations = fetchLocationList(false);
@@ -102,7 +102,7 @@ class _LocationListPageState extends State<LocationListPage> {
     timestamp = int.tryParse(sp.getString('locationListTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > cacheTimeoutLong) {
+    if (timediff > cacheTimeout) {
       setState(() {
         // Fetch list of locations, getCache false
         locations = fetchLocationList(false);
@@ -123,6 +123,8 @@ class _LocationListPageState extends State<LocationListPage> {
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
               title: Text('Mätstationer'),
               actions: <Widget>[
                 IconButton(

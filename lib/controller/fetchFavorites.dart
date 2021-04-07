@@ -26,31 +26,26 @@ Future<StationNameVerbose> fetchFavorites(bool getCache) async {
       output = null;
     }
   } else {
-    try {
-      // Save and fetch locally saved data
-      List searchLocationList = await fetchLocalFavorites();
-      String searchLocations = searchLocationList.join(',');
-      // JSON based response
-      Map<String, dynamic> settingsParams = {
-        "verbose": "true",
-      };
-      Map<String, String> locationParams = {
-        "p": searchLocations,
-      };
-      Map<String, dynamic> urlParams = {};
-      urlParams.addAll(locationParams);
-      urlParams.addAll(settingsParams);
+    // Save and fetch locally saved data
+    List searchLocationList = await fetchLocalFavorites();
+    String searchLocations = searchLocationList.join(',');
+    // JSON based response
+    Map<String, dynamic> settingsParams = {
+      "verbose": "true",
+    };
+    Map<String, String> locationParams = {
+      "p": searchLocations,
+    };
+    Map<String, dynamic> urlParams = {};
+    urlParams.addAll(locationParams);
+    urlParams.addAll(settingsParams);
 
-      String data = await apiCaller(urlParams);
+    String data = await apiCaller(urlParams);
 
-      // Write response to cache
-      prefs.setString('favoritesListCache', data);
+    // Write response to cache
+    prefs.setString('favoritesListCache', data);
 
-      output = responseTranslator(data);
-    } catch (e) {
-      inspect(e);
-      output = null;
-    }
+    output = responseTranslator(data);
   }
 
   return output;

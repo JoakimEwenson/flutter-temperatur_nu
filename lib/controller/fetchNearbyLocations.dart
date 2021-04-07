@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'dart:async';
 
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,32 +22,30 @@ Future<StationNameVerbose> fetchNearbyLocations(bool getCache) async {
       output = responseTranslator(data);
     }
   } else {
-    try {
-      position = await fetchPosition();
+    position = await fetchPosition();
 
-      if (position != null) {
-        Map<String, dynamic> settingsParams = {
-          "amm": "true",
-          "verbose": "true",
-          "num": "10",
-        };
-        Map<String, String> locationParams = {
-          "lat": position.latitude.toString(),
-          "lon": position.longitude.toString()
-        };
-        Map<String, dynamic> urlParams = {};
-        urlParams.addAll(locationParams);
-        urlParams.addAll(settingsParams);
+    if (position != null) {
+      Map<String, dynamic> settingsParams = {
+        "amm": "true",
+        "verbose": "true",
+        "num": "10",
+      };
+      Map<String, String> locationParams = {
+        "lat": position.latitude.toString(),
+        "lon": position.longitude.toString()
+      };
+      Map<String, dynamic> urlParams = {};
+      urlParams.addAll(locationParams);
+      urlParams.addAll(settingsParams);
 
-        String data = await apiCaller(urlParams);
+      String data = await apiCaller(urlParams);
 
-        // Write response to cache
-        prefs.setString('nearbyLocationListCache', data);
+      // Write response to cache
+      prefs.setString('nearbyLocationListCache', data);
 
-        output = responseTranslator(data);
-      }
-    } catch (e) {
-      inspect(e);
+      output = responseTranslator(data);
+    } else {
+      throw TimeoutException("Kunde inte hitta din position.");
     }
   }
 
