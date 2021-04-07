@@ -27,7 +27,6 @@ Future<StationNameVerbose> fetchNearbyLocations(bool getCache) async {
 
       if (position != null) {
         Map<String, dynamic> settingsParams = {
-          "json": "true",
           "amm": "true",
           "verbose": "true",
           "num": "10",

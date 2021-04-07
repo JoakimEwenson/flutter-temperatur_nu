@@ -1,7 +1,5 @@
 import 'package:http/http.dart' as http;
 
-import 'common.dart';
-
 // Make global base URL for API
 String baseUrl = "api.temperatur.nu";
 String apiVersion = "/tnu_1.17.php";
@@ -10,7 +8,7 @@ String apiToken = "75bc346ecd42428015caa1cdf40150ea";
 
 Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   Map<String, dynamic> authParams = {
-    "cli": Utils.createCryptoRandomString(),
+    "cli": apiCli,
     "token": apiToken,
   };
   urlParams.addAll(authParams);

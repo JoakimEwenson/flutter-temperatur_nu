@@ -32,7 +32,6 @@ Future<StationNameVerbose> fetchFavorites(bool getCache) async {
       String searchLocations = searchLocationList.join(',');
       // JSON based response
       Map<String, dynamic> settingsParams = {
-        "json": "true",
         "verbose": "true",
       };
       Map<String, String> locationParams = {

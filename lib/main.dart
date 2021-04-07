@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
@@ -269,7 +270,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 textAlign: TextAlign.center,
                               ),
                               Text(
-                                'Uppdaterad ${station.lastUpdate}',
+                                'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(station.lastUpdate)}',
                                 style: Theme.of(context).textTheme.caption,
                                 textAlign: TextAlign.center,
                               ),

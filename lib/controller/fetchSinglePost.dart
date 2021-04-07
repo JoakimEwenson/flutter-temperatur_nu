@@ -33,7 +33,6 @@ Future<String> fetchSinglePostCache() async {
 Future<String> fetchSinglePost(String location) async {
   // Set up url parameters
   Map<String, dynamic> settingsParams = {
-    "json": "true",
     "amm": "true",
     "verbose": "true",
     "num": "1",

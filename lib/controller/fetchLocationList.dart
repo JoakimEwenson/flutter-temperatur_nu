@@ -19,7 +19,6 @@ Future<StationNameVerbose> fetchLocationList(bool getCache) async {
   } else {
     try {
       Map<String, dynamic> urlParams = {
-        "json": "true",
         "coordinates": "true",
       };
 
