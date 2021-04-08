@@ -118,10 +118,17 @@ class _NearbyListPageState extends State<NearbyListPage> {
                             title: Text(station.title),
                             subtitle: Text(
                                 "Avstånd ${station.dist} km\n${station.kommun}, ${station.lan}"),
-                            trailing: Text(
-                              "${station.temp}°",
-                              style: Theme.of(context).textTheme.headline4,
-                            ),
+                            trailing: station.temp != null
+                                ? Text(
+                                    "${station.temp}°",
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
+                                  )
+                                : Text(
+                                    'N/A',
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
+                                  ),
                             onTap: () {
                               //saveLocationId(station.id);
                               Navigator.pushNamed(context, '/',

@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
@@ -15,15 +13,11 @@ Future<StationNameVerbose> fetchFavorites(bool getCache) async {
   var output;
 
   // Check if cached data should be fetched or if API call should be made
-  if (getCache &&
-      (prefs.containsKey('favoritesListCache') &&
-          prefs.getString('favoritesListCache') != "")) {
-    try {
-      var json = jsonDecode(prefs.getString('favoritesListCache'));
+  if (getCache) {
+    if (prefs.containsKey('favoritesListCache') &&
+        prefs.getString('favoritesListCache') != "") {
+      var json = prefs.getString('favoritesListCache');
       output = responseTranslator(json);
-    } catch (e) {
-      inspect(e);
-      output = null;
     }
   } else {
     // Save and fetch locally saved data

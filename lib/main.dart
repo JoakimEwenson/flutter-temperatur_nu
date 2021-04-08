@@ -62,6 +62,7 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(
+        appBarTheme: AppBarTheme(brightness: Brightness.dark),
         brightness: Brightness.dark,
         accentColor: Colors.grey[100],
       ),

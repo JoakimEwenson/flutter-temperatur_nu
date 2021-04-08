@@ -4,6 +4,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      elevation: 0,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -19,15 +20,6 @@ class AppDrawer extends StatelessWidget {
                       fit: BoxFit.contain),
                 ),
               ),
-              //     child: Column(
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       children: <Widget>[
-              //         ListTile(
-              //           leading: Icon(Icons.ac_unit, ),
-              //           title: Text('temperatur.nu', style: Theme.of(context).textTheme.title, ),
-              //         ),
-              //       ],
-              //     ),
             ),
           ),
           ListTile(

@@ -13,6 +13,11 @@ Future<String> getTimeStamp(String title) async {
   return timestamp;
 }
 
+Future<void> removeTimeStamp(String title) async {
+  SharedPreferences sp = await SharedPreferences.getInstance();
+  sp.setString(title, "0");
+}
+
 num compareTimeStamp(num saved, num current) {
   return current - saved;
 }

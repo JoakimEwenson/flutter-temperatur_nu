@@ -55,7 +55,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _refreshList() async {
-    num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
+    num timestamp = int.tryParse(sp.getString('favoritesListTimeout'));
     num timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > cacheTimeout) {
@@ -116,10 +116,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             title: Text(station.title),
                             subtitle:
                                 Text("${station.kommun} - ${station.lan}"),
-                            trailing: Text(
-                              "${station.temp}°",
-                              style: Theme.of(context).textTheme.headline4,
-                            ),
+                            trailing: station.temp != null
+                                ? Text(
+                                    "${station.temp}°",
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
+                                  )
+                                : Text(
+                                    'N/A',
+                                    style:
+                                        Theme.of(context).textTheme.headline4,
+                                  ),
                             onTap: () {
                               //saveLocationId(station.id);
                               Navigator.pushNamed(context, '/',

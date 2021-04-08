@@ -1,8 +1,6 @@
 // Fetch saved favorites from local storage
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
-
-import 'common.dart';
+import 'package:temperatur_nu/controller/timestamps.dart';
 
 Future<List> fetchLocalFavorites() async {
   var sp = await SharedPreferences.getInstance();
@@ -27,14 +25,14 @@ Future<bool> addToFavorites(String locationId) async {
   var favList = await fetchLocalFavorites();
   favList = await cleanupFavoritesList(favList);
 
-  if (!(await existsInFavorites(locationId)) &&
-      (favList.length < maxFavorites)) {
+  if (!(await existsInFavorites(locationId))) {
     favList.add(locationId);
     saveLocalFavorites(favList.toSet().toList());
+    removeTimeStamp('favoritesListTimeout');
     return true;
   } else {
     //throw Exception('För många favoriter sparade, max antal är enligt konstant maxFavorites.');
-    throw TooManyFavoritesException();
+    throw Exception('Platsen $locationId finns redan i dina favoriter.');
     //return false;
   }
 }
@@ -53,6 +51,7 @@ Future<bool> removeFromFavorites(String locationId) async {
 
   if (favList.remove(locationId)) {
     saveLocalFavorites(favList);
+    removeTimeStamp('favoritesListTimeout');
     return true;
   } else {
     throw Exception(
