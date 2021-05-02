@@ -40,6 +40,7 @@ class Station {
   Station({
     this.title,
     this.id,
+    this.isFavorite,
     this.temp,
     this.lat,
     this.lon,
@@ -60,6 +61,7 @@ class Station {
 
   String title;
   String id;
+  bool isFavorite;
   double temp;
   String lat;
   String lon;
@@ -80,6 +82,7 @@ class Station {
   factory Station.fromJson(Map<String, dynamic> json) => Station(
         title: json["title"],
         id: json["id"],
+        isFavorite: null,
         temp: json["temp"] != null ? double.tryParse(json["temp"]) : null,
         lat: json["lat"],
         lon: json["lon"],

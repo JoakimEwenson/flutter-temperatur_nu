@@ -25,7 +25,12 @@ SharedPreferences sp;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.black,
+        statusBarColor: Colors.black,
+        statusBarBrightness: Brightness.dark),
+  );
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
@@ -54,7 +59,7 @@ class MyApp extends StatelessWidget {
       //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(brightness: Brightness.light),
+        appBarTheme: AppBarTheme(brightness: Brightness.dark),
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
@@ -66,6 +71,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.dark,
         accentColor: Colors.grey[100],
       ),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (context) => MyHomePage(),
@@ -90,7 +96,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
-  bool isFavorite = false;
   num timestamp;
   num timediff;
   Icon userLocationIcon = Icon(Icons.gps_not_fixed);
@@ -109,20 +114,11 @@ class _MyHomePageState extends State<MyHomePage> {
         setTimeStamp('mainScreenTimeout');
       });
     });
-    existsInFavorites(locationId).then((exists) {
-      setState(() {
-        isFavorite = exists;
-      });
-    });
   }
 
   Future<void> _refreshList() async {
     locationId = sp.getString('location');
-    existsInFavorites(locationId).then((exists) {
-      setState(() {
-        isFavorite = exists;
-      });
-    });
+    print(locationId);
 
     timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     timediff = compareTimeStamp(
@@ -193,10 +189,6 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       locationId = sp.getString('location');
     }
-    // Check if location is in favorites
-    existsInFavorites(locationId).then((exists) {
-      isFavorite = exists;
-    });
 
     return FutureBuilder(
         future: post,
@@ -214,6 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
               {
                 if (snapshot.hasData) {
                   Station station = snapshot.data.stations[0];
+                  inspect(station);
                   return LayoutBuilder(
                     builder: (BuildContext context,
                         BoxConstraints viewportConstraints) {
@@ -291,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 height: 10,
                               ),
                               GestureDetector(
-                                child: isFavorite
+                                child: station.isFavorite
                                     ? Icon(
                                         Icons.favorite,
                                         color: Colors.red,
@@ -303,11 +296,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                       ),
                                 onTap: () async {
                                   try {
-                                    if (isFavorite) {
+                                    if (station.isFavorite) {
                                       if (await removeFromFavorites(
                                           station.id)) {
-                                        isFavorite =
-                                            await _checkFavoriteStatus();
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
@@ -316,11 +309,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                           ));
                                         setState(() {
-                                          isFavorite = false;
+                                          station.isFavorite = false;
                                         });
                                       } else {
-                                        isFavorite =
-                                            await _checkFavoriteStatus();
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
@@ -328,13 +321,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 'Det gick inte att ta bort ${station.title} från favoriter.'),
                                           ));
                                         setState(() {
-                                          isFavorite = false;
+                                          station.isFavorite = false;
                                         });
                                       }
                                     } else {
                                       if (await addToFavorites(station.id)) {
-                                        isFavorite =
-                                            await _checkFavoriteStatus();
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
@@ -342,11 +335,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 'La till ${station.title} i favoriter.'),
                                           ));
                                         setState(() {
-                                          isFavorite = true;
+                                          station.isFavorite = true;
                                         });
                                       } else {
-                                        isFavorite =
-                                            await _checkFavoriteStatus();
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
                                         ScaffoldMessenger.of(context)
                                           ..removeCurrentSnackBar()
                                           ..showSnackBar(SnackBar(
@@ -354,7 +347,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 'Det gick inte att lägga till ${station.title} i favoriter.'),
                                           ));
                                         setState(() {
-                                          isFavorite = false;
+                                          station.isFavorite = false;
                                         });
                                       }
                                       setState(() {});
@@ -393,10 +386,6 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           return loadingView();
         });
-  }
-
-  _checkFavoriteStatus() async {
-    isFavorite = await existsInFavorites(locationId);
   }
 
   // Loading indicator

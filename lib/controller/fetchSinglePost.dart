@@ -13,7 +13,8 @@ Future<StationNameVerbose> fetchStation(locationId) async {
   String data = await fetchSinglePost(locationId);
   var output = await responseTranslator(data);
   // Save location id to local storage for later, including gps if that was last requested
-  prefs.setString('location', locationId);
+
+  prefs.setString('location', output.stations[0].id ?? "default");
 
   return output;
 }
