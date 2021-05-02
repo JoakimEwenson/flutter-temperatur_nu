@@ -9,7 +9,6 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-            //color: Theme.of(context).primaryColor,
             height: 120,
             child: DrawerHeader(
               child: Container(
