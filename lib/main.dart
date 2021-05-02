@@ -58,7 +58,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     var platform = Theme.of(context).platform;
-    inspect(platform);
     var appBarThemeiOS = AppBarTheme(
       brightness: Brightness.light,
     );
@@ -72,8 +71,8 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         appBarTheme:
             platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
-        backgroundColor: honeydew,
         brightness: Brightness.light,
+        canvasColor: appCanvasColor,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
         primaryColorBrightness: Brightness.light,
@@ -313,7 +312,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: station.isFavorite
                                             ? Icon(
                                                 Icons.favorite,
-                                                color: imperialred,
+                                                color: imperialRed,
                                                 size: 50.0,
                                               )
                                             : Icon(

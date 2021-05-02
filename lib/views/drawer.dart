@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -22,7 +23,9 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(
+              Icons.home,
+            ),
             title: Text('Startsida'),
             onTap: () {
               Navigator.of(context).pop();
@@ -30,7 +33,10 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.favorite),
+            leading: Icon(
+              Icons.favorite,
+              color: imperialRed,
+            ),
             title: Text('Favoriter'),
             onTap: () {
               Navigator.of(context).pop();
@@ -38,7 +44,9 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.gps_fixed),
+            leading: Icon(
+              Icons.gps_fixed,
+            ),
             title: Text('Närliggande mätpunkter'),
             onTap: () {
               Navigator.of(context).pop();
@@ -46,7 +54,9 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.list),
+            leading: Icon(
+              Icons.list,
+            ),
             title: Text('Lista alla mätpunkter'),
             onTap: () {
               Navigator.of(context).pop();
@@ -54,7 +64,9 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.info),
+            leading: Icon(
+              Icons.info,
+            ),
             title: Text('Om appen'),
             onTap: () {
               Navigator.of(context).pop();

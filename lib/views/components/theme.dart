@@ -1,8 +1,12 @@
 // Color palette
 import 'package:flutter/material.dart';
 
-Color imperialred = Color.fromRGBO(230, 57, 70, 1);
-Color honeydew = Color.fromRGBO(241, 250, 238, 1);
-Color powderblue = Color.fromRGBO(168, 218, 220, 1);
-Color celadonblue = Color.fromRGBO(69, 123, 157, 1);
-Color prussianblue = Color.fromRGBO(29, 53, 87, 1);
+// Set https://coolors.co/2b2d42-8d99ae-edf2f4-ef233c-d90429
+Color spaceCadet = Color.fromRGBO(43, 45, 66, 1);
+Color manatee = Color.fromRGBO(141, 153, 174, 1);
+Color aliceBlue = Color.fromRGBO(237, 242, 244, 1);
+Color imperialRed = Color.fromRGBO(230, 57, 70, 1);
+Color amaranthRed = Color.fromRGBO(217, 4, 41, 1);
+
+// App theme
+Color appCanvasColor = aliceBlue;
