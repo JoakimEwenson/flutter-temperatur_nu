@@ -14,7 +14,8 @@ Future<StationNameVerbose> fetchStation(locationId) async {
   var output = await responseTranslator(data);
   // Save location id to local storage for later, including gps if that was last requested
 
-  prefs.setString('location', output.stations[0].id ?? "default");
+  prefs.setString(
+      'location', output != null ? output.stations[0].id : "default");
 
   return output;
 }

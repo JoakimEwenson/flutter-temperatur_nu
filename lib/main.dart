@@ -27,11 +27,10 @@ Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.black,
-        statusBarColor: Colors.black,
-        statusBarBrightness: Brightness.dark),
+      statusBarColor: Colors.black,
+      statusBarBrightness: Brightness.light, // this one for iOS
+    ),
   );
-
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('location') ?? 'default';
   if (sp.containsKey('singlePostCache')) {
@@ -51,15 +50,29 @@ String pageTitle = "temperatur.nu";
 Future<StationNameVerbose> post;
 
 // Begin app
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    var platform = Theme.of(context).platform;
+    inspect(platform);
+    var appBarThemeiOS = AppBarTheme(
+      brightness: Brightness.light,
+    );
+    var appBarTheme = AppBarTheme(
+      backgroundColor: Colors.black,
+      brightness: Brightness.dark,
+    );
     return MaterialApp(
       //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(brightness: Brightness.dark),
+        appBarTheme:
+            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
         brightness: Brightness.light,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
@@ -67,7 +80,10 @@ class MyApp extends StatelessWidget {
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(
-        appBarTheme: AppBarTheme(brightness: Brightness.dark),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          brightness: Brightness.dark,
+        ),
         brightness: Brightness.dark,
         accentColor: Colors.grey[100],
       ),
