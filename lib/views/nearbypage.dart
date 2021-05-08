@@ -75,7 +75,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Närliggande mätpunkter'),
+        //title: Text('Närliggande mätpunkter'),
       ),
       drawer: AppDrawer(),
       //body: nearbyList(),

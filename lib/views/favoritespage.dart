@@ -76,7 +76,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Favoriter'),
+        //title: Text('Favoriter'),
       ),
       drawer: AppDrawer(),
       body: RefreshIndicator(

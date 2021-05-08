@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
+import 'package:temperatur_nu/controller/userHome.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
@@ -31,7 +32,7 @@ Future<Null> main() async {
     ),
   );
   sp = await SharedPreferences.getInstance();
-  locationId = sp.getString('location') ?? 'default';
+  locationId = sp.getString('userHome ') ?? 'default';
   if (sp.containsKey('singlePostCache')) {
     //print("Cached string:\n" + sp.getString('singlePostCache'));
   }
@@ -162,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(pageTitle),
+        //title: Text(pageTitle),
         actions: [
           IconButton(
             icon: userLocationIcon,
@@ -195,6 +196,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _singlePostPage() {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     // Get and check if arguments is passed to the screen
     final LocationArguments args = ModalRoute.of(context).settings.arguments;
     if (args != null) {
@@ -233,202 +236,233 @@ class _MyHomePageState extends State<MyHomePage> {
                             minHeight: viewportConstraints.maxHeight,
                             minWidth: viewportConstraints.maxWidth,
                           ),
-                          child: Stack(
+                          child: Column(
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  Card(
-                                    elevation: 0,
-                                    child: Container(
-                                      margin: const EdgeInsets.all(4),
-                                      padding: const EdgeInsets.all(8),
-                                      width: double.infinity,
-                                      child: Column(
-                                        children: [
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: station.temp != null
-                                                ? Text(
-                                                    "${station.temp}°",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline1,
-                                                    textAlign: TextAlign.center,
-                                                  )
-                                                : Text(
-                                                    "N/A",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .headline1,
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                          ),
-                                          FittedBox(
-                                            fit: BoxFit.scaleDown,
-                                            child: Text(
-                                              station.title,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .headline3,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Text(
-                                            station.kommun,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline5,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          SizedBox(height: 20),
-                                          if (station.amm != null &&
-                                              station.amm.min != null &&
-                                              station.amm.average != null &&
-                                              station.amm.max != null)
-                                            Text(
-                                              "min ${station.amm.min}° ◦ medel ${station.amm.average}° ◦ max ${station.amm.max}°",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyText1,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            station.sourceInfo,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          Text(
-                                            'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(station.lastUpdate)}',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .caption,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Positioned(
-                                child: IconButton(
-                                  icon: station.isFavorite
-                                      ? Icon(
-                                          Icons.favorite,
-                                          color: imperialRed,
-                                        )
-                                      : Icon(Icons.favorite_outline),
-                                  onPressed: () async {
-                                    try {
-                                      if (station.isFavorite) {
-                                        if (await removeFromFavorites(
-                                            station.id)) {
-                                          station.isFavorite =
-                                              await existsInFavorites(
-                                                  station.id);
-                                          ScaffoldMessenger.of(context)
-                                            ..removeCurrentSnackBar()
-                                            ..showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Tog bort ${station.title} från favoriter.',
+                              Stack(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: <Widget>[
+                                      Card(
+                                        elevation: 0,
+                                        child: Container(
+                                          margin: const EdgeInsets.all(4),
+                                          padding: const EdgeInsets.all(8),
+                                          width: double.infinity,
+                                          child: Column(
+                                            children: [
+                                              FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: station.temp != null
+                                                    ? Text(
+                                                        "${station.temp}°",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline1,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      )
+                                                    : Text(
+                                                        "N/A",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headline1,
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                              ),
+                                              FittedBox(
+                                                fit: BoxFit.scaleDown,
+                                                child: Text(
+                                                  station.title,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headline3,
+                                                  textAlign: TextAlign.center,
                                                 ),
                                               ),
-                                            );
-                                          setState(() {
-                                            station.isFavorite = false;
-                                          });
-                                        } else {
-                                          station.isFavorite =
-                                              await existsInFavorites(
-                                                  station.id);
-                                          ScaffoldMessenger.of(context)
-                                            ..removeCurrentSnackBar()
-                                            ..showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    'Det gick inte att ta bort ${station.title} från favoriter.'),
+                                              Text(
+                                                station.kommun,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .headline5,
+                                                textAlign: TextAlign.center,
                                               ),
-                                            );
-                                          setState(() {
-                                            station.isFavorite = false;
-                                          });
-                                        }
-                                      } else {
-                                        if (await addToFavorites(station.id)) {
-                                          station.isFavorite =
-                                              await existsInFavorites(
-                                                  station.id);
-                                          ScaffoldMessenger.of(context)
-                                            ..removeCurrentSnackBar()
-                                            ..showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    'La till ${station.title} i favoriter.'),
+                                              SizedBox(height: 20),
+                                              if (station.amm != null &&
+                                                  station.amm.min != null &&
+                                                  station.amm.average != null &&
+                                                  station.amm.max != null)
+                                                Text(
+                                                  "min ${station.amm.min}° ◦ medel ${station.amm.average}° ◦ max ${station.amm.max}°",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyText1,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                            );
-                                          setState(() {
-                                            station.isFavorite = true;
-                                          });
-                                        } else {
-                                          station.isFavorite =
-                                              await existsInFavorites(
-                                                  station.id);
-                                          ScaffoldMessenger.of(context)
-                                            ..removeCurrentSnackBar()
-                                            ..showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                    'Det gick inte att lägga till ${station.title} i favoriter.'),
+                                              Text(
+                                                station.sourceInfo,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .caption,
+                                                textAlign: TextAlign.center,
                                               ),
-                                            );
-                                          setState(() {
-                                            station.isFavorite = false;
-                                          });
-                                        }
-                                        setState(() {});
-                                      }
-                                    } on TooManyFavoritesException catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(e.errorMsg()),
+                                              Text(
+                                                'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(station.lastUpdate)}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .caption,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                    } catch (e) {
-                                      ScaffoldMessenger.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(
-                                          SnackBar(
-                                            content: Text(e.toString()),
-                                          ),
-                                        );
-                                    }
-                                  },
-                                ),
-                                top: 0,
-                                left: 0,
-                              ),
-                              Positioned(
-                                child: IconButton(
-                                  icon: station.isFavorite
-                                      ? Icon(
-                                          Icons.home,
-                                          color: Colors.blueGrey,
-                                        )
-                                      : Icon(Icons.home_outlined),
-                                  onPressed: () {},
-                                ),
-                                top: 0,
-                                right: 0,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Positioned(
+                                    child: IconButton(
+                                      icon: station.isFavorite
+                                          ? Icon(
+                                              Icons.favorite,
+                                              color: imperialRed,
+                                            )
+                                          : Icon(Icons.favorite_outline),
+                                      onPressed: () async {
+                                        try {
+                                          if (station.isFavorite) {
+                                            if (await removeFromFavorites(
+                                                station.id)) {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Tog bort ${station.title} från favoriter.',
+                                                    ),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            } else {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Det gick inte att ta bort ${station.title} från favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            }
+                                          } else {
+                                            if (await addToFavorites(
+                                                station.id)) {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'La till ${station.title} i favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = true;
+                                              });
+                                            } else {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Det gick inte att lägga till ${station.title} i favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            }
+                                            setState(() {});
+                                          }
+                                        } on TooManyFavoritesException catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                            ..removeCurrentSnackBar()
+                                            ..showSnackBar(
+                                              SnackBar(
+                                                content: Text(e.errorMsg()),
+                                              ),
+                                            );
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                            ..removeCurrentSnackBar()
+                                            ..showSnackBar(
+                                              SnackBar(
+                                                content: Text(e.toString()),
+                                              ),
+                                            );
+                                        }
+                                      },
+                                    ),
+                                    top: 0,
+                                    left: 0,
+                                  ),
+                                  Positioned(
+                                    child: IconButton(
+                                      icon: station.isHome
+                                          ? Icon(
+                                              Icons.home,
+                                              color: _isDarkMode
+                                                  ? darkIconColor
+                                                  : lightIconColor,
+                                            )
+                                          : Icon(Icons.home_outlined),
+                                      onPressed: () async {
+                                        try {
+                                          if (station.isHome) {
+                                            ScaffoldMessenger.of(context)
+                                              ..removeCurrentSnackBar()
+                                              ..showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Du har redan ${station.title} som hemstation')));
+                                          }
+                                          if (!station.isHome) {
+                                            ScaffoldMessenger.of(context)
+                                              ..removeCurrentSnackBar()
+                                              ..showSnackBar(SnackBar(
+                                                  content: Text(
+                                                      'Du har valt ${station.title} som hemstation')));
+                                            setState(() {
+                                              saveUserHome(station.id);
+                                              station.isHome = true;
+                                            });
+                                          }
+                                        } catch (e) {}
+                                      },
+                                    ),
+                                    top: 0,
+                                    right: 0,
+                                  ),
+                                ],
                               ),
                             ],
                           ),

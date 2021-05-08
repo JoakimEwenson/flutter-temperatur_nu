@@ -4,6 +4,8 @@ import 'package:temperatur_nu/views/components/theme.dart';
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Drawer(
       elevation: 0,
       child: ListView(
@@ -25,8 +27,9 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(
               Icons.home,
+              color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
-            title: Text('Startsida'),
+            title: Text('Hemstation'),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
@@ -46,6 +49,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(
               Icons.gps_fixed,
+              color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
             title: Text('Närliggande mätpunkter'),
             onTap: () {
@@ -56,6 +60,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(
               Icons.list,
+              color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
             title: Text('Lista alla mätpunkter'),
             onTap: () {
@@ -66,6 +71,7 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(
               Icons.info,
+              color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
             title: Text('Om appen'),
             onTap: () {
