@@ -41,6 +41,7 @@ class Station {
     this.title,
     this.id,
     this.isFavorite,
+    this.isHome,
     this.temp,
     this.lat,
     this.lon,
@@ -62,6 +63,7 @@ class Station {
   String title;
   String id;
   bool isFavorite;
+  bool isHome;
   double temp;
   String lat;
   String lon;

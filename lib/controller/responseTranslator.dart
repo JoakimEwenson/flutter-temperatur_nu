@@ -11,6 +11,7 @@ Future<StationNameVerbose> responseTranslator(String input) async {
     StationNameVerbose output = stationNameVerboseFromJson(input);
     output.stations.forEach((station) async {
       station.isFavorite = await existsInFavorites(station.id);
+      station.isHome = await existsInFavorites(station.id);
     });
     return output;
   } catch (e) {

@@ -110,33 +110,41 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       itemBuilder: (context, index) {
                         Station station = stations[index];
                         return GestureDetector(
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
                             child: Card(
-                          child: ListTile(
-                            leading: Icon(Icons.ac_unit),
-                            title: Text(station.title),
-                            subtitle:
-                                Text("${station.kommun} - ${station.lan}"),
-                            trailing: station.temp != null
-                                ? Text(
-                                    "${station.temp}°",
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  )
-                                : Text(
-                                    'N/A',
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  ),
-                            onTap: () {
-                              //saveLocationId(station.id);
-                              Navigator.pushNamed(context, '/',
-                                  arguments: LocationArguments(station.id));
-                            },
-                            onLongPress: () async {
-                              await favoritesDialog(context, station, "remove");
-                            },
+                              elevation: 0,
+                              child: ListTile(
+                                leading: Icon(Icons.ac_unit),
+                                title: Text(station.title),
+                                subtitle:
+                                    Text("${station.kommun} - ${station.lan}"),
+                                trailing: station.temp != null
+                                    ? Text(
+                                        "${station.temp}°",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline4,
+                                      )
+                                    : Text(
+                                        'N/A',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline4,
+                                      ),
+                                onTap: () {
+                                  //saveLocationId(station.id);
+                                  Navigator.pushNamed(context, '/',
+                                      arguments: LocationArguments(station.id));
+                                },
+                                onLongPress: () async {
+                                  await favoritesDialog(
+                                      context, station, "remove");
+                                },
+                              ),
+                            ),
                           ),
-                        ));
+                        );
                       },
                     );
                   } else {

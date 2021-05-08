@@ -112,28 +112,32 @@ class _NearbyListPageState extends State<NearbyListPage> {
                     itemBuilder: (context, index) {
                       Station station = stations[index];
                       return GestureDetector(
-                        child: Card(
-                          child: ListTile(
-                            leading: Icon(Icons.ac_unit),
-                            title: Text(station.title),
-                            subtitle: Text(
-                                "Avstånd ${station.dist} km\n${station.kommun}, ${station.lan}"),
-                            trailing: station.temp != null
-                                ? Text(
-                                    "${station.temp}°",
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  )
-                                : Text(
-                                    'N/A',
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  ),
-                            onTap: () {
-                              //saveLocationId(station.id);
-                              Navigator.pushNamed(context, '/',
-                                  arguments: LocationArguments(station.id));
-                            },
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Card(
+                            elevation: 0,
+                            child: ListTile(
+                              leading: Icon(Icons.ac_unit),
+                              title: Text(station.title),
+                              subtitle: Text(
+                                  "Avstånd ${station.dist} km\n${station.kommun}, ${station.lan}"),
+                              trailing: station.temp != null
+                                  ? Text(
+                                      "${station.temp}°",
+                                      style:
+                                          Theme.of(context).textTheme.headline4,
+                                    )
+                                  : Text(
+                                      'N/A',
+                                      style:
+                                          Theme.of(context).textTheme.headline4,
+                                    ),
+                              onTap: () {
+                                //saveLocationId(station.id);
+                                Navigator.pushNamed(context, '/',
+                                    arguments: LocationArguments(station.id));
+                              },
+                            ),
                           ),
                         ),
                       );
