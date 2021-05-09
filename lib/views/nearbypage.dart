@@ -134,7 +134,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                                     ),
                               onTap: () {
                                 //saveLocationId(station.id);
-                                Navigator.pushNamed(context, '/',
+                                Navigator.pushNamed(context, '/SingleStation',
                                     arguments: LocationArguments(station.id));
                               },
                             ),

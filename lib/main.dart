@@ -92,9 +92,10 @@ class _MyAppState extends State<MyApp> {
       routes: <String, WidgetBuilder>{
         '/': (context) => MyHomePage(),
         '/Favorites': (context) => FavoritesPage(),
-        '/Nearby': (context) => NearbyListPage(),
         '/LocationList': (context) => LocationListPage(),
+        '/Nearby': (context) => NearbyListPage(),
         '/Settings': (context) => SettingsPage(),
+        '/SingleStation': (context) => MyHomePage(),
       },
     );
   }

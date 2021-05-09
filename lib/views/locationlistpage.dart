@@ -308,7 +308,7 @@ class _LocationListPageState extends State<LocationListPage> {
                                   ),
                             onTap: () {
                               //saveLocationId(station.id);
-                              Navigator.pushNamed(context, '/',
+                              Navigator.pushNamed(context, '/SingleStation',
                                   arguments: LocationArguments(station.id));
                             },
                           ),

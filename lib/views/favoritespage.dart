@@ -134,7 +134,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                       ),
                                 onTap: () {
                                   //saveLocationId(station.id);
-                                  Navigator.pushNamed(context, '/',
+                                  Navigator.pushNamed(context, '/SingleStation',
                                       arguments: LocationArguments(station.id));
                                 },
                                 onLongPress: () async {
