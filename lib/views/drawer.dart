@@ -32,7 +32,8 @@ class AppDrawer extends StatelessWidget {
             title: Text('Hemstation'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
+              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,
+                  arguments: null);
             },
           ),
           ListTile(

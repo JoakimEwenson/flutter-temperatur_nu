@@ -119,7 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    locationId = sp.getString('location');
+    locationId = sp.getString('userHome');
+
+    print(locationId);
     Future.delayed(const Duration(milliseconds: 250), () async {
       if (!sp.containsKey('mainScreenTimeout')) {
         setTimeStamp('mainScreenTimeout');
@@ -132,20 +134,24 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _refreshList() async {
-    locationId = sp.getString('location');
-    print(locationId);
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
+  Future<void> _refreshList(String location) async {
     timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > cacheTimeout) {
       setState(() {
-        post = fetchStation(locationId);
+        post = fetchStation(location);
         setTimeStamp('mainScreenTimeout');
       });
     } else {
-      post = fetchStation(locationId);
+      setState(() {
+        post = fetchStation(location);
+      });
     }
   }
 
@@ -190,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _singlePostPage(),
         color: Theme.of(context).primaryColor,
         key: _mainRefreshIndicatorKey,
-        onRefresh: () => _refreshList(),
+        onRefresh: () => _refreshList(locationId),
       ),
     );
   }
@@ -200,11 +206,16 @@ class _MyHomePageState extends State<MyHomePage> {
         Theme.of(context).brightness == Brightness.dark ? true : false;
     // Get and check if arguments is passed to the screen
     final LocationArguments args = ModalRoute.of(context).settings.arguments;
+    inspect(args);
     if (args != null) {
-      locationId = args.locationId;
-      sp.setString('location', locationId);
+      setState(() {
+        locationId = args.locationId;
+      });
+      //sp.setString('location', locationId);
     } else {
-      locationId = sp.getString('location');
+      setState(() {
+        locationId = sp.getString('userHome');
+      });
     }
 
     return FutureBuilder(

@@ -8,14 +8,13 @@ import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
 // Fetch data and return a single StationName object
 Future<StationNameVerbose> fetchStation(locationId) async {
-  final prefs = await SharedPreferences.getInstance();
-
   String data = await fetchSinglePost(locationId);
   var output = await responseTranslator(data);
-  // Save location id to local storage for later, including gps if that was last requested
 
-  prefs.setString(
-      'location', output != null ? output.stations[0].id : "default");
+  // Save location id to local storage for later, including gps if that was last requested
+  //final prefs = await SharedPreferences.getInstance();
+  // prefs.setString(
+  //     'location', output != null ? output.stations[0].id : "default");
 
   return output;
 }
@@ -65,9 +64,8 @@ Future<String> fetchSinglePost(String location) async {
       "p": defaultLocation,
     };
   } else {
-    // Check if location id is stored in local storage or else, use default
-    if (prefs.getString('location') != null) {
-      locationId = prefs.getString('location');
+    if (location != null) {
+      locationId = location;
     } else {
       locationId = defaultLocation;
     }
