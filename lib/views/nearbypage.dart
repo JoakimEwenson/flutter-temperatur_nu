@@ -4,8 +4,9 @@ import 'package:temperatur_nu/controller/common.dart';
 
 import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
-import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up SharedPreferences for accessing local storage
@@ -106,42 +107,25 @@ class _NearbyListPageState extends State<NearbyListPage> {
               {
                 if (snapshot.hasData) {
                   List<Station> stations = snapshot.data.stations;
-                  return ListView.builder(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    itemCount: stations.length,
-                    itemBuilder: (context, index) {
-                      Station station = stations[index];
-                      return GestureDetector(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Card(
-                            elevation: 0,
-                            child: ListTile(
-                              leading: Icon(Icons.ac_unit),
-                              title: Text(station.title),
-                              subtitle: Text(
-                                  "Avstånd ${station.dist} km\n${station.kommun}, ${station.lan}"),
-                              trailing: station.temp != null
-                                  ? Text(
-                                      "${station.temp}°",
-                                      style:
-                                          Theme.of(context).textTheme.headline4,
-                                    )
-                                  : Text(
-                                      'N/A',
-                                      style:
-                                          Theme.of(context).textTheme.headline4,
-                                    ),
-                              onTap: () {
-                                //saveLocationId(station.id);
-                                Navigator.pushNamed(context, '/SingleStation',
-                                    arguments: LocationArguments(station.id));
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                  return SingleChildScrollView(
+                    child: Card(
+                      margin: const EdgeInsets.only(
+                          left: 4, top: 0, right: 4, bottom: 16),
+                      elevation: 0,
+                      child: ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        separatorBuilder: (BuildContext context, int index) =>
+                            StationListDivider(),
+                        itemCount: stations.length,
+                        itemBuilder: (context, index) {
+                          Station station = stations[index];
+                          return GestureDetector(
+                            child: StationListTile(station: station),
+                          );
+                        },
+                      ),
+                    ),
                   );
                 } else if (snapshot.hasError) {
                   return noDataView(snapshot.error);

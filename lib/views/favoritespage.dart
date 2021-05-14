@@ -7,6 +7,9 @@ import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up SharedPreferences for accessing local storage
@@ -105,47 +108,135 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 } else if (snapshot.hasData) {
                   List<Station> stations = snapshot.data.stations;
                   if (stations.length > 0) {
-                    return ListView.builder(
-                      itemCount: stations.length,
-                      itemBuilder: (context, index) {
-                        Station station = stations[index];
-                        return GestureDetector(
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Card(
-                              elevation: 0,
-                              child: ListTile(
-                                leading: Icon(Icons.ac_unit),
-                                title: Text(station.title),
-                                subtitle:
-                                    Text("${station.kommun} - ${station.lan}"),
-                                trailing: station.temp != null
-                                    ? Text(
-                                        "${station.temp}°",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline4,
+                    return SingleChildScrollView(
+                      child: Card(
+                        elevation: 0,
+                        margin: const EdgeInsets.only(
+                            left: 4, top: 0, right: 4, bottom: 16),
+                        child: ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: stations.length,
+                          itemBuilder: (context, index) {
+                            Station station = stations[index];
+                            return ListTile(
+                              leading: IconButton(
+                                icon: station.isFavorite
+                                    ? Icon(
+                                        Icons.favorite,
+                                        color: imperialRed,
                                       )
-                                    : Text(
-                                        'N/A',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline4,
-                                      ),
-                                onTap: () {
-                                  //saveLocationId(station.id);
-                                  Navigator.pushNamed(context, '/SingleStation',
-                                      arguments: LocationArguments(station.id));
-                                },
-                                onLongPress: () async {
-                                  await favoritesDialog(
-                                      context, station, "remove");
+                                    : Icon(Icons.favorite_outline),
+                                onPressed: () async {
+                                  try {
+                                    if (station.isFavorite) {
+                                      if (await removeFromFavorites(
+                                          station.id)) {
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Tog bort ${station.title} från favoriter.',
+                                              ),
+                                            ),
+                                          );
+                                        setState(() {
+                                          station.isFavorite = false;
+                                        });
+                                      } else {
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Det gick inte att ta bort ${station.title} från favoriter.'),
+                                            ),
+                                          );
+                                        setState(() {
+                                          station.isFavorite = false;
+                                        });
+                                      }
+                                    } else {
+                                      if (await addToFavorites(station.id)) {
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'La till ${station.title} i favoriter.'),
+                                            ),
+                                          );
+                                        setState(() {
+                                          station.isFavorite = true;
+                                        });
+                                      } else {
+                                        station.isFavorite =
+                                            await existsInFavorites(station.id);
+                                        ScaffoldMessenger.of(context)
+                                          ..removeCurrentSnackBar()
+                                          ..showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Det gick inte att lägga till ${station.title} i favoriter.'),
+                                            ),
+                                          );
+                                        setState(() {
+                                          station.isFavorite = false;
+                                        });
+                                      }
+                                      setState(() {});
+                                    }
+                                  } on TooManyFavoritesException catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          content: Text(e.errorMsg()),
+                                        ),
+                                      );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                      ..removeCurrentSnackBar()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          content: Text(e.toString()),
+                                        ),
+                                      );
+                                  }
                                 },
                               ),
-                            ),
-                          ),
-                        );
-                      },
+                              title: Text(station.title),
+                              subtitle:
+                                  Text("${station.kommun} - ${station.lan}"),
+                              trailing: station.temp != null
+                                  ? Text(
+                                      "${station.temp}°",
+                                      style:
+                                          Theme.of(context).textTheme.headline4,
+                                    )
+                                  : Text(
+                                      'N/A',
+                                      style:
+                                          Theme.of(context).textTheme.headline4,
+                                    ),
+                              onTap: () {
+                                //saveLocationId(station.id);
+                                Navigator.pushNamed(context, '/SingleStation',
+                                    arguments: LocationArguments(station.id));
+                              },
+                            );
+                          },
+                          separatorBuilder: (BuildContext context, int index) =>
+                              StationListDivider(),
+                        ),
+                      ),
                     );
                   } else {
                     return noDataView('Du har inga sparade favoriter än.');

@@ -7,6 +7,7 @@ import 'package:temperatur_nu/controller/sorting.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up Shared Preferences for accessing local storage
@@ -282,40 +283,38 @@ class _LocationListPageState extends State<LocationListPage> {
                     }
                   });
                 }
-                return ListView.builder(
-                  controller: _controller,
-                  itemCount: stations.length,
-                  itemBuilder: (context, index) {
-                    Station station = stations[index];
-                    return GestureDetector(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Card(
-                          elevation: 0,
-                          child: ListTile(
-                            leading: Icon(Icons.ac_unit),
-                            title: Text(station.title),
-                            trailing: station.temp != null
-                                ? Text(
-                                    "${station.temp}°",
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  )
-                                : Text(
-                                    'N/A',
-                                    style:
-                                        Theme.of(context).textTheme.headline4,
-                                  ),
-                            onTap: () {
-                              //saveLocationId(station.id);
-                              Navigator.pushNamed(context, '/SingleStation',
-                                  arguments: LocationArguments(station.id));
-                            },
-                          ),
+                return Card(
+                  elevation: 0,
+                  child: ListView.separated(
+                    controller: _controller,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        StationListDivider(),
+                    itemCount: stations.length,
+                    itemBuilder: (context, index) {
+                      Station station = stations[index];
+                      return GestureDetector(
+                        child: ListTile(
+                          title: Text(station.title),
+                          trailing: station.temp != null
+                              ? Text(
+                                  "${station.temp}°",
+                                  style: Theme.of(context).textTheme.headline4,
+                                )
+                              : Text(
+                                  'N/A',
+                                  style: Theme.of(context).textTheme.headline4,
+                                ),
+                          onTap: () {
+                            //saveLocationId(station.id);
+                            Navigator.pushNamed(context, '/SingleStation',
+                                arguments: LocationArguments(station.id));
+                          },
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               } else if (snapshot.hasError) {
                 return noDataView(snapshot.error);
