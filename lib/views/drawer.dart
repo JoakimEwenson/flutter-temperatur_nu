@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -33,7 +34,7 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,
-                  arguments: null);
+                  arguments: LocationArguments(null));
             },
           ),
           ListTile(

@@ -6,7 +6,7 @@ import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 Future<StationNameVerbose> nearby;
 
 Future<StationNameVerbose> _getNearbyStations(String lat, String lon) {
-  return fetchNearbyLocations(false, latitude: lat, longitude: lon, amount: 11);
+  return fetchNearbyLocations(false, latitude: lat, longitude: lon, amount: 6);
 }
 
 class NearbyStationsWidget extends StatefulWidget {
@@ -27,15 +27,15 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 250), () async {
-      setState(() {
-        nearby = _getNearbyStations(widget.latitude, widget.longitude);
-      });
+
+    setState(() {
+      nearby = _getNearbyStations(widget.latitude, widget.longitude);
     });
   }
 
   @override
   void dispose() {
+    nearby = null;
     super.dispose();
   }
 

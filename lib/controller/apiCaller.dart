@@ -13,7 +13,7 @@ Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   };
   urlParams.addAll(authParams);
   Uri url = new Uri.https(baseUrl, apiVersion, urlParams);
-  print("Fetching from $url");
+  //print("Fetching from $url");
 
   // Prepare empty content string
   String content;

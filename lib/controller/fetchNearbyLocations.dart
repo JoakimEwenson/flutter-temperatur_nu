@@ -30,7 +30,7 @@ Future<StationNameVerbose> fetchNearbyLocations(bool getCache,
     };
     Map<String, String> locationParams = {};
     if (latitude != null && longitude != null) {
-      print('Lat: $latitude, long: $longitude');
+      //print('Lat: $latitude, long: $longitude');
 
       locationParams = {"lat": latitude, "lon": longitude};
     } else {
