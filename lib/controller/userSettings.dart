@@ -22,7 +22,11 @@ Future<UserSettings> fetchUserSettings() async {
 Future<bool> saveUserSettings(UserSettings settings) async {
   try {
     sp = await SharedPreferences.getInstance();
-    saveUserHome(settings.userHome);
+    if (settings.userHome == null) {
+      removeUserHome();
+    } else {
+      saveUserHome(settings.userHome);
+    }
     setNearbyDetailsNumber(settings.nearbyStationDetails);
     setNearbyPageNumber(settings.nearbyStationsPage);
     return true;
