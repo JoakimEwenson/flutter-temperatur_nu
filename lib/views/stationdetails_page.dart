@@ -55,7 +55,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                         latitude: station.lat,
                         longitude: station.lon,
                       ),
-                      appInfo,
+                      appInfo(),
                     ],
                   ),
                 ),

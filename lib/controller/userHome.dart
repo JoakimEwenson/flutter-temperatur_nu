@@ -5,7 +5,7 @@ Future<String> fetchUserHome() async {
   if (_sharedPreferences.containsKey('userHome')) {
     return _sharedPreferences.getString('userHome');
   }
-  return 'default';
+  return null;
 }
 
 Future<bool> isUserHome(String _query) async {
@@ -21,4 +21,9 @@ Future<bool> isUserHome(String _query) async {
 saveUserHome(String _home) async {
   SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
   _sharedPreferences.setString('userHome', _home);
+}
+
+removeUserHome() async {
+  SharedPreferences _sharedPreferences = await SharedPreferences.getInstance();
+  _sharedPreferences.remove('userHome');
 }

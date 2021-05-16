@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -33,8 +32,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Hemstation'),
             onTap: () {
               Navigator.of(context).pop();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false,
-                  arguments: LocationArguments(null));
+              Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);
             },
           ),
           ListTile(
@@ -72,10 +70,10 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.info,
+              Icons.settings,
               color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
-            title: Text('Om appen'),
+            title: Text('Inställningar'),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(context, '/Settings');

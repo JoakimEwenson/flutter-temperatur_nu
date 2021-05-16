@@ -1,99 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
-import 'package:temperatur_nu/views/components/theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/views/components/aboutapp_widget.dart';
+import 'package:temperatur_nu/views/components/settings_widget.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
-Future<PackageInfo> getPackageInfo() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+// Set up SharedPreferences for loading saved data
+SharedPreferences sp;
 
-  return packageInfo;
+// Futures for later
+Future<PackageInfo> _packageInfo;
+void getPackageInfo() {
+  _packageInfo = PackageInfo.fromPlatform();
 }
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    super.initState();
+    getPackageInfo();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Om appen'),
+        //title: Text('Om appen'),
       ),
       drawer: AppDrawer(),
-      body:
-          LayoutBuilder(builder: (context, BoxConstraints viewportConstraints) {
-        return FutureBuilder(
-            future: getPackageInfo(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                PackageInfo packInfo = snapshot.data;
-                return ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: viewportConstraints.maxHeight,
-                    maxWidth: viewportConstraints.maxWidth,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Image.asset(
-                        'icon/Solflinga.png',
-                        height: 100,
-                      ),
-                      Text(
-                        'temperatur.nu',
-                        style: Theme.of(context).textTheme.headline3,
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Text(
-                        'Version ${packInfo.version}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Text(
-                        'build ${packInfo.buildNumber}',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              appInfo,
-                              SizedBox(
-                                height: 50,
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              }
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            FutureBuilder(
+              future: _packageInfo,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  PackageInfo packInfo = snapshot.data;
+                  return AboutAppCard(
+                    packageInfo: packInfo,
+                  );
+                }
 
-              return Center(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(
-                      height: 25,
-                    ),
-                    CircularProgressIndicator(
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                    Text(
-                      'Hämtar data',
-                      style: Theme.of(context).textTheme.headline3,
-                    )
-                  ],
-                ),
-              );
-            });
-      }),
+                return Container();
+              },
+            ),
+            SettingsCard(),
+            SizedBox(
+              height: 48,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

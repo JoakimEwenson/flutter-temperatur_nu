@@ -17,26 +17,28 @@ Color appCanvasColor = cultured;
 Color darkIconColor = cultured;
 Color lightIconColor = eerieBlack;
 
-Widget appInfo = Padding(
-  padding: const EdgeInsets.all(8),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      Text(
-        'En app av Joakim Ewenson',
-        style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
-      ),
-      SizedBox(
-        height: 4,
-      ),
-      Text(
-        'https://www.ewenson.se',
-        style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
-      ),
-      SizedBox(
-        height: 16,
-      ),
-    ],
-  ),
-);
+Widget appInfo() {
+  return Padding(
+    padding: const EdgeInsets.all(8),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'En app av Joakim Ewenson',
+          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
+        ),
+        SizedBox(
+          height: 4,
+        ),
+        Text(
+          'https://www.ewenson.se',
+          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+      ],
+    ),
+  );
+}

@@ -212,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           latitude: station.lat,
                           longitude: station.lon,
                         ),
-                        appInfo,
+                        appInfo(),
                       ],
                     ),
                   );

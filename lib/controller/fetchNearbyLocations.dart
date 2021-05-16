@@ -24,7 +24,6 @@ Future<StationNameVerbose> fetchNearbyLocations(bool getCache,
     }
   } else {
     Map<String, dynamic> settingsParams = {
-      "amm": "true",
       "verbose": "true",
       "num": amount.toString(),
     };

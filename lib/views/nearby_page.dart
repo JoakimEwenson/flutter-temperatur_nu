@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
@@ -65,8 +67,6 @@ class _NearbyListPageState extends State<NearbyListPage> {
       setState(() {
         locationList = fetchNearbyLocations(true);
       });
-      //var time = (timediff / 60000).toStringAsFixed(1);
-      //print('Det har passerat $time minuter sedan senaste uppdateringen.');
     }
   }
 
@@ -107,6 +107,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
               {
                 if (snapshot.hasData) {
                   List<Station> stations = snapshot.data.stations;
+                  inspect(stations);
                   return SingleChildScrollView(
                     child: Card(
                       margin: const EdgeInsets.only(
