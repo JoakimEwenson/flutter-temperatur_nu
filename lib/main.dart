@@ -28,13 +28,13 @@ Future<Null> main() async {
     ),
   );
   sp = await SharedPreferences.getInstance();
-  locationId = sp.getString('userHome ') ?? 'default';
+  locationId = sp.getString('userHome ');
 
   runApp(MyApp());
 }
 
 // Set up global String for location
-String locationId = 'default';
+String locationId;
 
 // Set title
 String pageTitle = "temperatur.nu";
@@ -126,17 +126,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
-    locationId = null;
     post = null;
     nearby = null;
     userLocationIcon = Icon(Icons.gps_not_fixed);
     super.dispose();
-  }
-
-  Future<void> _refreshList(String location) async {
-    setState(() {
-      post = fetchStation(location);
-    });
   }
 
   Future<void> _getGpsLocation() async {
@@ -180,27 +173,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _singlePostPage(),
         color: Theme.of(context).primaryColor,
         key: _mainRefreshIndicatorKey,
-        onRefresh: () => _refreshList(locationId),
+        onRefresh: () async {
+          if (locationId != null) {
+            setState(() {
+              post = fetchStation(locationId);
+            });
+          }
+        },
       ),
     );
   }
 
   _singlePostPage() {
-    // Get and check if arguments is passed to the screen
-    //final LocationArguments args = ModalRoute.of(context).settings.arguments;
-    //inspect(args);
-/* 
-    if (args != null) {
-      setState(() {
-        locationId = args.locationId;
-      });
-      //sp.setString('location', locationId);
-    } else {
-    } */
-    setState(() {
-      locationId = sp.getString('userHome');
-    });
-
     return FutureBuilder(
         future: post,
         builder: (context, snapshot) {
@@ -217,33 +201,20 @@ class _MyHomePageState extends State<MyHomePage> {
               {
                 if (snapshot.hasData) {
                   Station station = snapshot.data.stations[0];
-                  inspect(station);
-                  return LayoutBuilder(
-                    builder: (BuildContext context,
-                        BoxConstraints viewportConstraints) {
-                      return Container(
-                        child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          physics: AlwaysScrollableScrollPhysics(),
-                          dragStartBehavior: DragStartBehavior.down,
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              minHeight: viewportConstraints.maxHeight,
-                              minWidth: viewportConstraints.maxWidth,
-                            ),
-                            child: Column(
-                              children: [
-                                StationDetailsWidget(station: station),
-                                NearbyStationsWidget(
-                                  latitude: station.lat,
-                                  longitude: station.lon,
-                                ),
-                              ],
-                            ),
-                          ),
+                  //inspect(station);
+                  return SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    dragStartBehavior: DragStartBehavior.down,
+                    child: Column(
+                      children: [
+                        StationDetailsWidget(station: station),
+                        NearbyStationsWidget(
+                          latitude: station.lat,
+                          longitude: station.lon,
                         ),
-                      );
-                    },
+                        appInfo,
+                      ],
+                    ),
                   );
                 } else if (snapshot.hasError) {
                   return noDataView(snapshot.error);

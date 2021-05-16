@@ -29,65 +29,67 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Card(
-              elevation: 0,
-              child: Container(
-                margin: const EdgeInsets.all(4),
-                padding: const EdgeInsets.all(8),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: widget.station.temp != null
-                          ? Text(
-                              "${widget.station.temp}°",
-                              style: Theme.of(context).textTheme.headline1,
-                              textAlign: TextAlign.center,
-                            )
-                          : Text(
-                              "N/A",
-                              style: Theme.of(context).textTheme.headline1,
-                              textAlign: TextAlign.center,
-                            ),
-                    ),
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        widget.station.title,
-                        style: Theme.of(context).textTheme.headline3,
-                        textAlign: TextAlign.center,
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              width: double.infinity,
+              child: Card(
+                elevation: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: widget.station.temp != null
+                            ? Text(
+                                "${widget.station.temp}°",
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.center,
+                              )
+                            : Text(
+                                "N/A",
+                                style: Theme.of(context).textTheme.headline1,
+                                textAlign: TextAlign.center,
+                              ),
                       ),
-                    ),
-                    Text(
-                      widget.station.kommun,
-                      style: Theme.of(context).textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 20),
-                    if (widget.station.amm != null &&
-                        widget.station.amm.min != null &&
-                        widget.station.amm.average != null &&
-                        widget.station.amm.max != null)
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          widget.station.title,
+                          style: Theme.of(context).textTheme.headline3,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                       Text(
-                        "min ${widget.station.amm.min}° ◦ medel ${widget.station.amm.average}° ◦ max ${widget.station.amm.max}°",
-                        style: Theme.of(context).textTheme.bodyText1,
+                        widget.station.kommun,
+                        style: Theme.of(context).textTheme.headline5,
                         textAlign: TextAlign.center,
                       ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      widget.station.sourceInfo,
-                      style: Theme.of(context).textTheme.caption,
-                      textAlign: TextAlign.center,
-                    ),
-                    Text(
-                      'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}',
-                      style: Theme.of(context).textTheme.caption,
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      if (widget.station.amm != null &&
+                          widget.station.amm.min != null &&
+                          widget.station.amm.average != null &&
+                          widget.station.amm.max != null)
+                        Text(
+                          "min ${widget.station.amm.min}° ◦ medel ${widget.station.amm.average}° ◦ max ${widget.station.amm.max}°",
+                          style: Theme.of(context).textTheme.bodyText1,
+                          textAlign: TextAlign.center,
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.station.sourceInfo,
+                        style: Theme.of(context).textTheme.caption,
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}',
+                        style: Theme.of(context).textTheme.caption,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

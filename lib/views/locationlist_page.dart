@@ -472,7 +472,7 @@ class Search extends SearchDelegate {
           ),
           leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
           onTap: () {
-            Navigator.pushNamed(context, '/',
+            Navigator.pushNamed(context, '/SingleStation',
                 arguments: LocationArguments(suggestionList[index].id));
           },
         );

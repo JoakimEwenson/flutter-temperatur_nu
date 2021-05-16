@@ -93,172 +93,190 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Widget favoritesList() {
-    return FutureBuilder(
-        future: favorites,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.active:
-              {
-                return loadingView();
-              }
-            case ConnectionState.done:
-              {
-                if (!snapshot.hasData) {
-                  return noDataView('Du har inga sparade favoriter än.');
-                } else if (snapshot.hasData) {
-                  List<Station> stations = snapshot.data.stations;
-                  if (stations.length > 0) {
-                    return SingleChildScrollView(
-                      child: Card(
-                        elevation: 0,
-                        margin: const EdgeInsets.only(
-                            left: 4, top: 0, right: 4, bottom: 16),
-                        child: ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: stations.length,
-                          itemBuilder: (context, index) {
-                            Station station = stations[index];
-                            return ListTile(
-                              leading: IconButton(
-                                icon: station.isFavorite
-                                    ? Icon(
-                                        Icons.favorite,
-                                        color: imperialRed,
-                                      )
-                                    : Icon(Icons.favorite_outline),
-                                onPressed: () async {
-                                  try {
-                                    if (station.isFavorite) {
-                                      if (await removeFromFavorites(
-                                          station.id)) {
-                                        station.isFavorite =
-                                            await existsInFavorites(station.id);
-                                        ScaffoldMessenger.of(context)
-                                          ..removeCurrentSnackBar()
-                                          ..showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Tog bort ${station.title} från favoriter.',
-                                              ),
-                                            ),
-                                          );
-                                        setState(() {
-                                          station.isFavorite = false;
-                                        });
-                                      } else {
-                                        station.isFavorite =
-                                            await existsInFavorites(station.id);
-                                        ScaffoldMessenger.of(context)
-                                          ..removeCurrentSnackBar()
-                                          ..showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Det gick inte att ta bort ${station.title} från favoriter.'),
-                                            ),
-                                          );
-                                        setState(() {
-                                          station.isFavorite = false;
-                                        });
-                                      }
-                                    } else {
-                                      if (await addToFavorites(station.id)) {
-                                        station.isFavorite =
-                                            await existsInFavorites(station.id);
-                                        ScaffoldMessenger.of(context)
-                                          ..removeCurrentSnackBar()
-                                          ..showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'La till ${station.title} i favoriter.'),
-                                            ),
-                                          );
-                                        setState(() {
-                                          station.isFavorite = true;
-                                        });
-                                      } else {
-                                        station.isFavorite =
-                                            await existsInFavorites(station.id);
-                                        ScaffoldMessenger.of(context)
-                                          ..removeCurrentSnackBar()
-                                          ..showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                  'Det gick inte att lägga till ${station.title} i favoriter.'),
-                                            ),
-                                          );
-                                        setState(() {
-                                          station.isFavorite = false;
-                                        });
-                                      }
-                                      setState(() {});
-                                    }
-                                  } on TooManyFavoritesException catch (e) {
-                                    ScaffoldMessenger.of(context)
-                                      ..removeCurrentSnackBar()
-                                      ..showSnackBar(
-                                        SnackBar(
-                                          content: Text(e.errorMsg()),
-                                        ),
-                                      );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context)
-                                      ..removeCurrentSnackBar()
-                                      ..showSnackBar(
-                                        SnackBar(
-                                          content: Text(e.toString()),
-                                        ),
-                                      );
-                                  }
-                                },
-                              ),
-                              title: Text(station.title),
-                              subtitle:
-                                  Text("${station.kommun} - ${station.lan}"),
-                              trailing: station.temp != null
-                                  ? Text(
-                                      "${station.temp}°",
-                                      style:
-                                          Theme.of(context).textTheme.headline4,
-                                    )
-                                  : Text(
-                                      'N/A',
-                                      style:
-                                          Theme.of(context).textTheme.headline4,
-                                    ),
-                              onTap: () {
-                                //saveLocationId(station.id);
-                                Navigator.pushNamed(context, '/SingleStation',
-                                    arguments: LocationArguments(station.id));
-                              },
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              StationListDivider(),
-                        ),
-                      ),
-                    );
-                  } else {
-                    return noDataView('Du har inga sparade favoriter än.');
+    return Container(
+      width: double.infinity,
+      height: MediaQuery.of(context).size.height,
+      child: SingleChildScrollView(
+        child: FutureBuilder(
+            future: favorites,
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.active:
+                  {
+                    return loadingView();
                   }
-                } else if (snapshot.hasError) {
-                  return noDataView(snapshot.error);
-                }
+                case ConnectionState.done:
+                  {
+                    if (!snapshot.hasData) {
+                      return noDataView('Du har inga sparade favoriter än.');
+                    } else if (snapshot.hasData) {
+                      List<Station> stations = snapshot.data.stations;
+                      if (stations.length > 0) {
+                        return Column(
+                          children: [
+                            Card(
+                              elevation: 0,
+                              margin: const EdgeInsets.only(
+                                  left: 4, top: 0, right: 4, bottom: 16),
+                              child: ListView.separated(
+                                physics: NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: stations.length,
+                                itemBuilder: (context, index) {
+                                  Station station = stations[index];
+                                  return ListTile(
+                                    leading: IconButton(
+                                      icon: station.isFavorite
+                                          ? Icon(
+                                              Icons.favorite,
+                                              color: imperialRed,
+                                            )
+                                          : Icon(Icons.favorite_outline),
+                                      onPressed: () async {
+                                        try {
+                                          if (station.isFavorite) {
+                                            if (await removeFromFavorites(
+                                                station.id)) {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      'Tog bort ${station.title} från favoriter.',
+                                                    ),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            } else {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Det gick inte att ta bort ${station.title} från favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            }
+                                          } else {
+                                            if (await addToFavorites(
+                                                station.id)) {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'La till ${station.title} i favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = true;
+                                              });
+                                            } else {
+                                              station.isFavorite =
+                                                  await existsInFavorites(
+                                                      station.id);
+                                              ScaffoldMessenger.of(context)
+                                                ..removeCurrentSnackBar()
+                                                ..showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Det gick inte att lägga till ${station.title} i favoriter.'),
+                                                  ),
+                                                );
+                                              setState(() {
+                                                station.isFavorite = false;
+                                              });
+                                            }
+                                            setState(() {});
+                                          }
+                                        } on TooManyFavoritesException catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                            ..removeCurrentSnackBar()
+                                            ..showSnackBar(
+                                              SnackBar(
+                                                content: Text(e.errorMsg()),
+                                              ),
+                                            );
+                                        } catch (e) {
+                                          ScaffoldMessenger.of(context)
+                                            ..removeCurrentSnackBar()
+                                            ..showSnackBar(
+                                              SnackBar(
+                                                content: Text(e.toString()),
+                                              ),
+                                            );
+                                        }
+                                      },
+                                    ),
+                                    title: Text(station.title),
+                                    subtitle: Text(
+                                        "${station.kommun} - ${station.lan}"),
+                                    trailing: station.temp != null
+                                        ? Text(
+                                            "${station.temp}°",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4,
+                                          )
+                                        : Text(
+                                            'N/A',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headline4,
+                                          ),
+                                    onTap: () {
+                                      //saveLocationId(station.id);
+                                      Navigator.pushNamed(
+                                          context, '/SingleStation',
+                                          arguments:
+                                              LocationArguments(station.id));
+                                    },
+                                  );
+                                },
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        StationListDivider(),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return noDataView('Du har inga sparade favoriter än.');
+                      }
+                    } else if (snapshot.hasError) {
+                      return noDataView(snapshot.error);
+                    }
 
-                break;
+                    break;
+                  }
+                case ConnectionState.none:
+                  {
+                    break;
+                  }
+                case ConnectionState.waiting:
+                  {
+                    return loadingView();
+                  }
               }
-            case ConnectionState.none:
-              {
-                break;
-              }
-            case ConnectionState.waiting:
-              {
-                return loadingView();
-              }
-          }
 
-          return loadingView();
-        });
+              return loadingView();
+            }),
+      ),
+    );
   }
 
   favoritesDialog(BuildContext context, Station station, String type) async {

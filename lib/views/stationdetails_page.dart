@@ -4,6 +4,7 @@ import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 Future<StationNameVerbose> post;
@@ -45,15 +46,18 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
               Station station = snapshot.data.stations[0];
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    StationDetailsWidget(station: station),
-                    NearbyStationsWidget(
-                      latitude: station.lat,
-                      longitude: station.lon,
-                    )
-                  ],
+              return Container(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      StationDetailsWidget(station: station),
+                      NearbyStationsWidget(
+                        latitude: station.lat,
+                        longitude: station.lon,
+                      ),
+                      appInfo,
+                    ],
+                  ),
                 ),
               );
             }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 
 Future<StationNameVerbose> nearby;
@@ -47,36 +48,39 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
             StationNameVerbose _nearbyStations = snapshot.data;
-            return Card(
-              elevation: 0,
-              margin: const EdgeInsets.symmetric(vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Närliggande mätpunkter',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1
-                          .copyWith(fontWeight: FontWeight.bold),
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              width: double.infinity,
+              child: Card(
+                elevation: 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Närliggande mätpunkter',
+                        style: Theme.of(context)
+                            .textTheme
+                            .subtitle1
+                            .copyWith(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Divider();
-                    },
-                    itemCount: _nearbyStations.stations.length - 1,
-                    itemBuilder: (BuildContext context, int index) {
-                      Station _station = _nearbyStations.stations[index + 1];
-                      return StationListTile(station: _station);
-                    },
-                  ),
-                ],
+                    ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return StationListDivider();
+                      },
+                      itemCount: _nearbyStations.stations.length - 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        Station _station = _nearbyStations.stations[index + 1];
+                        return StationListTile(station: _station);
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
           }

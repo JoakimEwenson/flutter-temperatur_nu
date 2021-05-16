@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
 Future<PackageInfo> getPackageInfo() async {
@@ -62,14 +63,7 @@ class SettingsPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             mainAxisSize: MainAxisSize.max,
                             children: [
-                              Text(
-                                'Appen skapad av Joakim Ewenson',
-                                style: Theme.of(context).textTheme.caption,
-                              ),
-                              Text(
-                                'https://www.ewenson.se',
-                                style: Theme.of(context).textTheme.caption,
-                              ),
+                              appInfo,
                               SizedBox(
                                 height: 50,
                               ),
