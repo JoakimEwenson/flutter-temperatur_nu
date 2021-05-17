@@ -70,10 +70,10 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.settings,
+              Icons.info_outline,
               color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
-            title: Text('Inställningar'),
+            title: Text('Om appen'),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(context, '/Settings');

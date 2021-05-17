@@ -1,32 +1,38 @@
-import 'package:flutter/material.dart';
-import 'package:temperatur_nu/controller/userHome.dart';
+import 'dart:async';
 
-void deleteUserHomeConfirmationAlert(
-    BuildContext context, String location) async {
+import 'package:flutter/material.dart';
+import 'package:temperatur_nu/controller/userSettings.dart';
+import 'package:temperatur_nu/model/UserSettings.dart';
+
+FutureOr<bool> deleteUserHomeConfirmationAlert(
+    BuildContext context, UserSettings _settings) async {
+  bool _output = false;
   AlertDialog alert = AlertDialog(
-    content: Text('Vill du verkligen ta bort \"$location\" som hemstation?'),
+    content: Text(
+        'Vill du verkligen ta bort \"${_settings.userHome}\" som hemstation?'),
     actions: [
       TextButton(
         onPressed: () async {
-          await removeUserHome();
           Navigator.of(context).pop(true);
         },
         child: Text('TA BORT'),
       ),
       TextButton(
         onPressed: () {
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(false);
         },
         child: Text('AVBRYT'),
       ),
     ],
   );
 
-  showDialog(
+  await showDialog(
       context: context,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
           return alert;
         });
-      });
+      }).then((result) => _output = result);
+
+  return _output;
 }

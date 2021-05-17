@@ -82,24 +82,24 @@ class _SettingsCardState extends State<SettingsCard> {
                   ),
                   subtitle: Text(
                       '${_userSettings.userHome != null ? _userSettings.userHome : "Ingen vald"}'),
-                  trailing: IconButton(
-                    icon: _userSettings.userHome != null
-                        ? Icon(
+                  trailing: _userSettings.userHome != null
+                      ? IconButton(
+                          icon: Icon(
                             Icons.clear,
                             color: Colors.red,
-                          )
-                        : Icon(
-                            Icons.clear,
                           ),
-                    onPressed: () {
-                      deleteUserHomeConfirmationAlert(
-                          context, _userSettings.userHome);
-                      setState(() {
-                        _userSettings.userHome = null;
-                        userSettings = fetchUserSettings();
-                      });
-                    },
-                  ),
+                          onPressed: () async {
+                            bool result = await deleteUserHomeConfirmationAlert(
+                                context, _userSettings);
+                            if (result) {
+                              setState(() {
+                                _userSettings.userHome = null;
+                                saveUserSettings(_userSettings);
+                              });
+                            }
+                          },
+                        )
+                      : IconButton(icon: Icon(Icons.clear), onPressed: null),
                 ),
                 ListTile(
                   isThreeLine: true,
