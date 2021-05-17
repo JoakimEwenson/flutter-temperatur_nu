@@ -1,10 +1,14 @@
 import 'dart:core';
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:temperatur.nu/controller/common.dart';
-import 'package:temperatur.nu/views/drawer.dart';
-import 'package:temperatur.nu/model/locationlistitem.dart';
+import 'package:temperatur_nu/controller/common.dart';
+import 'package:temperatur_nu/controller/fetchLocationList.dart';
+import 'package:temperatur_nu/controller/sorting.dart';
+import 'package:temperatur_nu/controller/timestamps.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
@@ -12,7 +16,7 @@ SharedPreferences sp;
 ScrollController _controller;
 
 // Prepare future data
-Future<List<LocationListItem>> locations;
+Future<StationNameVerbose> locations;
 
 class LocationListPage extends StatefulWidget {
   LocationListPage({Key key, this.title}) : super(key: key);
@@ -53,7 +57,6 @@ class _LocationListPageState extends State<LocationListPage> {
   _getSortingOrder() async {
     sp = await SharedPreferences.getInstance();
     if (sp.containsKey('sortingOrder')) {
-      print(sp.getString('sortingOrder'));
       _sortingChoice = sp.getString('sortingOrder');
     }
   }
@@ -77,7 +80,7 @@ class _LocationListPageState extends State<LocationListPage> {
         timestamp = int.tryParse(sp.getString('locationListTimeout'));
         timediff = compareTimeStamp(
             timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-        if (timediff > cacheTimeoutLong) {
+        if (timediff > cacheTimeout) {
           setState(() {
             // Fetch list of locations, getCache false
             locations = fetchLocationList(false);
@@ -100,7 +103,7 @@ class _LocationListPageState extends State<LocationListPage> {
     timestamp = int.tryParse(sp.getString('locationListTimeout'));
     timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > cacheTimeoutLong) {
+    if (timediff > cacheTimeout) {
       setState(() {
         // Fetch list of locations, getCache false
         locations = fetchLocationList(false);
@@ -121,15 +124,17 @@ class _LocationListPageState extends State<LocationListPage> {
         builder: (context, snapshot) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Mätstationer'),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              //title: Text('Mätstationer'),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search),
                   onPressed: () {
                     showSearch(
                         context: context,
-                        delegate:
-                            Search(snapshot.hasData ? snapshot.data : []));
+                        delegate: Search(
+                            snapshot.hasData ? snapshot.data.stations : []));
                   },
                 ),
                 IconButton(
@@ -162,6 +167,19 @@ class _LocationListPageState extends State<LocationListPage> {
                           saveSortingOrder(_sortingChoice);
                         });
                         break;
+                      case 'north':
+                        setState(() {
+                          _sortingChoice = "north";
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
+                        break;
+                      case 'south':
+                        setState(() {
+                          _sortingChoice = 'south';
+                          _setScrollPosition(resetPosition: true);
+                          saveSortingOrder(_sortingChoice);
+                        });
                     }
                   }
                 }, itemBuilder: (BuildContext context) {
@@ -205,51 +223,83 @@ class _LocationListPageState extends State<LocationListPage> {
           case ConnectionState.done:
             {
               if (snapshot.hasData) {
-                List items = snapshot.data;
+                List<Station> stations = snapshot.data.stations;
                 if (_sortingChoice == "alphabetical") {
-                  items.sort((a, b) => a.title.compareTo(b.title));
+                  stations.sort((a, b) => a.title.compareTo(b.title));
                 } else if (_sortingChoice == "highest") {
-                  items.sort((a, b) {
-                    if (a.temperature == null && b.temperature == null) {
+                  stations.sort((a, b) {
+                    if (a.temp == null && b.temp == null) {
                       return 0;
                     }
-                    if (a.temperature == null) {
+                    if (a.temp == null) {
                       return 1;
                     }
-                    if (b.temperature == null) {
+                    if (b.temp == null) {
                       return -1;
                     } else {
-                      return b.temperature.compareTo(a.temperature);
+                      return b.temp.compareTo(a.temp);
                     }
                   });
                 } else if (_sortingChoice == "lowest") {
-                  items.sort((a, b) {
-                    if (a.temperature == null && b.temperature == null) {
+                  stations.sort((a, b) {
+                    if (a.temp == null && b.temp == null) {
                       return 0;
                     }
-                    if (a.temperature == null) {
+                    if (a.temp == null) {
                       return 1;
                     }
-                    if (b.temperature == null) {
+                    if (b.temp == null) {
                       return -1;
                     } else {
-                      return a.temperature.compareTo(b.temperature);
+                      return a.temp.compareTo(b.temp);
+                    }
+                  });
+                } else if (_sortingChoice == "north") {
+                  stations.sort((a, b) {
+                    if (a.lat == null && b.lat == null) {
+                      return 0;
+                    }
+                    if (a.lat == null) {
+                      return 1;
+                    }
+                    if (b.lat == null) {
+                      return -1;
+                    } else {
+                      return b.lat.compareTo(a.lat);
+                    }
+                  });
+                } else if (_sortingChoice == "south") {
+                  stations.sort((a, b) {
+                    if (a.lat == null && b.lat == null) {
+                      return 0;
+                    }
+                    if (a.lat == null) {
+                      return 1;
+                    }
+                    if (b.lat == null) {
+                      return -1;
+                    } else {
+                      return a.lat.compareTo(b.lat);
                     }
                   });
                 }
-                return ListView.builder(
-                  controller: _controller,
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    LocationListItem listItem = items[index];
-                    return GestureDetector(
-                      child: Card(
+                return Card(
+                  elevation: 0,
+                  child: ListView.separated(
+                    controller: _controller,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    separatorBuilder: (BuildContext context, int index) =>
+                        StationListDivider(),
+                    itemCount: stations.length,
+                    itemBuilder: (context, index) {
+                      Station station = stations[index];
+                      return GestureDetector(
                         child: ListTile(
-                          leading: Icon(Icons.ac_unit),
-                          title: Text(listItem.title),
-                          trailing: listItem.temperature != null
+                          title: Text(station.title),
+                          trailing: station.temp != null
                               ? Text(
-                                  "${listItem.temperature}°C",
+                                  "${station.temp}°",
                                   style: Theme.of(context).textTheme.headline4,
                                 )
                               : Text(
@@ -257,14 +307,14 @@ class _LocationListPageState extends State<LocationListPage> {
                                   style: Theme.of(context).textTheme.headline4,
                                 ),
                           onTap: () {
-                            //saveLocationId(listItem.id);
-                            Navigator.pushNamed(context, '/',
-                                arguments: LocationArguments(listItem.id));
+                            //saveLocationId(station.id);
+                            Navigator.pushNamed(context, '/SingleStation',
+                                arguments: LocationArguments(station.id));
                           },
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 );
               } else if (snapshot.hasError) {
                 return noDataView(snapshot.error);
@@ -336,25 +386,38 @@ class SortingChoice {
 
 const List<SortingChoice> sortingChoices = const <SortingChoice>[
   const SortingChoice(
-      id: 'alphabetical',
-      title: 'Alfabetiskt',
-      icon: Icon(Icons.sort_by_alpha)),
+    id: 'alphabetical',
+    title: 'Alfabetiskt',
+    icon: Icon(Icons.sort_by_alpha),
+  ),
   const SortingChoice(
-      id: 'highest',
-      title: 'Högsta temperatur överst',
-      icon: Icon(Icons.trending_down)),
+    id: 'highest',
+    title: 'Högsta temperatur överst',
+    icon: Icon(Icons.trending_down),
+  ),
   const SortingChoice(
-      id: 'lowest',
-      title: 'Lägsta temperatur överst',
-      icon: Icon(Icons.trending_up))
+    id: 'lowest',
+    title: 'Lägsta temperatur överst',
+    icon: Icon(Icons.trending_up),
+  ),
+  const SortingChoice(
+    id: 'north',
+    title: 'Norr till söder',
+    icon: Icon(Icons.south),
+  ),
+  const SortingChoice(
+    id: 'south',
+    title: 'Söder till norr',
+    icon: Icon(Icons.north),
+  )
 ];
 
 class Search extends SearchDelegate {
-  final List<LocationListItem> inputList;
+  final List<Station> inputList;
   Search(this.inputList);
   final String searchFieldLabel = 'Sök mätstation';
 
-  List<LocationListItem> recentList = [];
+  List<Station> recentList = [];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -391,7 +454,7 @@ class Search extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<LocationListItem> suggestionList = [];
+    List<Station> suggestionList = [];
     query.isEmpty
         ? suggestionList = recentList //In the true case
         : suggestionList.addAll(inputList.where(
@@ -409,13 +472,7 @@ class Search extends SearchDelegate {
           ),
           leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
           onTap: () {
-            /*
-            selectedResult =
-                "${suggestionList[index].title} (${suggestionList[index].id})";
-            showResults(context);
-            */
-            inspect(suggestionList[index]);
-            Navigator.pushNamed(context, '/',
+            Navigator.pushNamed(context, '/SingleStation',
                 arguments: LocationArguments(suggestionList[index].id));
           },
         );

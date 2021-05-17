@@ -1,70 +1,95 @@
 import 'dart:async';
+import 'dart:developer';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-// Import views
+import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
+import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
+import 'package:temperatur_nu/views/stationdetails_page.dart';
+import 'controller/fetchSinglePost.dart';
 import 'views/drawer.dart';
-import 'views/favoritespage.dart';
-import 'views/nearbypage.dart';
-import 'views/locationlistpage.dart';
-import 'views/settingspage.dart';
-
-// Import local files
-import 'controller/common.dart';
-import 'model/post.dart';
+import 'views/favorites_page.dart';
+import 'views/nearby_page.dart';
+import 'views/locationlist_page.dart';
+import 'views/settings_page.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.black,
+      statusBarBrightness: Brightness.light, // this one for iOS
+    ),
+  );
   sp = await SharedPreferences.getInstance();
-  locationId = sp.getString('location') ?? 'default';
-  if (sp.containsKey('singlePostCache')) {
-    //print("Cached string:\n" + sp.getString('singlePostCache'));
-  }
+  locationId = sp.getString('userHome ');
 
   runApp(MyApp());
 }
 
 // Set up global String for location
-String locationId = 'default';
+String locationId;
+
+// Set title
+String pageTitle = "temperatur.nu";
 
 // Prepare future data
-Future<Post> post;
+Future<StationNameVerbose> post;
+Future<StationNameVerbose> nearby;
 
 // Begin app
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    var platform = Theme.of(context).platform;
+    var appBarThemeiOS = AppBarTheme(
+      brightness: Brightness.light,
+    );
+    var appBarTheme = AppBarTheme(
+      backgroundColor: Colors.black,
+      brightness: Brightness.dark,
+    );
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(brightness: Brightness.dark),
+        appBarTheme:
+            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
         brightness: Brightness.light,
+        canvasColor: appCanvasColor,
         accentColor: Colors.grey[100],
         primaryColor: Colors.grey[800],
-        primaryColorBrightness: Brightness.dark,
+        primaryColorBrightness: Brightness.light,
         textTheme: TextTheme(),
       ),
       darkTheme: ThemeData.dark().copyWith(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.black,
+          brightness: Brightness.dark,
+        ),
         brightness: Brightness.dark,
         accentColor: Colors.grey[100],
       ),
-      //home: MyHomePage(title: 'temperatur.nu'),
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (context) => MyHomePage(),
         '/Favorites': (context) => FavoritesPage(),
-        '/Nearby': (context) => NearbyListPage(),
         '/LocationList': (context) => LocationListPage(),
+        '/Nearby': (context) => NearbyListPage(),
         '/Settings': (context) => SettingsPage(),
+        '/SingleStation': (context) => StationDetailsPage(),
       },
     );
   }
@@ -82,7 +107,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
-  bool isFavorite = false;
   num timestamp;
   num timediff;
   Icon userLocationIcon = Icon(Icons.gps_not_fixed);
@@ -90,68 +114,39 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    locationId = sp.getString('location');
-    Future.delayed(const Duration(milliseconds: 250), () {
-      if (!sp.containsKey('mainScreenTimeout')) {
-        setTimeStamp('mainScreenTimeout');
-      }
+    locationId = sp.getString('userHome');
+
+    //print(locationId);
+    Future.delayed(const Duration(milliseconds: 250), () async {
       setState(() {
-        post = fetchSinglePost(locationId);
-        setTimeStamp('mainScreenTimeout');
-      });
-    });
-    existsInFavorites(locationId).then((exists) {
-      setState(() {
-        isFavorite = exists;
+        post = fetchStation(locationId);
       });
     });
   }
 
-  Future<void> _refreshList() async {
-    //_mainRefreshIndicatorKey.currentState?.show();
-    locationId = sp.getString('location');
-    existsInFavorites(locationId).then((exists) {
-      setState(() {
-        isFavorite = exists;
-      });
-    });
-
-    timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
-    timediff = compareTimeStamp(
-        timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    //var now = DateTime.now();
-    if (timediff > 300000) {
-      setState(() {
-        post = fetchSinglePost(locationId);
-        //print('$now: Mer än 5 minuter har passerat sedan senaste uppdateringen.');
-        setTimeStamp('mainScreenTimeout');
-      });
-    } else {
-      post = fetchSinglePostCache();
-      //var time = (timediff / 60000).toStringAsFixed(1);
-      //print('$now: Det har passerat $time minuter sedan senaste uppdateringen.');
-    }
+  @override
+  void dispose() {
+    post = null;
+    nearby = null;
+    userLocationIcon = Icon(Icons.gps_not_fixed);
+    super.dispose();
   }
 
   Future<void> _getGpsLocation() async {
-    // Reset post data
-    post = null;
-    // Fetch new post data
-    post = fetchSinglePost('gps').then((data) {
-      //Navigator.pushReplacementNamed(context, '/', arguments: LocationArguments(data.id));
-      // Check if favorite
-      existsInFavorites(data.id).then((exists) {
-        isFavorite = exists;
-      });
-      return data;
-    });
+    try {
+      post = fetchStation('gps');
+    } catch (e) {
+      inspect(e);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('temperatur.nu'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        //title: Text(pageTitle),
         actions: [
           IconButton(
             icon: userLocationIcon,
@@ -159,9 +154,11 @@ class _MyHomePageState extends State<MyHomePage> {
               setState(() {
                 try {
                   _getGpsLocation();
-                  userLocationIcon = Icon(Icons.gps_fixed);
+                  userLocationIcon = Icon(
+                    Icons.gps_fixed,
+                  );
                 } catch (e) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(e.toString()),
                   ));
                 }
@@ -175,27 +172,19 @@ class _MyHomePageState extends State<MyHomePage> {
       body: RefreshIndicator(
         child: _singlePostPage(),
         color: Theme.of(context).primaryColor,
-        backgroundColor: Theme.of(context).accentColor,
         key: _mainRefreshIndicatorKey,
-        onRefresh: () => _refreshList(),
+        onRefresh: () async {
+          if (locationId != null) {
+            setState(() {
+              post = fetchStation(locationId);
+            });
+          }
+        },
       ),
     );
   }
 
   _singlePostPage() {
-    // Get and check if arguments is passed to the screen
-    final LocationArguments args = ModalRoute.of(context).settings.arguments;
-    if (args != null) {
-      locationId = args.locationId;
-      sp.setString('location', locationId);
-    } else {
-      locationId = sp.getString('location');
-    }
-    // Check if location is in favorites
-    existsInFavorites(locationId).then((exists) {
-      isFavorite = exists;
-    });
-
     return FutureBuilder(
         future: post,
         builder: (context, snapshot) {
@@ -211,152 +200,22 @@ class _MyHomePageState extends State<MyHomePage> {
             case ConnectionState.done:
               {
                 if (snapshot.hasData) {
-                  return LayoutBuilder(builder: (BuildContext context,
-                      BoxConstraints viewportConstraints) {
-                    return SingleChildScrollView(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      physics: AlwaysScrollableScrollPhysics(),
-                      dragStartBehavior: DragStartBehavior.down,
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                            minHeight: viewportConstraints.maxHeight,
-                            minWidth: viewportConstraints.maxWidth),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            SizedBox(
-                              height: 25,
-                            ),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                snapshot.data.temperature + "°C",
-                                style: Theme.of(context).textTheme.headline1,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                snapshot.data.title,
-                                style: Theme.of(context).textTheme.headline3,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Text(
-                              snapshot.data.county,
-                              style: Theme.of(context).textTheme.headline5,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              snapshot.data.amm,
-                              style: Theme.of(context).textTheme.bodyText1,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              snapshot.data.sourceInfo,
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              'Uppdaterad ${snapshot.data.lastUpdate}',
-                              style: Theme.of(context).textTheme.caption,
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            GestureDetector(
-                              child: isFavorite
-                                  ? Icon(
-                                      Icons.favorite,
-                                      color: Colors.red,
-                                      size: 50.0,
-                                    )
-                                  : Icon(
-                                      Icons.favorite_border,
-                                      size: 50,
-                                    ),
-                              onTap: () async {
-                                try {
-                                  if (isFavorite) {
-                                    if (await removeFromFavorites(
-                                        snapshot.data.id)) {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                            'Tog bort ${snapshot.data.title} från favoriter.',
-                                          ),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
-                                    } else {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Det gick inte att ta bort ${snapshot.data.title} från favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
-                                    }
-                                  } else {
-                                    if (await addToFavorites(
-                                        snapshot.data.id)) {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'La till ${snapshot.data.title} i favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = true;
-                                      });
-                                    } else {
-                                      isFavorite = await _checkFavoriteStatus();
-                                      Scaffold.of(context)
-                                        ..removeCurrentSnackBar()
-                                        ..showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Det gick inte att lägga till ${snapshot.data.title} i favoriter.'),
-                                        ));
-                                      setState(() {
-                                        isFavorite = false;
-                                      });
-                                    }
-                                    setState(() {});
-                                  }
-                                } on TooManyFavoritesException catch (e) {
-                                  Scaffold.of(context)
-                                    ..removeCurrentSnackBar()
-                                    ..showSnackBar(SnackBar(
-                                      content: Text(e.errorMsg()),
-                                    ));
-                                } catch (e) {
-                                  Scaffold.of(context)
-                                    ..removeCurrentSnackBar()
-                                    ..showSnackBar(SnackBar(
-                                      content: Text(e.toString()),
-                                    ));
-                                }
-                              },
-                            ),
-                          ],
+                  Station station = snapshot.data.stations[0];
+                  //inspect(station);
+                  return SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
+                    dragStartBehavior: DragStartBehavior.down,
+                    child: Column(
+                      children: [
+                        StationDetailsWidget(station: station),
+                        NearbyStationsWidget(
+                          latitude: station.lat,
+                          longitude: station.lon,
                         ),
-                      ),
-                    );
-                  });
+                        appInfo(),
+                      ],
+                    ),
+                  );
                 } else if (snapshot.hasError) {
                   return noDataView(snapshot.error);
                 }
@@ -370,10 +229,6 @@ class _MyHomePageState extends State<MyHomePage> {
           }
           return loadingView();
         });
-  }
-
-  _checkFavoriteStatus() async {
-    isFavorite = await existsInFavorites(locationId);
   }
 
   // Loading indicator
@@ -397,48 +252,36 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Error/No data view
-  noDataView(String msg) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Något gick fel!',
-            style: Theme.of(context).textTheme.headline3,
+  noDataView(var msg) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints viewportConstraints) {
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          physics: AlwaysScrollableScrollPhysics(),
+          dragStartBehavior: DragStartBehavior.down,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: viewportConstraints.maxHeight,
+              maxWidth: viewportConstraints.maxWidth,
+            ),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  'Något gick fel!',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "$msg",
+                  style: Theme.of(context).textTheme.caption,
+                ),
+              ],
+            ),
           ),
-          Text(
-            msg,
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
-
-  // Multiple Floating Action Buttons setup
-/*   _doubleFAB() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          foregroundColor: Theme.of(context).accentColor,
-          onPressed: () {
-            setState(() {
-              try {
-                _getGpsLocation();
-              } catch (e) {
-                Scaffold.of(context).showSnackBar(SnackBar(
-                  content: Text(e.toString()),
-                ));
-              }
-            });
-          },
-          tooltip: 'Hämta position',
-          child: new Icon(Icons.location_searching),
-          heroTag: 'gpsFAB',
-        ),
-      ],
-    );
-  } */
 }
