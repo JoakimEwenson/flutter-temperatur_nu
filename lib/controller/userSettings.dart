@@ -14,8 +14,9 @@ Future<UserSettings> fetchUserSettings() async {
   double _nearbyDetailsNumber = await fetchNearbyDetailsNumber();
   double _nearbyPageNumber = await fetchNearbyPageNumber();
   bool _isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
+  LocationPermission _permission = await Geolocator.checkPermission();
 
-  return UserSettings(_isLocationServiceEnabled, _userHome,
+  return UserSettings(_isLocationServiceEnabled, _permission, _userHome,
       _nearbyDetailsNumber, _nearbyPageNumber);
 }
 

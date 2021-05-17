@@ -1,7 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/UserSettings.dart';
 
 FutureOr<bool> deleteUserHomeConfirmationAlert(

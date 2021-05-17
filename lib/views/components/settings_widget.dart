@@ -41,7 +41,6 @@ class _SettingsCardState extends State<SettingsCard> {
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
           UserSettings _userSettings = snapshot.data;
-          print('Home: ${_userSettings.userHome}');
           return Card(
             elevation: 0,
             child: Column(
@@ -55,26 +54,59 @@ class _SettingsCardState extends State<SettingsCard> {
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
-                ListTile(
-                  title: Text(
-                    'Platstjänster aktiverade?',
-                    style: Theme.of(context).textTheme.subtitle2,
+                if (_userSettings.locationServiceEnabled)
+                  ListTile(
+                    title: Text(
+                      'Platstjänster aktiverade',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.check,
+                        color: Colors.green,
+                      ),
+                      onPressed: () async {
+                        await Geolocator.openAppSettings();
+                      },
+                    ),
                   ),
-                  trailing: IconButton(
-                    icon: _userSettings.locationServiceEnabled
-                        ? Icon(
-                            Icons.check,
-                            color: Colors.green,
-                          )
-                        : Icon(
-                            Icons.report,
-                            color: Colors.red,
-                          ),
-                    onPressed: () async {
-                      await Geolocator.openLocationSettings();
-                    },
+                if (!_userSettings.locationServiceEnabled)
+                  ListTile(
+                    title: Text(
+                      'Platstjänster avaktiverade',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                    subtitle: Text(
+                        'Klicka på ikonen för att aktivera platstjänster.'),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.report,
+                        color: Colors.red,
+                      ),
+                      onPressed: () async {
+                        await Geolocator.openLocationSettings();
+                      },
+                    ),
                   ),
-                ),
+                if (_userSettings.permission != LocationPermission.whileInUse)
+                  ListTile(
+                    isThreeLine: true,
+                    title: Text(
+                      'Behörighet saknas',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                    subtitle: Text(
+                        'Appen saknar behörighet att använda platstjänster. Klicka på ikonen för att åtgärda.'),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.app_settings_alt,
+                        color: Colors.red,
+                      ),
+                      onPressed: () async {
+                        await Geolocator.openAppSettings();
+                      },
+                    ),
+                  ),
                 ListTile(
                   title: Text(
                     'Nuvarande hemstation',
