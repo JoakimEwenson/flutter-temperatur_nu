@@ -105,7 +105,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState> _mainRefreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
   num timestamp;
   num timediff;

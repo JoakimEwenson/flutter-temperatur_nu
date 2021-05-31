@@ -28,7 +28,7 @@ class LocationListPage extends StatefulWidget {
 }
 
 class _LocationListPageState extends State<LocationListPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshLocationsKey =
+  GlobalKey<RefreshIndicatorState> _refreshLocationsKey =
       new GlobalKey<RefreshIndicatorState>();
 
   double scrollPosition = 0.0;

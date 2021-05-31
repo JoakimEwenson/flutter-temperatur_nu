@@ -41,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       drawer: AppDrawer(),
       body: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: Column(
           children: [
             FutureBuilder(

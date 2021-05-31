@@ -1,13 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
+import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/model/UserSettings.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 
 Future<StationNameVerbose> nearby;
+Future<UserSettings> userSettings;
 
-Future<StationNameVerbose> _getNearbyStations(String lat, String lon) {
-  return fetchNearbyLocations(false, latitude: lat, longitude: lon, amount: 6);
+Future<StationNameVerbose> _getNearbyStations(String lat, String lon) async {
+  UserSettings _settings = await _getUserSettings();
+  int amount =
+      _settings != null ? _settings.nearbyStationDetails.toInt() + 1 : 6;
+
+  return fetchNearbyLocations(
+    false,
+    latitude: lat,
+    longitude: lon,
+    amount: amount,
+  );
+}
+
+Future<UserSettings> _getUserSettings() async {
+  return await fetchUserSettings();
 }
 
 class NearbyStationsWidget extends StatefulWidget {
@@ -28,7 +44,6 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
   @override
   void initState() {
     super.initState();
-
     setState(() {
       nearby = _getNearbyStations(widget.latitude, widget.longitude);
     });

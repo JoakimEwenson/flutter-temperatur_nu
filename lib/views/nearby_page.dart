@@ -32,7 +32,7 @@ class NearbyListPage extends StatefulWidget {
 }
 
 class _NearbyListPageState extends State<NearbyListPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
 
   @override
@@ -109,6 +109,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                   List<Station> stations = snapshot.data.stations;
                   inspect(stations);
                   return SingleChildScrollView(
+                    physics: AlwaysScrollableScrollPhysics(),
                     child: Card(
                       margin: const EdgeInsets.only(
                           left: 4, top: 0, right: 4, bottom: 16),

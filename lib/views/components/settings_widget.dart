@@ -31,7 +31,7 @@ class _SettingsCardState extends State<SettingsCard> {
   @override
   Widget build(BuildContext context) {
     // Preset min/max nearby stations
-    double _minNearbyAmount = 5.0;
+    double _minNearbyAmount = 3.0;
     double _maxNearbyAmount = 25.0;
 
     return FutureBuilder(
@@ -138,7 +138,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   subtitle: Text(
-                    'Bestämmer antalet närliggande mätpunkter som ska hämtas till varje station, mellan 5 och 25.',
+                    'Bestämmer antalet kompletterande mätpunkter som ska hämtas till varje station, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
                   ),
                 ),
                 Slider(
@@ -161,7 +161,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   subtitle: Text(
-                    'Bestämmer antalet närliggande mätpunkter som ska hämtas till listan, mellan 5 och 25.',
+                    'Bestämmer antalet närliggande mätpunkter som ska hämtas, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
                   ),
                 ),
                 Slider(

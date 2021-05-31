@@ -15,7 +15,7 @@ class StationDetailsPage extends StatefulWidget {
 }
 
 class _StationDetailsPageState extends State<StationDetailsPage> {
-  final GlobalKey<RefreshIndicatorState> _mainRefreshKey =
+  GlobalKey<RefreshIndicatorState> _mainRefreshKey =
       new GlobalKey<RefreshIndicatorState>();
 
   @override
@@ -48,6 +48,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
               Station station = snapshot.data.stations[0];
               return Container(
                 child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
                   child: Column(
                     children: [
                       StationDetailsWidget(station: station),

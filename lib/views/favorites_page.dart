@@ -35,7 +35,7 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  final GlobalKey<RefreshIndicatorState> _refreshFavoritesKey =
+  GlobalKey<RefreshIndicatorState> _refreshFavoritesKey =
       new GlobalKey<RefreshIndicatorState>();
 
   @override
@@ -97,6 +97,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
       child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
         child: FutureBuilder(
             future: favorites,
             builder: (context, snapshot) {
