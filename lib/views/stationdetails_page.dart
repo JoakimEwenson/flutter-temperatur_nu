@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:temperatur_nu/controller/fetchSinglePost.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -52,6 +53,10 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                   child: Column(
                     children: [
                       StationDetailsWidget(station: station),
+                      if (station.data != null)
+                        ChartWidget(
+                          dataposts: station.data != null ? station.data : [],
+                        ),
                       NearbyStationsWidget(
                         latitude: station.lat,
                         longitude: station.lon,

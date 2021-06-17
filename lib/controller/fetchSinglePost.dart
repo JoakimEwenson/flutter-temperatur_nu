@@ -11,11 +11,6 @@ Future<StationNameVerbose> fetchStation(locationId) async {
   String data = await fetchSinglePost(locationId);
   var output = await responseTranslator(data);
 
-  // Save location id to local storage for later, including gps if that was last requested
-  //final prefs = await SharedPreferences.getInstance();
-  // prefs.setString(
-  //     'location', output != null ? output.stations[0].id : "default");
-
   return output;
 }
 
