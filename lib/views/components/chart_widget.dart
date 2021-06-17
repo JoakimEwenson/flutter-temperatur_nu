@@ -43,59 +43,67 @@ class ChartWidget extends StatelessWidget {
     });
 
     double chartWidth = MediaQuery.of(context).size.width;
-    double chartHeight = chartWidth * 0.7;
+    double chartHeight = chartWidth * 0.6;
+
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       child: Card(
         elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
                 'Senaste dygnet',
-                style: Theme.of(context).textTheme.subtitle2,
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle1
+                    .copyWith(fontWeight: FontWeight.bold),
               ),
-              SizedBox(
-                height: 8,
-              ),
-              Container(
-                height: chartHeight,
-                width: chartWidth,
-                child: LineChart(
-                  LineChartData(
-                    minY: chartMinY - 3,
-                    maxY: chartMaxY + 3,
-                    borderData: FlBorderData(
-                      show: false,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Container(
+              height: chartHeight,
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+              child: LineChart(
+                LineChartData(
+                  minY: chartMinY - 3,
+                  maxY: chartMaxY + 3,
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  lineTouchData: LineTouchData(enabled: true),
+                  lineBarsData: [
+                    LineChartBarData(
+                      curveSmoothness: 5,
+                      isCurved: true,
+                      isStrokeCapRound: true,
+                      preventCurveOverShooting: true,
+                      colors: _isDarkMode ? [Colors.grey[100]] : [Colors.black],
+                      dotData: FlDotData(show: false),
+                      spots: _spots,
+                    )
+                  ],
+                  titlesData: FlTitlesData(
+                    leftTitles: SideTitles(
+                      showTitles: true,
                     ),
-                    lineTouchData: LineTouchData(enabled: true),
-                    lineBarsData: [
-                      LineChartBarData(
-                        curveSmoothness: 5,
-                        isCurved: true,
-                        isStrokeCapRound: true,
-                        preventCurveOverShooting: true,
-                        colors: [
-                          Colors.black,
-                        ],
-                        dotData: FlDotData(show: false),
-                        spots: _spots,
-                      )
-                    ],
-                    titlesData: FlTitlesData(
-                      bottomTitles: SideTitles(
-                        showTitles: false,
-                      ),
+                    bottomTitles: SideTitles(
+                      showTitles: false,
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
