@@ -134,7 +134,7 @@ class _SettingsCardState extends State<SettingsCard> {
                 ListTile(
                   isThreeLine: true,
                   title: Text(
-                    'Kompletterande mätpunkter',
+                    'Närliggande mätpunkter',
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   subtitle: Text(
@@ -154,6 +154,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     });
                   },
                 ),
+                /*
                 ListTile(
                   isThreeLine: true,
                   title: Text(
@@ -176,6 +177,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     });
                   },
                 ),
+                */
                 Center(
                   child: TextButton(
                       onPressed: () async {

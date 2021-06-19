@@ -1,28 +1,41 @@
+import 'dart:developer';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
-List<FlSpot> dataPostToFlSpot(List<DataPost> _dataPosts) {
-  List<FlSpot> output = [];
+class ChartSpotList {
+  ChartSpotList(this.spots, this.timestamps);
+  List<FlSpot> spots;
+  List<DateTime> timestamps;
+}
+
+ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
+  List<FlSpot> spots = [];
+  List<DateTime> timestamps = [];
   int position = 0;
   _dataPosts.forEach((_dataPost) {
+    // Parse datetime string into DateTime objects for null check
     double temperature = double.tryParse(_dataPost.temperatur);
+    DateTime dateTime = DateTime.tryParse(_dataPost.datetime);
     if (temperature == null) {
-      print(temperature);
-      output.add(FlSpot.nullSpot);
+      spots.add(FlSpot.nullSpot);
+      timestamps.add(dateTime);
     }
     if (temperature != null && !temperature.isNaN) {
-      output.add(
+      spots.add(
         FlSpot(
           position.toDouble(),
           temperature,
         ),
       );
+      timestamps.add(dateTime);
       position++;
     }
   });
 
-  return output;
+  return ChartSpotList(spots, timestamps);
 }
 
 class ChartWidget extends StatelessWidget {
@@ -32,14 +45,16 @@ class ChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<FlSpot> _spots = dataPostToFlSpot(dataposts);
-    double chartMinY = _spots[0].y.toInt().toDouble();
-    double chartMaxY = _spots[0].y.toInt().toDouble();
+    ChartSpotList spotList = dataPostToFlSpot(dataposts);
+    final List<FlSpot> _spots = spotList.spots;
+    DateTime spanStart = DateTime.tryParse(dataposts[0].datetime);
+    DateTime spanEnd =
+        DateTime.tryParse(dataposts[dataposts.length - 1].datetime);
+    double chartMinY = _spots[0].y;
+    double chartMaxY = _spots[0].y;
     _spots.forEach((element) {
-      chartMinY =
-          chartMinY < element.y ? chartMinY : element.y.toInt().toDouble();
-      chartMaxY =
-          chartMaxY > element.y ? chartMaxY : element.y.toInt().toDouble();
+      chartMinY = chartMinY < element.y ? chartMinY : element.y;
+      chartMaxY = chartMaxY > element.y ? chartMaxY : element.y;
     });
 
     double chartWidth = MediaQuery.of(context).size.width;
@@ -47,6 +62,8 @@ class ChartWidget extends StatelessWidget {
 
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+
+    inspect(_spots);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -59,7 +76,9 @@ class ChartWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'Senaste dygnet',
+                spanStart != null && spanEnd != null
+                    ? 'Temperaturgraf från ${spanStart.day}/${spanStart.month} till ${spanEnd.day}/${spanEnd.month}'
+                    : 'Temperaturgraf',
                 style: Theme.of(context)
                     .textTheme
                     .subtitle1
@@ -71,21 +90,45 @@ class ChartWidget extends StatelessWidget {
             ),
             Container(
               height: chartHeight,
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+              width: chartWidth,
+              margin: const EdgeInsets.fromLTRB(4, 0, 4, 16),
               child: LineChart(
                 LineChartData(
-                  minY: chartMinY - 3,
-                  maxY: chartMaxY + 3,
+                  minY: (chartMinY - 10).floorToDouble(),
+                  maxY: (chartMaxY + 5).ceilToDouble(),
                   borderData: FlBorderData(
                     show: false,
                   ),
-                  lineTouchData: LineTouchData(enabled: true),
+                  gridData: FlGridData(
+                    horizontalInterval: 5,
+                    show: true,
+                  ),
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      getTooltipItems: (tooltips) {
+                        return tooltips.map((tooltip) {
+                          DateTime timestamp =
+                              spotList.timestamps[tooltip.x.toInt()];
+                          return LineTooltipItem(
+                            '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
+                            TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[900]
+                                  : Colors.grey[100],
+                            ),
+                          );
+                        }).toList();
+                      },
+                      tooltipBgColor:
+                          _isDarkMode ? Colors.grey[100] : Colors.grey[900],
+                    ),
+                  ),
                   lineBarsData: [
                     LineChartBarData(
-                      curveSmoothness: 5,
+                      barWidth: 1,
+                      curveSmoothness: 1,
                       isCurved: true,
-                      isStrokeCapRound: true,
                       preventCurveOverShooting: true,
                       colors: _isDarkMode ? [Colors.grey[100]] : [Colors.black],
                       dotData: FlDotData(show: false),
@@ -95,10 +138,14 @@ class ChartWidget extends StatelessWidget {
                   titlesData: FlTitlesData(
                     leftTitles: SideTitles(
                       showTitles: true,
+                      getTitles: (value) => '${value.toStringAsFixed(0)}°',
+                      getTextStyles: (value) => TextStyle(
+                        color: _isDarkMode ? Colors.grey[100] : Colors.black,
+                      ),
+                      margin: 8,
+                      interval: 5,
                     ),
-                    bottomTitles: SideTitles(
-                      showTitles: false,
-                    ),
+                    bottomTitles: SideTitles(showTitles: false),
                   ),
                 ),
               ),
