@@ -30,7 +30,7 @@ Future<String> fetchSinglePost(String location) async {
   Map<String, dynamic> settingsParams = {
     "amm": "true",
     "data": "true",
-    "span": "1week",
+    "span": "1day",
     "verbose": "true",
     "num": "1",
   };

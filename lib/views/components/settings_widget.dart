@@ -86,7 +86,8 @@ class _SettingsCardState extends State<SettingsCard> {
                       },
                     ),
                   ),
-                if (_userSettings.permission != LocationPermission.whileInUse)
+                if (_userSettings.permission != LocationPermission.whileInUse &&
+                    _userSettings.permission != LocationPermission.always)
                   ListTile(
                     isThreeLine: true,
                     title: Text(
@@ -154,45 +155,40 @@ class _SettingsCardState extends State<SettingsCard> {
                     });
                   },
                 ),
-                /*
-                ListTile(
-                  isThreeLine: true,
-                  title: Text(
-                    'Närliggande mätpunkter',
-                    style: Theme.of(context).textTheme.subtitle2,
-                  ),
-                  subtitle: Text(
-                    'Bestämmer antalet närliggande mätpunkter som ska hämtas, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
-                  ),
-                ),
-                Slider(
-                  min: _minNearbyAmount,
-                  max: _maxNearbyAmount,
-                  divisions: _maxNearbyAmount.toInt(),
-                  value: _userSettings.nearbyStationsPage,
-                  label: _userSettings.nearbyStationsPage.toInt().toString(),
-                  onChanged: (double value) {
-                    setState(() {
-                      _userSettings.nearbyStationsPage = value.roundToDouble();
-                    });
-                  },
-                ),
-                */
                 Center(
                   child: TextButton(
-                      onPressed: () async {
-                        bool _settingsSaved =
-                            await saveUserSettings(_userSettings);
-                        if (_settingsSaved) {
-                          print('Saved settings');
-                        } else {
-                          print('Error saving user settings');
-                        }
-                        setState(() {
-                          userSettings = fetchUserSettings();
-                        });
-                      },
-                      child: Text('Spara inställningarna')),
+                    onPressed: () async {
+                      bool _settingsSaved =
+                          await saveUserSettings(_userSettings);
+                      if (_settingsSaved) {
+                        print('Saved settings');
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Inställningar sparade.',
+                              ),
+                            ),
+                          );
+                      } else {
+                        print('Error saving user settings');
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Inställningar sparades ej!',
+                              ),
+                            ),
+                          );
+                      }
+                      setState(() {
+                        userSettings = fetchUserSettings();
+                      });
+                    },
+                    child: Text('Spara inställningarna'),
+                  ),
                 )
               ],
             ),

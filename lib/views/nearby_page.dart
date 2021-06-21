@@ -55,7 +55,9 @@ class _NearbyListPageState extends State<NearbyListPage> {
   }
 
   Future<void> _refreshList() async {
-    num timestamp = int.tryParse(sp.getString('mainScreenTimeout'));
+    num timestamp = sp.containsKey('mainScreenTimeout')
+        ? int.tryParse(sp.getString('mainScreenTimeout'))
+        : 0;
     num timediff = compareTimeStamp(
         timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
     if (timediff > cacheTimeout) {
