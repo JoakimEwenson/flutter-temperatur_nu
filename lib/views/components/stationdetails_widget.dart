@@ -66,6 +66,7 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 20),
+                      /*
                       if (widget.station.amm != null &&
                           widget.station.amm.min != null &&
                           widget.station.amm.average != null &&
@@ -78,6 +79,7 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                       SizedBox(
                         height: 10,
                       ),
+                      */
                       Text(
                         widget.station.sourceInfo,
                         style: Theme.of(context).textTheme.caption,

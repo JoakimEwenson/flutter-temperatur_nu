@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
@@ -20,6 +22,10 @@ import 'views/settings_page.dart';
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
 
+// Set up global String for location and graph range
+String locationId;
+String graphRange = '1day';
+
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
@@ -30,12 +36,10 @@ Future<Null> main() async {
   );
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('userHome ');
+  //graphRange = sp.getString('graphRange');
 
   runApp(MyApp());
 }
-
-// Set up global String for location
-String locationId;
 
 // Set title
 String pageTitle = "temperatur.nu";
@@ -116,11 +120,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     locationId = sp.getString('userHome');
+    //graphRange = sp.getString('graphRange');
 
     //print(locationId);
     Future.delayed(const Duration(milliseconds: 250), () async {
       setState(() {
-        post = fetchStation(locationId);
+        post = fetchStation(locationId, graphRange: graphRange);
       });
     });
   }
@@ -135,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getGpsLocation() async {
     try {
-      post = fetchStation('gps');
+      post = fetchStation('gps', graphRange: graphRange);
     } catch (e) {
       inspect(e);
     }
@@ -177,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onRefresh: () async {
           if (locationId != null) {
             setState(() {
-              post = fetchStation(locationId);
+              post = fetchStation(locationId, graphRange: graphRange);
             });
           }
         },
@@ -212,7 +217,172 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (station.data != null)
                           ChartWidget(
                             dataposts: station.data != null ? station.data : [],
+                            amm: station.amm != null ? station.amm : null,
                           ),
+                        Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Card(
+                            elevation: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Välj grafens tidsspann',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .subtitle1
+                                        .copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  Container(
+                                    width: double.infinity,
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        elevation: 0,
+                                        isExpanded: true,
+                                        icon: Icon(Icons.bar_chart),
+                                        value: graphRange,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            graphRange = value;
+                                            setGraphRange(value);
+                                            post = fetchStation(locationId,
+                                                graphRange: value);
+                                          });
+                                          print('Chosen value: $value');
+                                        },
+                                        items: [
+                                          DropdownMenuItem(
+                                            value: '1day',
+                                            child: Text('Senaste dygnet'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: '1week',
+                                            child: Text('Senaste veckan'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: '1month',
+                                            child: Text('Senaste månaden'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: '1year',
+                                            child: Text('Senaste året'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  /*
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      TextButton.icon(
+                                        icon: Icon(
+                                          Icons.history,
+                                          color: _isDarkMode
+                                              ? Colors.grey[100]
+                                              : Colors.grey[900],
+                                        ),
+                                        label: Text(
+                                          'Dygn',
+                                          style: TextStyle(
+                                            color: _isDarkMode
+                                                ? Colors.grey[100]
+                                                : Colors.grey[900],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            post = fetchStation(locationId,
+                                                graphRange: '1day');
+                                          });
+                                          setGraphRange('1day');
+                                        },
+                                      ),
+                                      TextButton.icon(
+                                        icon: Icon(
+                                          Icons.view_week,
+                                          color: _isDarkMode
+                                              ? Colors.grey[100]
+                                              : Colors.grey[900],
+                                        ),
+                                        label: Text(
+                                          'Vecka',
+                                          style: TextStyle(
+                                            color: _isDarkMode
+                                                ? Colors.grey[100]
+                                                : Colors.grey[900],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            post = fetchStation(locationId,
+                                                graphRange: '1week');
+                                          });
+                                          setGraphRange('1week');
+                                        },
+                                      ),
+                                      TextButton.icon(
+                                        icon: Icon(
+                                          Icons.calendar_today,
+                                          color: _isDarkMode
+                                              ? Colors.grey[100]
+                                              : Colors.grey[900],
+                                        ),
+                                        label: Text(
+                                          'Månad',
+                                          style: TextStyle(
+                                            color: _isDarkMode
+                                                ? Colors.grey[100]
+                                                : Colors.grey[900],
+                                          ),
+                                        ),
+                                        style: ButtonStyle(),
+                                        onPressed: () {
+                                          setState(() {
+                                            post = fetchStation(locationId,
+                                                graphRange: '1month');
+                                          });
+                                          setGraphRange('1month');
+                                        },
+                                      ),
+                                      TextButton.icon(
+                                        icon: Icon(
+                                          Icons.wb_sunny,
+                                          color: _isDarkMode
+                                              ? Colors.grey[100]
+                                              : Colors.grey[900],
+                                        ),
+                                        label: Text(
+                                          'År',
+                                          style: TextStyle(
+                                            color: _isDarkMode
+                                                ? Colors.grey[100]
+                                                : Colors.grey[900],
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            post = fetchStation(locationId,
+                                                graphRange: '1year');
+                                          });
+                                          setGraphRange('1year');
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  */
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                         NearbyStationsWidget(
                           latitude: station.lat,
                           longitude: station.lon,

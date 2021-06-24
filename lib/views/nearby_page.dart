@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/common.dart';
@@ -109,7 +107,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
               {
                 if (snapshot.hasData) {
                   List<Station> stations = snapshot.data.stations;
-                  inspect(stations);
+                  //inspect(stations);
                   return SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Card(

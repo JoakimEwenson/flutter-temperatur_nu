@@ -7,8 +7,10 @@ import 'package:temperatur_nu/controller/responseTranslator.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 
 // Fetch data and return a single StationName object
-Future<StationNameVerbose> fetchStation(locationId) async {
-  String data = await fetchSinglePost(locationId);
+Future<StationNameVerbose> fetchStation(String locationId,
+    {String graphRange}) async {
+  String data = await fetchSinglePost(locationId,
+      graphRange: graphRange != null ? graphRange : null);
   var output = await responseTranslator(data);
 
   return output;
@@ -25,12 +27,12 @@ Future<String> fetchSinglePostCache() async {
 }
 
 // Fetching API data and return as string
-Future<String> fetchSinglePost(String location) async {
+Future<String> fetchSinglePost(String location, {String graphRange}) async {
   // Set up url parameters
   Map<String, dynamic> settingsParams = {
     "amm": "true",
     "data": "true",
-    "span": "1day",
+    "span": graphRange != null ? graphRange : '1day',
     "verbose": "true",
     "num": "1",
   };

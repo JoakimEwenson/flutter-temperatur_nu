@@ -15,9 +15,10 @@ Future<UserSettings> fetchUserSettings() async {
   double _nearbyPageNumber = await fetchNearbyPageNumber();
   bool _isLocationServiceEnabled = await Geolocator.isLocationServiceEnabled();
   LocationPermission _permission = await Geolocator.checkPermission();
+  String _graphRange = await fetchGraphRange();
 
   return UserSettings(_isLocationServiceEnabled, _permission, _userHome,
-      _nearbyDetailsNumber, _nearbyPageNumber);
+      _nearbyDetailsNumber, _nearbyPageNumber, _graphRange);
 }
 
 Future<bool> saveUserSettings(UserSettings settings) async {
@@ -65,4 +66,16 @@ void setNearbyPageNumber(double amount) async {
   sp = await SharedPreferences.getInstance();
 
   sp.setDouble('nearbyPageNumber', amount);
+}
+
+Future<String> fetchGraphRange() async {
+  sp = await SharedPreferences.getInstance();
+
+  return sp.containsKey('graphRange') ? sp.getString('graphRange') : '1day';
+}
+
+void setGraphRange(String graphRange) async {
+  sp = await SharedPreferences.getInstance();
+
+  sp.setString('graphRange', graphRange);
 }

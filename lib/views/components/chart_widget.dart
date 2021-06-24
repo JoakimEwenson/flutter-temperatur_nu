@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,9 +37,10 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
 }
 
 class ChartWidget extends StatelessWidget {
-  const ChartWidget({Key key, this.dataposts}) : super(key: key);
+  const ChartWidget({Key key, this.dataposts, this.amm}) : super(key: key);
 
   final List<DataPost> dataposts;
+  final Amm amm;
 
   @override
   Widget build(BuildContext context) {
@@ -52,18 +51,18 @@ class ChartWidget extends StatelessWidget {
         DateTime.tryParse(dataposts[dataposts.length - 1].datetime);
     double chartMinY = _spots[0].y;
     double chartMaxY = _spots[0].y;
+    // Check for highest and lowest temp to set graph limits, use 0 as baseline
     _spots.forEach((element) {
       chartMinY = chartMinY < element.y ? chartMinY : element.y;
       chartMaxY = chartMaxY > element.y ? chartMaxY : element.y;
     });
+    chartMinY = chartMinY > 0 ? 0 : chartMinY;
 
     double chartWidth = MediaQuery.of(context).size.width;
     double chartHeight = chartWidth * 0.6;
 
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
-
-    inspect(_spots);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -74,15 +73,20 @@ class ChartWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
               child: Text(
-                spanStart != null && spanEnd != null
-                    ? 'Temperaturgraf från ${spanStart.day}/${spanStart.month} till ${spanEnd.day}/${spanEnd.month}'
-                    : 'Temperaturgraf',
+                'Temperaturgraf',
                 style: Theme.of(context)
                     .textTheme
                     .subtitle1
                     .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: Text(
+                'Visar perioden mellan ${DateFormat("d/M -yy HH:mm").format(spanStart)} och kl. ${DateFormat("d/M -yy HH:mm").format(spanEnd)}',
+                style: Theme.of(context).textTheme.caption,
               ),
             ),
             SizedBox(
@@ -94,7 +98,7 @@ class ChartWidget extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(4, 0, 4, 16),
               child: LineChart(
                 LineChartData(
-                  minY: (chartMinY - 10).floorToDouble(),
+                  minY: (chartMinY - 5).floorToDouble(),
                   maxY: (chartMaxY + 5).ceilToDouble(),
                   borderData: FlBorderData(
                     show: false,
@@ -106,6 +110,8 @@ class ChartWidget extends StatelessWidget {
                   lineTouchData: LineTouchData(
                     enabled: true,
                     touchTooltipData: LineTouchTooltipData(
+                      fitInsideHorizontally: true,
+                      fitInsideVertically: true,
                       getTooltipItems: (tooltips) {
                         return tooltips.map((tooltip) {
                           DateTime timestamp =
@@ -150,6 +156,28 @@ class ChartWidget extends StatelessWidget {
                 ),
               ),
             ),
+            if (amm != null &&
+                amm.min != null &&
+                amm.average != null &&
+                amm.max != null)
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Samlade värden för perioden',
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                    Text(
+                      "min ${amm.min}° ◦ medel ${amm.average}° ◦ max ${amm.max}°",
+                      style: Theme.of(context).textTheme.caption,
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
