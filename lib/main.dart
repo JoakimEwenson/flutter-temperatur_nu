@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       child: DropdownButton(
                                         elevation: 0,
                                         isExpanded: true,
-                                        icon: Icon(Icons.bar_chart),
+                                        icon: Icon(Icons.timeline),
                                         value: graphRange,
                                         onChanged: (value) {
                                           setState(() {
