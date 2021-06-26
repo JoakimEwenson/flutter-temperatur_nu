@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';

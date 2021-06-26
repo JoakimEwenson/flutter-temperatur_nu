@@ -193,7 +193,6 @@ class _LocationListPageState extends State<LocationListPage> {
                 })
               ],
             ),
-            drawer: AppDrawer(),
             body: RefreshIndicator(
               child: locationList(),
               color: Theme.of(context).primaryColor,

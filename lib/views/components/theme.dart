@@ -17,28 +17,19 @@ Color appCanvasColor = cultured;
 Color darkIconColor = cultured;
 Color lightIconColor = eerieBlack;
 
-Widget appInfo() {
-  return Padding(
-    padding: const EdgeInsets.all(8),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'En app av Joakim Ewenson',
-          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
-        ),
-        SizedBox(
-          height: 4,
-        ),
-        Text(
-          'https://www.ewenson.se',
-          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-      ],
-    ),
-  );
-}
+// Text styles
+TextStyle temperatureHuge = TextStyle(
+  fontSize: 96,
+  fontWeight: FontWeight.w300,
+);
+TextStyle temperatureBig = TextStyle(fontSize: 60);
+
+TextStyle stationTitleSmall = TextStyle(fontSize: 12);
+
+TextStyle pageTitle = TextStyle(fontSize: 24);
+TextStyle cardTitle = TextStyle(fontSize: 16);
+
+TextStyle stationOwner = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
+);

@@ -5,10 +5,8 @@ import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
-import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
-import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/components/station_small_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
@@ -76,18 +74,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        //title: Text('Favoriter'),
-      ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        child: favoritesList(),
-        color: Theme.of(context).primaryColor,
-        backgroundColor: Theme.of(context).accentColor,
-        key: _refreshFavoritesKey,
-        onRefresh: () => _refreshList(),
+      body: SafeArea(
+        child: RefreshIndicator(
+          child: favoritesList(),
+          color: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).accentColor,
+          key: _refreshFavoritesKey,
+          onRefresh: () => _refreshList(),
+        ),
       ),
     );
   }
@@ -113,6 +108,28 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     } else if (snapshot.hasData) {
                       List<Station> stations = snapshot.data.stations;
                       if (stations.length > 0) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Mina mätpunkter',
+                                style: pageTitle,
+                              ),
+                            ),
+                            GridView.count(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              crossAxisCount: 2,
+                              children: stations.map((Station station) {
+                                return StationDataSmallWidget(station: station);
+                              }).toList(),
+                            ),
+                          ],
+                        );
+                        /*
                         return Column(
                           children: [
                             Card(
@@ -242,9 +259,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                     onTap: () {
                                       //saveLocationId(station.id);
                                       Navigator.pushNamed(
-                                          context, '/SingleStation',
-                                          arguments:
-                                              LocationArguments(station.id));
+                                        context,
+                                        '/SingleStation',
+                                        arguments:
+                                            LocationArguments(station.id),
+                                      );
                                     },
                                   );
                                 },
@@ -255,6 +274,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             ),
                           ],
                         );
+                        */
                       } else {
                         return noDataView('Du har inga sparade favoriter än.');
                       }

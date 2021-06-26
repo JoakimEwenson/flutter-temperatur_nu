@@ -76,16 +76,16 @@ class _NearbyListPageState extends State<NearbyListPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        //title: Text('Närliggande mätpunkter'),
       ),
-      drawer: AppDrawer(),
       //body: nearbyList(),
-      body: RefreshIndicator(
-        child: nearbyList(),
-        color: Theme.of(context).primaryColor,
-        backgroundColor: Theme.of(context).accentColor,
-        key: _refreshIndicatorKey,
-        onRefresh: () => _refreshList(),
+      body: SafeArea(
+        child: RefreshIndicator(
+          child: nearbyList(),
+          color: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).accentColor,
+          key: _refreshIndicatorKey,
+          onRefresh: () => _refreshList(),
+        ),
       ),
     );
   }
