@@ -14,7 +14,6 @@ import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/stationdetails_page.dart';
 import 'controller/fetchSinglePost.dart';
-import 'views/drawer.dart';
 import 'views/favorites_page.dart';
 import 'views/nearby_page.dart';
 import 'views/locationlist_page.dart';
@@ -26,6 +25,9 @@ SharedPreferences sp;
 // Set up global String for location and graph range
 String locationId;
 String graphRange = '1day';
+
+// Set up navigation
+int _selectedTab = 0;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -149,7 +151,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
+    final List<Widget> _children = [
+      _singlePostPage(),
+      FavoritesPage(),
+      LocationListPage(),
+      SettingsPage(),
+    ];
     return Scaffold(
+      /*
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -175,236 +187,167 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       drawer: AppDrawer(),
-      //body: _singleTemperatureView(),
-      body: RefreshIndicator(
-        child: _singlePostPage(),
-        color: Theme.of(context).primaryColor,
-        key: _mainRefreshIndicatorKey,
-        onRefresh: () async {
-          if (locationId != null) {
-            setState(() {
-              post = fetchStation(locationId, graphRange: graphRange);
-            });
-          }
+      */
+      bottomNavigationBar: BottomNavigationBar(
+        iconSize: 24,
+        backgroundColor: _isDarkMode ? Colors.grey[50] : Colors.grey[900],
+        currentIndex: _selectedTab,
+        selectedItemColor: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+        unselectedItemColor: _isDarkMode ? Colors.grey[400] : Colors.grey[600],
+        onTap: (int index) {
+          setState(() {
+            _selectedTab = index;
+          });
         },
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home), label: 'Hem', tooltip: 'Hem'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoriter',
+            tooltip: 'Favoriter',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Alla mätpunkter',
+            tooltip: 'Alla mätpunkter',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Inställningar',
+            tooltip: 'Inställningar',
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: _children[_selectedTab],
       ),
     );
   }
 
   _singlePostPage() {
-    return FutureBuilder(
-        future: post,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              {
-                return loadingView();
-              }
-            case ConnectionState.active:
-              {
-                return loadingView();
-              }
-            case ConnectionState.done:
-              {
-                if (snapshot.hasData) {
-                  Station station = snapshot.data.stations[0];
-                  //inspect(station);
-                  return SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    dragStartBehavior: DragStartBehavior.down,
-                    child: Column(
-                      children: [
-                        StationDetailsWidget(station: station),
-                        if (station.data != null)
-                          ChartWidget(
-                            dataposts: station.data != null ? station.data : [],
-                            amm: station.amm != null ? station.amm : null,
-                          ),
-                        Container(
-                          width: double.infinity,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Card(
-                            elevation: 0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Välj grafens tidsspann',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1
-                                        .copyWith(fontWeight: FontWeight.bold),
-                                  ),
-                                  Container(
-                                    width: double.infinity,
-                                    child: DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        elevation: 0,
-                                        isExpanded: true,
-                                        icon: Icon(Icons.timeline),
-                                        value: graphRange,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            graphRange = value;
-                                            setGraphRange(value);
-                                            post = fetchStation(locationId,
-                                                graphRange: value);
-                                          });
-                                          print('Chosen value: $value');
-                                        },
-                                        items: [
-                                          DropdownMenuItem(
-                                            value: '1day',
-                                            child: Text('Senaste dygnet'),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: '1week',
-                                            child: Text('Senaste veckan'),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: '1month',
-                                            child: Text('Senaste månaden'),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: '1year',
-                                            child: Text('Senaste året'),
-                                          ),
-                                        ],
+    return RefreshIndicator(
+      key: _mainRefreshIndicatorKey,
+      onRefresh: () async {
+        if (locationId != null) {
+          setState(() {
+            post = fetchStation(locationId, graphRange: graphRange);
+          });
+        }
+      },
+      child: FutureBuilder(
+          future: post,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                {
+                  return loadingView();
+                }
+              case ConnectionState.active:
+                {
+                  return loadingView();
+                }
+              case ConnectionState.done:
+                {
+                  if (snapshot.hasData) {
+                    Station station = snapshot.data.stations[0];
+                    //inspect(station);
+                    return SingleChildScrollView(
+                      physics: AlwaysScrollableScrollPhysics(),
+                      dragStartBehavior: DragStartBehavior.down,
+                      child: Column(
+                        children: [
+                          StationDetailsWidget(station: station),
+                          if (station.data != null)
+                            ChartWidget(
+                              dataposts:
+                                  station.data != null ? station.data : [],
+                              amm: station.amm != null ? station.amm : null,
+                            ),
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Card(
+                              elevation: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Välj grafens tidsspann',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .subtitle1
+                                          .copyWith(
+                                              fontWeight: FontWeight.bold),
+                                    ),
+                                    Container(
+                                      width: double.infinity,
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton(
+                                          elevation: 0,
+                                          isExpanded: true,
+                                          icon: Icon(Icons.timeline),
+                                          value: graphRange,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              graphRange = value;
+                                              setGraphRange(value);
+                                              post = fetchStation(locationId,
+                                                  graphRange: value);
+                                            });
+                                            print('Chosen value: $value');
+                                          },
+                                          items: [
+                                            DropdownMenuItem(
+                                              value: '1day',
+                                              child: Text('Senaste dygnet'),
+                                            ),
+                                            DropdownMenuItem(
+                                              value: '1week',
+                                              child: Text('Senaste veckan'),
+                                            ),
+                                            DropdownMenuItem(
+                                              value: '1month',
+                                              child: Text('Senaste månaden'),
+                                            ),
+                                            DropdownMenuItem(
+                                              value: '1year',
+                                              child: Text('Senaste året'),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  /*
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.history,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Dygn',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            post = fetchStation(locationId,
-                                                graphRange: '1day');
-                                          });
-                                          setGraphRange('1day');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.view_week,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Vecka',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            post = fetchStation(locationId,
-                                                graphRange: '1week');
-                                          });
-                                          setGraphRange('1week');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.calendar_today,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Månad',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        style: ButtonStyle(),
-                                        onPressed: () {
-                                          setState(() {
-                                            post = fetchStation(locationId,
-                                                graphRange: '1month');
-                                          });
-                                          setGraphRange('1month');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.wb_sunny,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'År',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            post = fetchStation(locationId,
-                                                graphRange: '1year');
-                                          });
-                                          setGraphRange('1year');
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  */
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        NearbyStationsWidget(
-                          latitude: station.lat,
-                          longitude: station.lon,
-                        ),
-                        appInfo(),
-                      ],
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return noDataView(snapshot.error);
-                }
+                          NearbyStationsWidget(
+                            latitude: station.lat,
+                            longitude: station.lon,
+                          ),
+                          appInfo(),
+                        ],
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return noDataView(snapshot.error);
+                  }
 
-                break;
-              }
-            case ConnectionState.none:
-              {
-                break;
-              }
-          }
-          return loadingView();
-        });
+                  break;
+                }
+              case ConnectionState.none:
+                {
+                  break;
+                }
+            }
+            return loadingView();
+          }),
+    );
   }
 
   // Loading indicator

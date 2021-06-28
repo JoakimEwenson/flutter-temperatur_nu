@@ -31,5 +31,4 @@ TextStyle cardTitle = TextStyle(fontSize: 16);
 
 TextStyle stationOwner = TextStyle(
   fontSize: 12,
-  fontWeight: FontWeight.w300,
 );
