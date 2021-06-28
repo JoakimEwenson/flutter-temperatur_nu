@@ -23,11 +23,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Appen behöver veta din plats för att kunna visa närliggande mätpunkter. Inga uppgifter sparas i eller utanför appen.</string>
+	<string>Appen behöver veta din plats för att kunna visa närliggande mätstationer. Inga uppgifter sparas i eller utanför appen.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Appen behöver veta din plats för att kunna visa närliggande mätpunkter. Inga uppgifter sparas i eller utanför appen.</string>
+	<string>Appen behöver veta din plats för att kunna visa närliggande mätstationer. Inga uppgifter sparas i eller utanför appen.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Appen behöver veta din plats för att kunna visa närliggande mätpunkter. Inga uppgifter sparas i eller utanför appen.</string>
+	<string>Appen behöver veta din plats för att kunna visa närliggande mätstationer. Inga uppgifter sparas i eller utanför appen.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

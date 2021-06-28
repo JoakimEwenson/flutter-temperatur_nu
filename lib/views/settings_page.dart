@@ -52,9 +52,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SettingsCard(),
-              SizedBox(
-                height: 48,
-              ),
             ],
           ),
         ),

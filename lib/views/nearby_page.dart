@@ -7,6 +7,7 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
@@ -72,11 +73,6 @@ class _NearbyListPageState extends State<NearbyListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      //body: nearbyList(),
       body: SafeArea(
         child: RefreshIndicator(
           child: nearbyList(),
@@ -109,23 +105,38 @@ class _NearbyListPageState extends State<NearbyListPage> {
                   //inspect(stations);
                   return SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
-                    child: Card(
-                      margin: const EdgeInsets.only(
-                          left: 4, top: 0, right: 4, bottom: 16),
-                      elevation: 0,
-                      child: ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        separatorBuilder: (BuildContext context, int index) =>
-                            StationListDivider(),
-                        itemCount: stations.length,
-                        itemBuilder: (context, index) {
-                          Station station = stations[index];
-                          return GestureDetector(
-                            child: StationListTile(station: station),
-                          );
-                        },
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 8),
+                          child: Text(
+                            'Närliggande mätstationer',
+                            style: pageTitle,
+                          ),
+                        ),
+                        Card(
+                          margin: const EdgeInsets.only(
+                              left: 4, top: 0, right: 4, bottom: 16),
+                          elevation: 0,
+                          child: ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            separatorBuilder:
+                                (BuildContext context, int index) =>
+                                    StationListDivider(),
+                            itemCount: stations.length,
+                            itemBuilder: (context, index) {
+                              Station station = stations[index];
+                              return GestureDetector(
+                                child: StationListTile(station: station),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 } else if (snapshot.hasError) {

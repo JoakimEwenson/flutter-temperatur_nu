@@ -96,65 +96,62 @@ class ChartWidget extends StatelessWidget {
               height: chartHeight,
               width: chartWidth,
               margin: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-              child: InteractiveViewer(
-                child: LineChart(
-                  LineChartData(
-                    minY: (chartMinY - 5).floorToDouble(),
-                    maxY: (chartMaxY + 5).ceilToDouble(),
-                    borderData: FlBorderData(
-                      show: false,
+              child: LineChart(
+                LineChartData(
+                  minY: (chartMinY - 5).floorToDouble(),
+                  maxY: (chartMaxY + 5).ceilToDouble(),
+                  borderData: FlBorderData(
+                    show: false,
+                  ),
+                  gridData: FlGridData(
+                    horizontalInterval: 5,
+                    show: true,
+                  ),
+                  lineTouchData: LineTouchData(
+                    enabled: true,
+                    touchTooltipData: LineTouchTooltipData(
+                      fitInsideHorizontally: true,
+                      fitInsideVertically: true,
+                      getTooltipItems: (tooltips) {
+                        return tooltips.map((tooltip) {
+                          DateTime timestamp =
+                              spotList.timestamps[tooltip.x.toInt()];
+                          return LineTooltipItem(
+                            '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
+                            TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[900]
+                                  : Colors.grey[100],
+                            ),
+                          );
+                        }).toList();
+                      },
+                      tooltipBgColor:
+                          _isDarkMode ? Colors.grey[100] : Colors.grey[900],
                     ),
-                    gridData: FlGridData(
-                      horizontalInterval: 5,
-                      show: true,
-                    ),
-                    lineTouchData: LineTouchData(
-                      enabled: true,
-                      touchTooltipData: LineTouchTooltipData(
-                        fitInsideHorizontally: true,
-                        fitInsideVertically: true,
-                        getTooltipItems: (tooltips) {
-                          return tooltips.map((tooltip) {
-                            DateTime timestamp =
-                                spotList.timestamps[tooltip.x.toInt()];
-                            return LineTooltipItem(
-                              '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
-                              TextStyle(
-                                color: _isDarkMode
-                                    ? Colors.grey[900]
-                                    : Colors.grey[100],
-                              ),
-                            );
-                          }).toList();
-                        },
-                        tooltipBgColor:
-                            _isDarkMode ? Colors.grey[100] : Colors.grey[900],
+                  ),
+                  lineBarsData: [
+                    LineChartBarData(
+                      barWidth: 1,
+                      curveSmoothness: 1,
+                      isCurved: true,
+                      preventCurveOverShooting: true,
+                      colors: _isDarkMode ? [Colors.grey[100]] : [Colors.black],
+                      dotData: FlDotData(show: false),
+                      spots: _spots,
+                    )
+                  ],
+                  titlesData: FlTitlesData(
+                    leftTitles: SideTitles(
+                      showTitles: true,
+                      getTitles: (value) => '${value.toStringAsFixed(0)}°',
+                      getTextStyles: (value) => TextStyle(
+                        color: _isDarkMode ? Colors.grey[100] : Colors.black,
                       ),
+                      margin: 8,
+                      interval: 5,
                     ),
-                    lineBarsData: [
-                      LineChartBarData(
-                        barWidth: 1,
-                        curveSmoothness: 1,
-                        isCurved: true,
-                        preventCurveOverShooting: true,
-                        colors:
-                            _isDarkMode ? [Colors.grey[100]] : [Colors.black],
-                        dotData: FlDotData(show: false),
-                        spots: _spots,
-                      )
-                    ],
-                    titlesData: FlTitlesData(
-                      leftTitles: SideTitles(
-                        showTitles: true,
-                        getTitles: (value) => '${value.toStringAsFixed(0)}°',
-                        getTextStyles: (value) => TextStyle(
-                          color: _isDarkMode ? Colors.grey[100] : Colors.black,
-                        ),
-                        margin: 8,
-                        interval: 5,
-                      ),
-                      bottomTitles: SideTitles(showTitles: false),
-                    ),
+                    bottomTitles: SideTitles(showTitles: false),
                   ),
                 ),
               ),

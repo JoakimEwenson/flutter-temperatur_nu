@@ -34,6 +34,9 @@ class _SettingsCardState extends State<SettingsCard> {
     double _minNearbyAmount = 3.0;
     double _maxNearbyAmount = 25.0;
 
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
+
     return FutureBuilder(
       future: userSettings,
       builder: (BuildContext context, snapshot) {
@@ -135,14 +138,18 @@ class _SettingsCardState extends State<SettingsCard> {
                 ListTile(
                   isThreeLine: true,
                   title: Text(
-                    'Närliggande mätpunkter',
+                    'Närliggande mätstationer',
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   subtitle: Text(
-                    'Bestämmer antalet kompletterande mätpunkter som ska hämtas till varje station, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
+                    'Bestämmer antalet kompletterande mätstationer som ska hämtas till varje station, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
                   ),
                 ),
                 Slider(
+                  activeColor:
+                      _isDarkMode ? Colors.grey[400] : Colors.grey[800],
+                  inactiveColor:
+                      _isDarkMode ? Colors.grey[400] : Colors.grey[800],
                   min: _minNearbyAmount,
                   max: _maxNearbyAmount,
                   divisions: _maxNearbyAmount.toInt(),
@@ -187,7 +194,14 @@ class _SettingsCardState extends State<SettingsCard> {
                         userSettings = fetchUserSettings();
                       });
                     },
-                    child: Text('Spara inställningarna'),
+                    child: Text(
+                      'Spara inställningarna',
+                      style: TextStyle(
+                        color:
+                            _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 )
               ],

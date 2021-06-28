@@ -45,7 +45,7 @@ class AboutAppCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Detta är en enkel tredjepartsapplikation för att hämta temperaturdata från webbtjänsten temperatur.nu och deras databas över mätpunkter runt om i landet. ',
+                  'Detta är en enkel tredjepartsapplikation för att hämta temperaturdata från webbtjänsten temperatur.nu och deras databas över mätstationer runt om i landet. ',
                   style: Theme.of(context).textTheme.bodyText2,
                 ),
                 SizedBox(

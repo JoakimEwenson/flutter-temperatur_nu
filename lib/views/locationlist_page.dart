@@ -125,7 +125,6 @@ class _LocationListPageState extends State<LocationListPage> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
-              //title: Text('Mätstationer'),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(Icons.search),

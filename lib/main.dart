@@ -141,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  // ignore: unused_element
   Future<void> _getGpsLocation() async {
     try {
       post = fetchStation('gps', graphRange: graphRange);
@@ -151,49 +152,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isDarkMode =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
-
+    // Specify list of page childrens
     final List<Widget> _children = [
       _singlePostPage(),
       FavoritesPage(),
+      NearbyListPage(),
       LocationListPage(),
       SettingsPage(),
     ];
     return Scaffold(
-      /*
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        //title: Text(pageTitle),
-        actions: [
-          IconButton(
-            icon: userLocationIcon,
-            onPressed: () {
-              setState(() {
-                try {
-                  _getGpsLocation();
-                  userLocationIcon = Icon(
-                    Icons.gps_fixed,
-                  );
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(e.toString()),
-                  ));
-                }
-              });
-            },
-          )
-        ],
-      ),
-      drawer: AppDrawer(),
-      */
       bottomNavigationBar: BottomNavigationBar(
-        iconSize: 24,
-        backgroundColor: _isDarkMode ? Colors.grey[50] : Colors.grey[900],
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.grey[900],
         currentIndex: _selectedTab,
-        selectedItemColor: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
-        unselectedItemColor: _isDarkMode ? Colors.grey[400] : Colors.grey[600],
+        selectedItemColor: Colors.grey[200],
+        unselectedItemColor: Colors.grey[400],
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: (int index) {
           setState(() {
             _selectedTab = index;
@@ -201,16 +176,24 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: 'Hem', tooltip: 'Hem'),
+            icon: Icon(Icons.home),
+            label: 'Hem',
+            tooltip: 'Gå till hemstationen',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.favorite),
             label: 'Favoriter',
-            tooltip: 'Favoriter',
+            tooltip: 'Visa mina favoriter',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.gps_fixed),
+            label: 'Närliggande',
+            tooltip: 'Lista närliggande mätstationer',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'Alla mätpunkter',
-            tooltip: 'Alla mätpunkter',
+            label: 'Lista alla',
+            tooltip: 'Lista alla mätstationer',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),

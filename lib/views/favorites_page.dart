@@ -113,15 +113,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 8),
                               child: Text(
-                                'Mina mätpunkter',
+                                'Favoritmätstationer',
                                 style: pageTitle,
                               ),
                             ),
                             GridView.count(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
+                              childAspectRatio: 1.4,
                               crossAxisCount: 2,
                               children: stations.map((Station station) {
                                 return StationDataSmallWidget(station: station);

@@ -32,14 +32,24 @@ class StationDataSmallWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Center(
-                    child: Text('${station.temp}°', style: temperatureBig),
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '${station.temp}°',
+                        style: temperatureBig,
+                      ),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomLeft,
-                    child: Text(
-                      '${station.title}',
-                      style: stationTitleSmall,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        '${station.title}',
+                        style: stationTitleSmall,
+                      ),
                     ),
                   ),
                 ],

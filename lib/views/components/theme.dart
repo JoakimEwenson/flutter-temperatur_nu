@@ -22,7 +22,10 @@ TextStyle temperatureHuge = TextStyle(
   fontSize: 96,
   fontWeight: FontWeight.w300,
 );
-TextStyle temperatureBig = TextStyle(fontSize: 60);
+TextStyle temperatureBig = TextStyle(
+  fontSize: 60,
+  fontWeight: FontWeight.w300,
+);
 
 TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 

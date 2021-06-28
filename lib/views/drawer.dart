@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
               Icons.gps_fixed,
               color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
-            title: Text('Närliggande mätpunkter'),
+            title: Text('Närliggande mätstationer'),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(context, '/Nearby');
@@ -62,7 +62,7 @@ class AppDrawer extends StatelessWidget {
               Icons.list,
               color: _isDarkMode ? darkIconColor : lightIconColor,
             ),
-            title: Text('Lista alla mätpunkter'),
+            title: Text('Lista alla mätstationer'),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.pushNamed(context, '/LocationList');

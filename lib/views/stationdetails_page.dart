@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:temperatur_nu/controller/fetchSinglePost.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
@@ -35,10 +37,12 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
       });
     }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      appBar: Platform.isIOS
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            )
+          : null,
       body: SafeArea(
         child: RefreshIndicator(
           color: Theme.of(context).primaryColor,
@@ -119,104 +123,6 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                                       ),
                                     ),
                                   ),
-                                  /*
-                                  Row(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.history,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Dygn',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            graphRange = '1day';
-                                          });
-                                          setGraphRange('1day');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.view_week,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Vecka',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            graphRange = '1week';
-                                          });
-                                          setGraphRange('1week');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.calendar_today,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'Månad',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        style: ButtonStyle(),
-                                        onPressed: () {
-                                          setState(() {
-                                            graphRange = '1month';
-                                          });
-                                          setGraphRange('1month');
-                                        },
-                                      ),
-                                      TextButton.icon(
-                                        icon: Icon(
-                                          Icons.wb_sunny,
-                                          color: _isDarkMode
-                                              ? Colors.grey[100]
-                                              : Colors.grey[900],
-                                        ),
-                                        label: Text(
-                                          'År',
-                                          style: TextStyle(
-                                            color: _isDarkMode
-                                                ? Colors.grey[100]
-                                                : Colors.grey[900],
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            graphRange = '1year';
-                                          });
-                                          setGraphRange('1year');
-                                        },
-                                      ),
-                                    ],
-                                  )
-                                  */
                                 ],
                               ),
                             ),

@@ -75,7 +75,7 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'Närliggande mätpunkter',
+                        'Närliggande mätstationer',
                         style: Theme.of(context)
                             .textTheme
                             .subtitle1
