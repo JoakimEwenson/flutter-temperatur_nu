@@ -212,10 +212,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _singlePostPage() {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return RefreshIndicator(
+      backgroundColor: Colors.grey[800],
+      color: Colors.grey[200],
       key: _mainRefreshIndicatorKey,
       onRefresh: () async {
         if (locationId != null) {
+          locationId = sp.getString('userHome') ?? locationId;
           setState(() {
             post = fetchStation(locationId, graphRange: graphRange);
           });
@@ -238,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (snapshot.hasData) {
                     Station station = snapshot.data.stations[0];
                     //inspect(station);
-                    return phoneMainScreen(station, context);
+                    return phoneMainScreen(station, context, _isDarkMode);
                   } else if (snapshot.hasError) {
                     return noDataView(snapshot.error);
                   }
@@ -255,7 +260,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget tabletMainScreen(Station station, BuildContext context) {
+  Widget tabletMainScreen(
+      Station station, BuildContext context, bool _isDarkMode) {
     return Container(
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
@@ -344,8 +350,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget phoneMainScreen(Station station, BuildContext context) {
-    print('Graph range: $graphRange');
+  Widget phoneMainScreen(
+      Station station, BuildContext context, bool _isDarkMode) {
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       dragStartBehavior: DragStartBehavior.down,
@@ -426,10 +432,32 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 children: [
                   TextButton.icon(
-                    icon: Icon(Icons.favorite),
+                    icon: station.isFavorite
+                        ? Icon(
+                            Icons.favorite_outline,
+                            color: _isDarkMode
+                                ? Colors.grey[200]
+                                : Colors.grey[800],
+                          )
+                        : Icon(
+                            Icons.favorite,
+                            color: imperialRed,
+                          ),
                     label: station.isFavorite
-                        ? Text('Ta bort ${station.title} som favorit')
-                        : Text('Lägg till ${station.title} som favorit'),
+                        ? Text(
+                            'Ta bort ${station.title} som favorit',
+                            style: TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[200]
+                                  : Colors.grey[800],
+                            ),
+                          )
+                        : Text('Lägg till ${station.title} som favorit',
+                            style: TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[200]
+                                  : Colors.grey[800],
+                            )),
                     onPressed: () async {
                       try {
                         if (station.isFavorite) {
@@ -510,7 +538,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () async {
                       try {
                         if (station.isHome) {
-                          inspect(station);
                           ScaffoldMessenger.of(context)
                             ..removeCurrentSnackBar()
                             ..showSnackBar(
@@ -539,10 +566,27 @@ class _MyHomePageState extends State<MyHomePage> {
                         }
                       } catch (e) {}
                     },
-                    icon: Icon(Icons.home),
+                    icon: Icon(
+                      station.isHome ? Icons.home_outlined : Icons.home,
+                      color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                    ),
                     label: station.isHome
-                        ? Text('Ta bort ${station.title} som hemstation')
-                        : Text('Välj ${station.title} som hemstation'),
+                        ? Text(
+                            'Ta bort ${station.title} som hemstation',
+                            style: TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[200]
+                                  : Colors.grey[800],
+                            ),
+                          )
+                        : Text(
+                            'Välj ${station.title} som hemstation',
+                            style: TextStyle(
+                              color: _isDarkMode
+                                  ? Colors.grey[200]
+                                  : Colors.grey[800],
+                            ),
+                          ),
                   ),
                 ],
               ),
@@ -567,12 +611,13 @@ class _MyHomePageState extends State<MyHomePage> {
           SizedBox(
             height: 25,
           ),
-          CircularProgressIndicator(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
           Text(
             'Hämtar data',
             style: Theme.of(context).textTheme.headline3,
+          ),
+          LinearProgressIndicator(
+            backgroundColor: Colors.grey[800],
+            minHeight: 2,
           ),
         ],
       ),
