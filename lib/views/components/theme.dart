@@ -19,7 +19,7 @@ Color lightIconColor = eerieBlack;
 
 // Text styles
 TextStyle temperatureHuge = TextStyle(
-  fontSize: 96,
+  fontSize: 120,
   fontWeight: FontWeight.w300,
 );
 TextStyle temperatureBig = TextStyle(

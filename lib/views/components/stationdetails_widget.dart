@@ -45,49 +45,48 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
               Column(
                 children: [
                   Container(
-                    child: Card(
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: double.infinity,
-                          child: Column(
-                            children: [
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: widget.station.temp != null
-                                    ? Text(
-                                        "${widget.station.temp}°",
-                                        style: temperatureHuge,
-                                        textAlign: TextAlign.center,
-                                      )
-                                    : Text(
-                                        "N/A",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline1,
-                                        textAlign: TextAlign.center,
-                                      ),
-                              ),
-                              Text(
-                                widget.station.sourceInfo,
-                                style: stationOwner,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                              ),
-                              Text(
-                                'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}',
-                                style: stationOwner,
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
-                          ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        child: Column(
+                          children: [
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: widget.station.temp != null
+                                  ? Text(
+                                      "${widget.station.temp}°",
+                                      style: temperatureHuge,
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Text(
+                                      "N/A",
+                                      style:
+                                          Theme.of(context).textTheme.headline1,
+                                      textAlign: TextAlign.center,
+                                    ),
+                            ),
+                            /*
+                            Text(
+                              widget.station.sourceInfo,
+                              style: stationOwner,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                            ),
+                            Text(
+                              'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}',
+                              style: stationOwner,
+                              textAlign: TextAlign.center,
+                            ),
+                            */
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
+              /*
               Positioned(
                 top: 0,
                 left: 0,
@@ -217,6 +216,7 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                   },
                 ),
               ),
+              */
             ],
           ),
         ],

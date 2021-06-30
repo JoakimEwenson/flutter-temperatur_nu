@@ -5,8 +5,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
@@ -235,88 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   if (snapshot.hasData) {
                     Station station = snapshot.data.stations[0];
                     //inspect(station);
-                    return SingleChildScrollView(
-                      physics: AlwaysScrollableScrollPhysics(),
-                      dragStartBehavior: DragStartBehavior.down,
-                      child: Column(
-                        children: [
-                          StationDetailsWidget(station: station),
-                          if (station.data != null)
-                            ChartWidget(
-                              dataposts:
-                                  station.data != null ? station.data : [],
-                              amm: station.amm != null ? station.amm : null,
-                            ),
-                          Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Card(
-                              elevation: 0,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Välj grafens tidsspann',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1
-                                          .copyWith(
-                                              fontWeight: FontWeight.bold),
-                                    ),
-                                    Container(
-                                      width: double.infinity,
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton(
-                                          elevation: 0,
-                                          isExpanded: true,
-                                          icon: Icon(Icons.timeline),
-                                          value: graphRange,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              graphRange = value;
-                                              setGraphRange(value);
-                                              post = fetchStation(locationId,
-                                                  graphRange: value);
-                                            });
-                                            print('Chosen value: $value');
-                                          },
-                                          items: [
-                                            DropdownMenuItem(
-                                              value: '1day',
-                                              child: Text('Senaste dygnet'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: '1week',
-                                              child: Text('Senaste veckan'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: '1month',
-                                              child: Text('Senaste månaden'),
-                                            ),
-                                            DropdownMenuItem(
-                                              value: '1year',
-                                              child: Text('Senaste året'),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          NearbyStationsWidget(
-                            latitude: station.lat,
-                            longitude: station.lon,
-                          ),
-                          appInfo(),
-                        ],
-                      ),
-                    );
+                    return phoneMainScreen(station, context);
                   } else if (snapshot.hasError) {
                     return noDataView(snapshot.error);
                   }
@@ -330,6 +251,288 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             return loadingView();
           }),
+    );
+  }
+
+  Widget tabletMainScreen(Station station, BuildContext context) {
+    return Container(
+      child: SingleChildScrollView(
+        physics: AlwaysScrollableScrollPhysics(),
+        dragStartBehavior: DragStartBehavior.down,
+        child: Row(
+          children: [
+            StationDetailsWidget(station: station),
+            if (station.data != null)
+              Column(
+                children: [
+                  ChartWidget(
+                    dataposts: station.data != null ? station.data : [],
+                    amm: station.amm != null ? station.amm : null,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Card(
+                      elevation: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Välj grafens tidsspann',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .subtitle1
+                                  .copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              width: double.infinity,
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  elevation: 0,
+                                  isExpanded: true,
+                                  icon: Icon(Icons.timeline),
+                                  value: graphRange,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      graphRange = value;
+                                      setGraphRange(value);
+                                      post = fetchStation(locationId,
+                                          graphRange: value);
+                                    });
+                                    print('Chosen value: $value');
+                                  },
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: '1day',
+                                      child: Text('Senaste dygnet'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: '1week',
+                                      child: Text('Senaste veckan'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: '1month',
+                                      child: Text('Senaste månaden'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: '1year',
+                                      child: Text('Senaste året'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            NearbyStationsWidget(
+              latitude: station.lat,
+              longitude: station.lon,
+            ),
+            appInfo(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget phoneMainScreen(Station station, BuildContext context) {
+    return SingleChildScrollView(
+      physics: AlwaysScrollableScrollPhysics(),
+      dragStartBehavior: DragStartBehavior.down,
+      child: Column(
+        children: [
+          StationDetailsWidget(station: station),
+          if (station.data != null)
+            ChartWidget(
+              dataposts: station.data != null ? station.data : [],
+              amm: station.amm != null ? station.amm : null,
+            ),
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            child: Card(
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Välj grafens tidsspann',
+                      style: Theme.of(context)
+                          .textTheme
+                          .subtitle1
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton(
+                          elevation: 0,
+                          isExpanded: true,
+                          icon: Icon(Icons.timeline),
+                          value: graphRange,
+                          onChanged: (value) {
+                            setState(() {
+                              graphRange = value;
+                              setGraphRange(value);
+                              post =
+                                  fetchStation(locationId, graphRange: value);
+                            });
+                            print('Chosen value: $value');
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: '1day',
+                              child: Text('Senaste dygnet'),
+                            ),
+                            DropdownMenuItem(
+                              value: '1week',
+                              child: Text('Senaste veckan'),
+                            ),
+                            DropdownMenuItem(
+                              value: '1month',
+                              child: Text('Senaste månaden'),
+                            ),
+                            DropdownMenuItem(
+                              value: '1year',
+                              child: Text('Senaste året'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8),
+            width: double.infinity,
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () async {
+                      try {
+                        if (station.isFavorite) {
+                          if (await removeFromFavorites(station.id)) {
+                            station.isFavorite =
+                                await existsInFavorites(station.id);
+                            ScaffoldMessenger.of(context)
+                              ..removeCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'Tog bort ${station.title} från favoriter.',
+                                  ),
+                                ),
+                              );
+                            setState(() {
+                              station.isFavorite = false;
+                            });
+                          } else {
+                            station.isFavorite =
+                                await existsInFavorites(station.id);
+                            ScaffoldMessenger.of(context)
+                              ..removeCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Det gick inte att ta bort ${station.title} från favoriter.'),
+                                ),
+                              );
+                            setState(() {
+                              station.isFavorite = false;
+                            });
+                          }
+                        } else {
+                          if (await addToFavorites(station.id)) {
+                            station.isFavorite =
+                                await existsInFavorites(station.id);
+                            ScaffoldMessenger.of(context)
+                              ..removeCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'La till ${station.title} i favoriter.'),
+                                ),
+                              );
+                            setState(() {
+                              station.isFavorite = true;
+                            });
+                          } else {
+                            station.isFavorite =
+                                await existsInFavorites(station.id);
+                            ScaffoldMessenger.of(context)
+                              ..removeCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Det gick inte att lägga till ${station.title} i favoriter.'),
+                                ),
+                              );
+                            setState(() {
+                              station.isFavorite = false;
+                            });
+                          }
+                          setState(() {});
+                        }
+                      } on TooManyFavoritesException catch (e) {
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(e.errorMsg()),
+                            ),
+                          );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(
+                            SnackBar(
+                              content: Text(e.toString()),
+                            ),
+                          );
+                      }
+                    },
+                    icon: Icon(Icons.favorite),
+                    label: station.isFavorite
+                        ? Text('Ta bort ${station.title} som favorit')
+                        : Text('Lägg till ${station.title} som favorit'),
+                  ),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () {},
+                    icon: Icon(Icons.home),
+                    label: station.isHome
+                        ? Text('Ta bort ${station.title} som hemstation')
+                        : Text('Välj ${station.title} som hemstation'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          NearbyStationsWidget(
+            latitude: station.lat,
+            longitude: station.lon,
+          ),
+          appInfo(),
+        ],
+      ),
     );
   }
 
