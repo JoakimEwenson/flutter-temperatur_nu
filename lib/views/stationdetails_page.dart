@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/fetchSinglePost.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
@@ -9,6 +10,10 @@ import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
+import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
+
+// Set up SharedPreferences for loading saved data
+SharedPreferences sp;
 
 Future<StationNameVerbose> post;
 
@@ -132,6 +137,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                           latitude: station.lat,
                           longitude: station.lon,
                         ),
+                        StationInfoWidget(station: station),
                         appInfo(),
                       ],
                     ),

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:temperatur_nu/controller/favorites.dart';
-import 'package:temperatur_nu/controller/userHome.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class StationDetailsWidget extends StatefulWidget {
@@ -21,8 +17,6 @@ class StationDetailsWidget extends StatefulWidget {
 class _StationDetailsWidgetState extends State<StationDetailsWidget> {
   @override
   Widget build(BuildContext context) {
-    bool _isDarkMode =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: double.infinity,

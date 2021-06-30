@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/favorites.dart';
+import 'package:temperatur_nu/controller/userHome.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
+import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/stationdetails_page.dart';
 import 'controller/fetchSinglePost.dart';
@@ -25,8 +26,10 @@ import 'views/settings_page.dart';
 SharedPreferences sp;
 
 // Set up global String for location and graph range
+String defaultLocation = 'kayravuopio';
+String defaultGraphRange = '1day';
 String locationId;
-String graphRange = '1day';
+String graphRange;
 
 // Set up navigation
 int _selectedTab = 0;
@@ -40,8 +43,8 @@ Future<Null> main() async {
     ),
   );
   sp = await SharedPreferences.getInstance();
-  locationId = sp.getString('userHome ');
-  //graphRange = sp.getString('graphRange');
+  locationId = sp.getString('userHome') ?? defaultLocation;
+  graphRange = sp.getString('graphRange') ?? defaultGraphRange;
 
   runApp(MyApp());
 }
@@ -119,13 +122,12 @@ class _MyHomePageState extends State<MyHomePage> {
       new GlobalKey<RefreshIndicatorState>();
   num timestamp;
   num timediff;
-  Icon userLocationIcon = Icon(Icons.gps_not_fixed);
 
   @override
   void initState() {
     super.initState();
-    locationId = sp.getString('userHome');
-    //graphRange = sp.getString('graphRange');
+    locationId = sp.getString('userHome') ?? defaultLocation;
+    graphRange = sp.getString('graphRange') ?? defaultGraphRange;
 
     //print(locationId);
     Future.delayed(const Duration(milliseconds: 250), () async {
@@ -139,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     post = null;
     nearby = null;
-    userLocationIcon = Icon(Icons.gps_not_fixed);
     super.dispose();
   }
 
@@ -344,6 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget phoneMainScreen(Station station, BuildContext context) {
+    print('Graph range: $graphRange');
     return SingleChildScrollView(
       physics: AlwaysScrollableScrollPhysics(),
       dragStartBehavior: DragStartBehavior.down,
@@ -417,13 +419,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 8),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
             width: double.infinity,
-            child: Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
+            child: Card(
+              elevation: 0,
+              child: Column(
+                children: [
+                  TextButton.icon(
+                    icon: Icon(Icons.favorite),
+                    label: station.isFavorite
+                        ? Text('Ta bort ${station.title} som favorit')
+                        : Text('Lägg till ${station.title} som favorit'),
                     onPressed: () async {
                       try {
                         if (station.isFavorite) {
@@ -489,14 +495,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                           setState(() {});
                         }
-                      } on TooManyFavoritesException catch (e) {
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(e.errorMsg()),
-                            ),
-                          );
                       } catch (e) {
                         ScaffoldMessenger.of(context)
                           ..removeCurrentSnackBar()
@@ -507,29 +505,54 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                       }
                     },
-                    icon: Icon(Icons.favorite),
-                    label: station.isFavorite
-                        ? Text('Ta bort ${station.title} som favorit')
-                        : Text('Lägg till ${station.title} som favorit'),
                   ),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {},
+                  TextButton.icon(
+                    onPressed: () async {
+                      try {
+                        if (station.isHome) {
+                          inspect(station);
+                          ScaffoldMessenger.of(context)
+                            ..removeCurrentSnackBar()
+                            ..showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Du har tagit bort ${station.title} som hemstation'),
+                              ),
+                            );
+                          setState(() {
+                            station.isHome = false;
+                            removeUserHome();
+                          });
+                        } else if (!station.isHome) {
+                          ScaffoldMessenger.of(context)
+                            ..removeCurrentSnackBar()
+                            ..showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'Du har valt ${station.title} som hemstation'),
+                              ),
+                            );
+                          setState(() {
+                            saveUserHome(station.id);
+                            station.isHome = true;
+                          });
+                        }
+                      } catch (e) {}
+                    },
                     icon: Icon(Icons.home),
                     label: station.isHome
                         ? Text('Ta bort ${station.title} som hemstation')
                         : Text('Välj ${station.title} som hemstation'),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           NearbyStationsWidget(
             latitude: station.lat,
             longitude: station.lon,
           ),
+          StationInfoWidget(station: station),
           appInfo(),
         ],
       ),

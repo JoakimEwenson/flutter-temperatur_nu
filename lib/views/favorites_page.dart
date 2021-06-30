@@ -5,8 +5,10 @@ import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
+import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/views/components/station_small_widget.dart';
+import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
+import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
 
@@ -108,6 +110,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     } else if (snapshot.hasData) {
                       List<Station> stations = snapshot.data.stations;
                       if (stations.length > 0) {
+                        /*
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -131,9 +134,19 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             ),
                           ],
                         );
-                        /*
+                        */
                         return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4, vertical: 8),
+                              child: Text(
+                                'Mina favoritstationer',
+                                style: pageTitle,
+                              ),
+                            ),
                             Card(
                               elevation: 0,
                               margin: const EdgeInsets.only(
@@ -276,7 +289,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             ),
                           ],
                         );
-                        */
                       } else {
                         return noDataView('Du har inga sparade favoriter än.');
                       }
