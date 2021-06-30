@@ -11,6 +11,7 @@ import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
+import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
@@ -215,8 +216,8 @@ class _MyHomePageState extends State<MyHomePage> {
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return RefreshIndicator(
-      backgroundColor: Colors.grey[800],
-      color: Colors.grey[200],
+      color: Theme.of(context).primaryColor,
+      backgroundColor: Theme.of(context).accentColor,
       key: _mainRefreshIndicatorKey,
       onRefresh: () async {
         if (locationId != null) {
@@ -232,11 +233,11 @@ class _MyHomePageState extends State<MyHomePage> {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 {
-                  return loadingView();
+                  return LoadingWidget();
                 }
               case ConnectionState.active:
                 {
-                  return loadingView();
+                  return LoadingWidget();
                 }
               case ConnectionState.done:
                 {
@@ -255,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   break;
                 }
             }
-            return loadingView();
+            return LoadingWidget();
           }),
     );
   }
@@ -598,27 +599,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           StationInfoWidget(station: station),
           appInfo(),
-        ],
-      ),
-    );
-  }
-
-  // Loading indicator
-  loadingView() {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 25,
-          ),
-          Text(
-            'Hämtar data',
-            style: Theme.of(context).textTheme.headline3,
-          ),
-          LinearProgressIndicator(
-            backgroundColor: Colors.grey[800],
-            minHeight: 2,
-          ),
         ],
       ),
     );

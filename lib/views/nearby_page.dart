@@ -5,6 +5,7 @@ import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -92,11 +93,11 @@ class _NearbyListPageState extends State<NearbyListPage> {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:
               {
-                return loadingView();
+                return LoadingWidget();
               }
             case ConnectionState.active:
               {
-                return loadingView();
+                return LoadingWidget();
               }
             case ConnectionState.done:
               {
@@ -150,7 +151,7 @@ class _NearbyListPageState extends State<NearbyListPage> {
                 break;
               }
           }
-          return loadingView();
+          return LoadingWidget();
         });
   }
 

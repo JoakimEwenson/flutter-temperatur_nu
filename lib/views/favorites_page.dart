@@ -8,6 +8,7 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
+import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
@@ -101,7 +102,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               switch (snapshot.connectionState) {
                 case ConnectionState.active:
                   {
-                    return loadingView();
+                    return LoadingWidget();
                   }
                 case ConnectionState.done:
                   {
@@ -304,11 +305,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   }
                 case ConnectionState.waiting:
                   {
-                    return loadingView();
+                    return LoadingWidget();
                   }
               }
 
-              return loadingView();
+              return LoadingWidget();
             }),
       ),
     );

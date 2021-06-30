@@ -7,6 +7,7 @@ import 'package:temperatur_nu/controller/sorting.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 
 // Set up Shared Preferences for accessing local storage
@@ -215,7 +216,7 @@ class _LocationListPageState extends State<LocationListPage> {
         switch (snapshot.connectionState) {
           case ConnectionState.active:
             {
-              return loadingView();
+              return LoadingWidget();
             }
           case ConnectionState.done:
             {
@@ -325,11 +326,11 @@ class _LocationListPageState extends State<LocationListPage> {
             }
           case ConnectionState.waiting:
             {
-              return loadingView();
+              return LoadingWidget();
             }
         }
 
-        return loadingView();
+        return LoadingWidget();
       },
     );
   }
