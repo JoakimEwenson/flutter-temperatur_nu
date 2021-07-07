@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 class ChartSpotList {
   ChartSpotList(this.spots, this.timestamps);
@@ -60,6 +61,10 @@ class ChartWidget extends StatelessWidget {
 
     double chartWidth = MediaQuery.of(context).size.width;
     double chartHeight = chartWidth * 0.6;
+
+    // Min/Max times
+    DateTime maxTime = DateTime.tryParse(amm.maxTime);
+    DateTime minTime = DateTime.tryParse(amm.minTime);
 
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
@@ -132,7 +137,7 @@ class ChartWidget extends StatelessWidget {
                   ),
                   lineBarsData: [
                     LineChartBarData(
-                      barWidth: 1,
+                      barWidth: 2,
                       curveSmoothness: 1,
                       isCurved: true,
                       preventCurveOverShooting: true,
@@ -160,23 +165,36 @@ class ChartWidget extends StatelessWidget {
                 amm.min != null &&
                 amm.average != null &&
                 amm.max != null)
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Samlade värden för perioden',
-                      style: Theme.of(context).textTheme.subtitle2,
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Samlade värden för perioden',
+                          style: Theme.of(context).textTheme.subtitle2,
+                        ),
+                        Text(
+                          "min ${amm.min}° ◦ medel ${amm.average}° ◦ max ${amm.max}°",
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "min ${amm.min}° ◦ medel ${amm.average}° ◦ max ${amm.max}°",
+                  ),
+                  Container(
+                    margin: const EdgeInsets.all(8),
+                    width: double.infinity,
+                    child: Text(
+                      'Periodens högsta temperatur (${amm.max}°) uppmättes ${DateFormat(shortDateFormat).format(maxTime)} kl. ${DateFormat(shortTimeFormat).format(maxTime)} och lägsta temperatur (${amm.min}°) uppmättes ${DateFormat(shortDateFormat).format(minTime)} kl. ${DateFormat(shortTimeFormat).format(minTime)}',
                       style: Theme.of(context).textTheme.caption,
+                      textAlign: TextAlign.center,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
           ],
         ),

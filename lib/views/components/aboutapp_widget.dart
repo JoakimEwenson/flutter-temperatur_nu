@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:package_info/package_info.dart';
 
 class AboutAppCard extends StatelessWidget {
   const AboutAppCard({
     Key key,
-    @required this.packageInfo,
   }) : super(key: key);
-
-  final PackageInfo packageInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +14,19 @@ class AboutAppCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Center(
-            child: Image.asset(
-              'icon/temperatur_nu.png',
-              height: 72,
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            child: Center(
-              child: Text(
-                'Appversion ${packageInfo.version} (build ${packageInfo.buildNumber})',
-                style: Theme.of(context).textTheme.caption,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(25),
+                child: Image.asset(
+                  'icon/icon.png',
+                  height: 96,
+                ),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Text(
               'Om appen',
               style: Theme.of(context).textTheme.headline6,

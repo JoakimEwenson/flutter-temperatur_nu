@@ -17,6 +17,10 @@ Color appCanvasColor = cultured;
 Color darkIconColor = cultured;
 Color lightIconColor = eerieBlack;
 
+// DateFormat styles
+String shortDateFormat = "d/M -yy";
+String shortTimeFormat = "HH:mm";
+
 // Text styles
 TextStyle temperatureHuge = TextStyle(
   fontSize: 120,

@@ -38,20 +38,25 @@ class _SettingsPageState extends State<SettingsPage> {
           physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
+              AboutAppCard(),
+              SettingsCard(),
               FutureBuilder(
                 future: _packageInfo,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    PackageInfo packInfo = snapshot.data;
-                    return AboutAppCard(
-                      packageInfo: packInfo,
+                    PackageInfo packageInfo = snapshot.data;
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Appversion ${packageInfo.version} (build ${packageInfo.buildNumber})',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
                     );
                   }
 
                   return Container();
                 },
               ),
-              SettingsCard(),
             ],
           ),
         ),

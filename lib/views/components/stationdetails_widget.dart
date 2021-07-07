@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/favhome_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class StationDetailsWidget extends StatefulWidget {
   const StationDetailsWidget({
     Key key,
     @required this.station,
+    @required this.showBackButton,
   }) : super(key: key);
 
   final Station station;
+  final bool showBackButton;
 
   @override
   _StationDetailsWidgetState createState() => _StationDetailsWidgetState();
@@ -24,193 +27,60 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              child: Text(
-                widget.station.title,
-                style: pageTitle,
-              ),
-            ),
-          ),
-          Stack(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Column(
-                children: [
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: widget.station.temp != null
-                                  ? Text(
-                                      "${widget.station.temp}°",
-                                      style: temperatureHuge,
-                                      textAlign: TextAlign.center,
-                                    )
-                                  : Text(
-                                      "N/A",
-                                      style:
-                                          Theme.of(context).textTheme.headline1,
-                                      textAlign: TextAlign.center,
-                                    ),
-                            ),
-                            /*
-                            Text(
-                              widget.station.sourceInfo,
-                              style: stationOwner,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                            ),
-                            Text(
-                              'Uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}',
-                              style: stationOwner,
-                              textAlign: TextAlign.center,
-                            ),
-                            */
-                          ],
+              if (widget.showBackButton)
+                IconButton(
+                    icon: Icon(Icons.chevron_left),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  child: Text(
+                    widget.station.title,
+                    style: pageTitle,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Column(
+            children: [
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    width: double.infinity,
+                    child: Column(
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: widget.station.temp != null
+                              ? Text(
+                                  "${widget.station.temp}°",
+                                  style: temperatureHuge,
+                                  textAlign: TextAlign.center,
+                                )
+                              : Text(
+                                  "N/A",
+                                  style: Theme.of(context).textTheme.headline1,
+                                  textAlign: TextAlign.center,
+                                ),
                         ),
-                      ),
+                        FavoriteHomeWidget(
+                          station: widget.station,
+                        )
+                      ],
                     ),
                   ),
-                ],
-              ),
-              /*
-              Positioned(
-                top: 0,
-                left: 0,
-                child: IconButton(
-                  icon: widget.station.isFavorite
-                      ? Icon(
-                          Icons.favorite,
-                          color: imperialRed,
-                        )
-                      : Icon(Icons.favorite_outline),
-                  onPressed: () async {
-                    try {
-                      if (widget.station.isFavorite) {
-                        if (await removeFromFavorites(widget.station.id)) {
-                          widget.station.isFavorite =
-                              await existsInFavorites(widget.station.id);
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Tog bort ${widget.station.title} från favoriter.',
-                                ),
-                              ),
-                            );
-                          setState(() {
-                            widget.station.isFavorite = false;
-                          });
-                        } else {
-                          widget.station.isFavorite =
-                              await existsInFavorites(widget.station.id);
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Det gick inte att ta bort ${widget.station.title} från favoriter.'),
-                              ),
-                            );
-                          setState(() {
-                            widget.station.isFavorite = false;
-                          });
-                        }
-                      } else {
-                        if (await addToFavorites(widget.station.id)) {
-                          widget.station.isFavorite =
-                              await existsInFavorites(widget.station.id);
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'La till ${widget.station.title} i favoriter.'),
-                              ),
-                            );
-                          setState(() {
-                            widget.station.isFavorite = true;
-                          });
-                        } else {
-                          widget.station.isFavorite =
-                              await existsInFavorites(widget.station.id);
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Det gick inte att lägga till ${widget.station.title} i favoriter.'),
-                              ),
-                            );
-                          setState(() {
-                            widget.station.isFavorite = false;
-                          });
-                        }
-                        setState(() {});
-                      }
-                    } on TooManyFavoritesException catch (e) {
-                      ScaffoldMessenger.of(context)
-                        ..removeCurrentSnackBar()
-                        ..showSnackBar(
-                          SnackBar(
-                            content: Text(e.errorMsg()),
-                          ),
-                        );
-                    } catch (e) {
-                      ScaffoldMessenger.of(context)
-                        ..removeCurrentSnackBar()
-                        ..showSnackBar(
-                          SnackBar(
-                            content: Text(e.toString()),
-                          ),
-                        );
-                    }
-                  },
                 ),
               ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: widget.station.isHome
-                      ? Icon(
-                          Icons.home,
-                          color: _isDarkMode ? darkIconColor : lightIconColor,
-                        )
-                      : Icon(Icons.home_outlined),
-                  onPressed: () async {
-                    try {
-                      if (widget.station.isHome) {
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(SnackBar(
-                              content: Text(
-                                  'Du har redan ${widget.station.title} som hemstation')));
-                      }
-                      if (!widget.station.isHome) {
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(SnackBar(
-                              content: Text(
-                                  'Du har valt ${widget.station.title} som hemstation')));
-                        setState(() {
-                          saveUserHome(widget.station.id);
-                          widget.station.isHome = true;
-                        });
-                      }
-                    } catch (e) {}
-                  },
-                ),
-              ),
-              */
             ],
           ),
         ],

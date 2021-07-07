@@ -5,8 +5,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:temperatur_nu/controller/favorites.dart';
-import 'package:temperatur_nu/controller/userHome.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/appinfo_widget.dart';
@@ -37,12 +35,15 @@ int _selectedTab = 0;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  /*
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: Colors.black,
-      statusBarBrightness: Brightness.light, // this one for iOS
+      statusBarBrightness: Brightness.dark, // this one for iOS
     ),
   );
+  */
+
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('userHome') ?? defaultLocation;
   graphRange = sp.getString('graphRange') ?? defaultGraphRange;
@@ -66,6 +67,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    /*
     var platform = Theme.of(context).platform;
     var appBarThemeiOS = AppBarTheme(
       brightness: Brightness.light,
@@ -74,12 +76,14 @@ class _MyAppState extends State<MyApp> {
       backgroundColor: Colors.black,
       brightness: Brightness.dark,
     );
+    */
+
     return MaterialApp(
       //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme:
-            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
+        /* appBarTheme:
+            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme, */
         brightness: Brightness.light,
         canvasColor: appCanvasColor,
         accentColor: Colors.grey[100],
@@ -167,10 +171,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.grey[900],
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         currentIndex: _selectedTab,
-        selectedItemColor: Colors.grey[200],
-        unselectedItemColor: Colors.grey[400],
+        //selectedItemColor: Colors.grey[200],
+        //unselectedItemColor: Colors.grey[400],
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (int index) {
@@ -191,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.gps_fixed),
-            label: 'Närliggande',
+            label: 'Nära dig',
             tooltip: 'Lista närliggande mätstationer',
           ),
           BottomNavigationBarItem(
@@ -269,7 +274,10 @@ class _MyHomePageState extends State<MyHomePage> {
         dragStartBehavior: DragStartBehavior.down,
         child: Row(
           children: [
-            StationDetailsWidget(station: station),
+            StationDetailsWidget(
+              station: station,
+              showBackButton: false,
+            ),
             if (station.data != null)
               Column(
                 children: [
@@ -358,7 +366,10 @@ class _MyHomePageState extends State<MyHomePage> {
       dragStartBehavior: DragStartBehavior.down,
       child: Column(
         children: [
-          StationDetailsWidget(station: station),
+          StationDetailsWidget(
+            station: station,
+            showBackButton: false,
+          ),
           if (station.data != null)
             ChartWidget(
               dataposts: station.data != null ? station.data : [],
@@ -422,174 +433,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            width: double.infinity,
-            child: Card(
-              elevation: 0,
-              child: Column(
-                children: [
-                  TextButton.icon(
-                    icon: station.isFavorite
-                        ? Icon(
-                            Icons.favorite_outline,
-                            color: _isDarkMode
-                                ? Colors.grey[200]
-                                : Colors.grey[800],
-                          )
-                        : Icon(
-                            Icons.favorite,
-                            color: imperialRed,
-                          ),
-                    label: station.isFavorite
-                        ? Text(
-                            'Ta bort ${station.title} som favorit',
-                            style: TextStyle(
-                              color: _isDarkMode
-                                  ? Colors.grey[200]
-                                  : Colors.grey[800],
-                            ),
-                          )
-                        : Text('Lägg till ${station.title} som favorit',
-                            style: TextStyle(
-                              color: _isDarkMode
-                                  ? Colors.grey[200]
-                                  : Colors.grey[800],
-                            )),
-                    onPressed: () async {
-                      try {
-                        if (station.isFavorite) {
-                          if (await removeFromFavorites(station.id)) {
-                            station.isFavorite =
-                                await existsInFavorites(station.id);
-                            ScaffoldMessenger.of(context)
-                              ..removeCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Tog bort ${station.title} från favoriter.',
-                                  ),
-                                ),
-                              );
-                            setState(() {
-                              station.isFavorite = false;
-                            });
-                          } else {
-                            station.isFavorite =
-                                await existsInFavorites(station.id);
-                            ScaffoldMessenger.of(context)
-                              ..removeCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Det gick inte att ta bort ${station.title} från favoriter.'),
-                                ),
-                              );
-                            setState(() {
-                              station.isFavorite = false;
-                            });
-                          }
-                        } else {
-                          if (await addToFavorites(station.id)) {
-                            station.isFavorite =
-                                await existsInFavorites(station.id);
-                            ScaffoldMessenger.of(context)
-                              ..removeCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'La till ${station.title} i favoriter.'),
-                                ),
-                              );
-                            setState(() {
-                              station.isFavorite = true;
-                            });
-                          } else {
-                            station.isFavorite =
-                                await existsInFavorites(station.id);
-                            ScaffoldMessenger.of(context)
-                              ..removeCurrentSnackBar()
-                              ..showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Det gick inte att lägga till ${station.title} i favoriter.'),
-                                ),
-                              );
-                            setState(() {
-                              station.isFavorite = false;
-                            });
-                          }
-                          setState(() {});
-                        }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context)
-                          ..removeCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(e.toString()),
-                            ),
-                          );
-                      }
-                    },
-                  ),
-                  TextButton.icon(
-                    onPressed: () async {
-                      try {
-                        if (station.isHome) {
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Du har tagit bort ${station.title} som hemstation'),
-                              ),
-                            );
-                          setState(() {
-                            station.isHome = false;
-                            removeUserHome();
-                          });
-                        } else if (!station.isHome) {
-                          ScaffoldMessenger.of(context)
-                            ..removeCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    'Du har valt ${station.title} som hemstation'),
-                              ),
-                            );
-                          setState(() {
-                            saveUserHome(station.id);
-                            station.isHome = true;
-                          });
-                        }
-                      } catch (e) {}
-                    },
-                    icon: Icon(
-                      station.isHome ? Icons.home_outlined : Icons.home,
-                      color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
-                    ),
-                    label: station.isHome
-                        ? Text(
-                            'Ta bort ${station.title} som hemstation',
-                            style: TextStyle(
-                              color: _isDarkMode
-                                  ? Colors.grey[200]
-                                  : Colors.grey[800],
-                            ),
-                          )
-                        : Text(
-                            'Välj ${station.title} som hemstation',
-                            style: TextStyle(
-                              color: _isDarkMode
-                                  ? Colors.grey[200]
-                                  : Colors.grey[800],
-                            ),
-                          ),
-                  ),
-                ],
               ),
             ),
           ),
