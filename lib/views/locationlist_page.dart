@@ -9,6 +9,7 @@ import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 // Set up Shared Preferences for accessing local storage
 SharedPreferences sp;
@@ -131,9 +132,11 @@ class _LocationListPageState extends State<LocationListPage> {
                   icon: Icon(Icons.search),
                   onPressed: () {
                     showSearch(
-                        context: context,
-                        delegate: Search(
-                            snapshot.hasData ? snapshot.data.stations : []));
+                      context: context,
+                      delegate: Search(
+                        snapshot.hasData ? snapshot.data.stations : [],
+                      ),
+                    );
                   },
                 ),
                 IconButton(
@@ -142,54 +145,59 @@ class _LocationListPageState extends State<LocationListPage> {
                       _setScrollPosition(resetPosition: true);
                     }),
                 PopupMenuButton<SortingChoice>(
-                    onSelected: (SortingChoice choice) {
-                  if (snapshot.hasData) {
-                    switch (choice.id) {
-                      case 'alphabetical':
-                        setState(() {
-                          _sortingChoice = "alphabetical";
-                          _setScrollPosition(resetPosition: true);
-                          saveSortingOrder(_sortingChoice);
-                        });
-                        break;
-                      case 'highest':
-                        setState(() {
-                          _sortingChoice = "highest";
-                          _setScrollPosition(resetPosition: true);
-                          saveSortingOrder(_sortingChoice);
-                        });
-                        break;
-                      case 'lowest':
-                        setState(() {
-                          _sortingChoice = "lowest";
-                          _setScrollPosition(resetPosition: true);
-                          saveSortingOrder(_sortingChoice);
-                        });
-                        break;
-                      case 'north':
-                        setState(() {
-                          _sortingChoice = "north";
-                          _setScrollPosition(resetPosition: true);
-                          saveSortingOrder(_sortingChoice);
-                        });
-                        break;
-                      case 'south':
-                        setState(() {
-                          _sortingChoice = 'south';
-                          _setScrollPosition(resetPosition: true);
-                          saveSortingOrder(_sortingChoice);
-                        });
+                  icon: Icon(Icons.filter_list),
+                  onSelected: (SortingChoice choice) {
+                    if (snapshot.hasData) {
+                      switch (choice.id) {
+                        case 'alphabetical':
+                          setState(() {
+                            _sortingChoice = "alphabetical";
+                            _setScrollPosition(resetPosition: true);
+                            saveSortingOrder(_sortingChoice);
+                          });
+                          break;
+                        case 'highest':
+                          setState(() {
+                            _sortingChoice = "highest";
+                            _setScrollPosition(resetPosition: true);
+                            saveSortingOrder(_sortingChoice);
+                          });
+                          break;
+                        case 'lowest':
+                          setState(() {
+                            _sortingChoice = "lowest";
+                            _setScrollPosition(resetPosition: true);
+                            saveSortingOrder(_sortingChoice);
+                          });
+                          break;
+                        case 'north':
+                          setState(() {
+                            _sortingChoice = "north";
+                            _setScrollPosition(resetPosition: true);
+                            saveSortingOrder(_sortingChoice);
+                          });
+                          break;
+                        case 'south':
+                          setState(() {
+                            _sortingChoice = 'south';
+                            _setScrollPosition(resetPosition: true);
+                            saveSortingOrder(_sortingChoice);
+                          });
+                      }
                     }
-                  }
-                }, itemBuilder: (BuildContext context) {
-                  return sortingChoices.map((SortingChoice choice) {
-                    return PopupMenuItem<SortingChoice>(
-                      child: ListTile(
-                          leading: choice.icon, title: Text(choice.title)),
-                      value: choice,
-                    );
-                  }).toList();
-                })
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return sortingChoices.map((SortingChoice choice) {
+                      return PopupMenuItem<SortingChoice>(
+                        child: ListTile(
+                          leading: choice.icon,
+                          title: Text(choice.title),
+                        ),
+                        value: choice,
+                      );
+                    }).toList();
+                  },
+                )
               ],
             ),
             body: RefreshIndicator(
@@ -294,15 +302,18 @@ class _LocationListPageState extends State<LocationListPage> {
                       Station station = stations[index];
                       return GestureDetector(
                         child: ListTile(
-                          title: Text(station.title),
+                          title: Text(
+                            station.title,
+                            style: locationListTileTitle,
+                          ),
                           trailing: station.temp != null
                               ? Text(
                                   "${station.temp}°",
-                                  style: Theme.of(context).textTheme.headline4,
+                                  style: locationListTileTemperature,
                                 )
                               : Text(
-                                  'N/A',
-                                  style: Theme.of(context).textTheme.headline4,
+                                  '--.-°',
+                                  style: locationListTileTemperature,
                                 ),
                           onTap: () {
                             //saveLocationId(station.id);
@@ -332,26 +343,6 @@ class _LocationListPageState extends State<LocationListPage> {
 
         return LoadingWidget();
       },
-    );
-  }
-
-  // Loading indicator
-  loadingView() {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 25,
-          ),
-          CircularProgressIndicator(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          Text(
-            'Hämtar data',
-            style: Theme.of(context).textTheme.headline3,
-          ),
-        ],
-      ),
     );
   }
 

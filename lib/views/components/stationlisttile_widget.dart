@@ -112,17 +112,22 @@ class _StationListTileState extends State<StationListTile> {
           }
         },
       ),
-      title: Text(widget.station.title),
-      subtitle:
-          Text("Avstånd ${widget.station.dist} km\n${widget.station.kommun}"),
+      title: Text(
+        widget.station.title,
+        style: locationListTileTitle,
+      ),
+      subtitle: Text(
+        "Avstånd ${widget.station.dist} km\n${widget.station.kommun}",
+        style: locationListTileSubtitle,
+      ),
       trailing: widget.station.temp != null
           ? Text(
               "${widget.station.temp}°",
-              style: Theme.of(context).textTheme.headline4,
+              style: locationListTileTemperature,
             )
           : Text(
-              'N/A',
-              style: Theme.of(context).textTheme.headline4,
+              '--.-°',
+              style: locationListTileTemperature,
             ),
       onTap: () {
         //saveLocationId(station.id);

@@ -267,7 +267,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                                 .headline4,
                                           )
                                         : Text(
-                                            'N/A',
+                                            '--.-°',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline4,

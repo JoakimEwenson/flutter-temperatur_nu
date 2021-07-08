@@ -35,7 +35,18 @@ TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 
 TextStyle pageTitle = TextStyle(fontSize: 24);
 TextStyle cardTitle = TextStyle(fontSize: 16);
+TextStyle stationOwner = TextStyle(fontSize: 12);
 
-TextStyle stationOwner = TextStyle(
+// Location List Tile
+TextStyle locationListTileTitle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+);
+TextStyle locationListTileSubtitle = TextStyle(
   fontSize: 12,
+  fontWeight: FontWeight.w300,
+);
+TextStyle locationListTileTemperature = TextStyle(
+  fontSize: 36,
+  fontWeight: FontWeight.w400,
 );

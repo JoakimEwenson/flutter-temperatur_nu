@@ -68,7 +68,7 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                                   textAlign: TextAlign.center,
                                 )
                               : Text(
-                                  "N/A",
+                                  "--.-°",
                                   style: Theme.of(context).textTheme.headline1,
                                   textAlign: TextAlign.center,
                                 ),
