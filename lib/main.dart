@@ -74,27 +74,27 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    /*
     var platform = Theme.of(context).platform;
     var appBarThemeiOS = AppBarTheme(
+      backgroundColor: Colors.transparent,
       brightness: Brightness.light,
+      elevation: 0,
     );
     var appBarTheme = AppBarTheme(
       backgroundColor: Colors.black,
       brightness: Brightness.dark,
     );
-    */
 
     return MaterialApp(
       //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        /* appBarTheme:
-            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme, */
+        appBarTheme:
+            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
         brightness: Brightness.light,
         canvasColor: appCanvasColor,
-        accentColor: Colors.grey[100],
-        primaryColor: lightModeTextColor,
+        accentColor: Colors.grey[200],
+        primaryColor: Colors.grey[800],
         primaryColorBrightness: Brightness.light,
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
       ),
@@ -104,7 +104,8 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.dark,
         ),
         brightness: Brightness.dark,
-        accentColor: Colors.grey[100],
+        accentColor: Colors.grey[200],
+        primaryColor: Colors.grey[800],
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -178,11 +179,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.grey[900],
         elevation: 0,
         currentIndex: _selectedTab,
-        //selectedItemColor: darkModeTextColor,
-        //unselectedItemColor: Colors.grey[400],
+        selectedItemColor: Colors.grey[200],
+        unselectedItemColor: Colors.grey[600],
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (int index) {

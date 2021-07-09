@@ -14,26 +14,34 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
   List<FlSpot> spots = [];
   List<DateTime> timestamps = [];
   int position = 0;
+  int timestamp = 0;
+  int count = 0;
+  int timeLimit = 900000; // 900 000 ms == 15 minutes
   _dataPosts.forEach((_dataPost) {
     // Parse datetime string into DateTime objects for null check
     double temperature = double.tryParse(_dataPost.temperatur);
     DateTime dateTime = DateTime.tryParse(_dataPost.datetime);
-    if (temperature == null) {
-      spots.add(FlSpot.nullSpot);
-      timestamps.add(dateTime);
-    }
-    if (temperature != null && !temperature.isNaN) {
-      spots.add(
-        FlSpot(
-          position.toDouble(),
-          temperature,
-        ),
-      );
-      timestamps.add(dateTime);
-      position++;
+    if (dateTime.millisecondsSinceEpoch > (timestamp + timeLimit)) {
+      timestamp = dateTime.millisecondsSinceEpoch;
+      count++;
+      if (temperature == null) {
+        spots.add(FlSpot.nullSpot);
+        timestamps.add(dateTime);
+      }
+      if (temperature != null && !temperature.isNaN) {
+        spots.add(
+          FlSpot(
+            position.toDouble(),
+            temperature,
+          ),
+        );
+        timestamps.add(dateTime);
+        position++;
+      }
     }
   });
 
+  print('Entries: $count');
   return ChartSpotList(spots, timestamps);
 }
 
@@ -90,7 +98,7 @@ class ChartWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               child: Text(
-                'Visar perioden mellan ${DateFormat("d/M -yy HH:mm").format(spanStart)} och kl. ${DateFormat("d/M -yy HH:mm").format(spanEnd)}',
+                '${DateFormat(longDateTimeFormat).format(spanStart)} - ${DateFormat(longDateTimeFormat).format(spanEnd)}',
                 style: Theme.of(context).textTheme.caption,
               ),
             ),
@@ -109,6 +117,7 @@ class ChartWidget extends StatelessWidget {
                     show: false,
                   ),
                   gridData: FlGridData(
+                    drawHorizontalLine: true,
                     horizontalInterval: 5,
                     show: true,
                   ),
@@ -153,7 +162,7 @@ class ChartWidget extends StatelessWidget {
                       getTextStyles: (value) => TextStyle(
                         color: _isDarkMode ? Colors.grey[100] : Colors.black,
                       ),
-                      margin: 8,
+                      margin: 5,
                       interval: 5,
                     ),
                     bottomTitles: SideTitles(showTitles: false),
@@ -193,11 +202,11 @@ class ChartWidget extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Text(
-                          'Max ${amm.max}° uppmättes ${DateFormat(shortDateFormat).format(maxTime)} kl. ${DateFormat(shortTimeFormat).format(maxTime)}.',
+                          'Max ${amm.max}° uppmättes ${DateFormat(shortDateTimeFormat).format(maxTime)}.',
                           style: Theme.of(context).textTheme.caption,
                         ),
                         Text(
-                          'Min ${amm.min}° uppmättes ${DateFormat(shortDateFormat).format(minTime)} kl. ${DateFormat(shortTimeFormat).format(minTime)}.',
+                          'Min ${amm.min}° uppmättes ${DateFormat(shortDateTimeFormat).format(minTime)}.',
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ],

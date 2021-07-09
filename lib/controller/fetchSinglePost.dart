@@ -9,8 +9,8 @@ import 'package:temperatur_nu/model/StationNameVerbose.dart';
 // Fetch data and return a single StationName object
 Future<StationNameVerbose> fetchStation(String locationId,
     {String graphRange}) async {
-  String data = await fetchSinglePost(locationId,
-      graphRange: graphRange != null ? graphRange : null);
+  String data =
+      await fetchSinglePost(locationId, graphRange: graphRange ?? null);
   var output = await responseTranslator(data);
 
   return output;

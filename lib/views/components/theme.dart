@@ -24,14 +24,18 @@ Color lightModeTextColor = Colors.grey[800];
 String noTempDataString = "--.-°";
 
 // DateFormat styles
+String longDateFormat = "yyyy-MM-dd";
+String longDateTimeFormat = "yyyy-MM-dd 'kl.' HH:mm";
+String longTimeFormat = "HH:mm:ss";
 String shortDateFormat = "d/M -yy";
+String shortDateTimeFormat = "'kl.' HH:mm 'den' d/M -yy";
 String shortTimeFormat = "HH:mm";
 
 // Text styles
 TextStyle temperatureHuge = GoogleFonts.robotoMono(
   textStyle: TextStyle(
     fontSize: 96,
-    fontWeight: FontWeight.w800,
+    fontWeight: FontWeight.w400,
     shadows: <Shadow>[
       Shadow(
         offset: Offset(1.0, 1.0),
@@ -41,7 +45,7 @@ TextStyle temperatureHuge = GoogleFonts.robotoMono(
     ],
   ),
 );
-TextStyle temperatureBig = GoogleFonts.roboto(
+TextStyle temperatureBig = GoogleFonts.robotoMono(
   textStyle: TextStyle(
     fontSize: 60,
     fontWeight: FontWeight.w300,
@@ -50,28 +54,20 @@ TextStyle temperatureBig = GoogleFonts.roboto(
 
 TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 
-TextStyle pageTitle = GoogleFonts.roboto(textStyle: TextStyle(fontSize: 24));
+TextStyle pageTitle = TextStyle(fontSize: 24);
 TextStyle cardTitle = TextStyle(fontSize: 16);
 TextStyle stationOwner = TextStyle(fontSize: 12);
 
-TextStyle bodyText = GoogleFonts.roboto(
-  textStyle: TextStyle(
-    fontSize: 12,
-  ),
-);
+TextStyle bodyText = TextStyle(fontSize: 12);
 
 // Location List Tile
-TextStyle locationListTileTitle = GoogleFonts.roboto(
-  textStyle: TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.bold,
-  ),
+TextStyle locationListTileTitle = TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
 );
-TextStyle locationListTileSubtitle = GoogleFonts.roboto(
-  textStyle: TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w300,
-  ),
+TextStyle locationListTileSubtitle = TextStyle(
+  fontSize: 12,
+  fontWeight: FontWeight.w300,
 );
 TextStyle locationListTileTemperature = GoogleFonts.robotoMono(
   textStyle: TextStyle(

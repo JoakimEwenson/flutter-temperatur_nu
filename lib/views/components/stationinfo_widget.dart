@@ -41,11 +41,6 @@ class StationInfoWidget extends StatelessWidget {
                       'Mätstationen är placerad i ${station.kommun}, ${station.lan}.',
                       style: Theme.of(context).textTheme.caption,
                     ),
-                    if (station.moh != null)
-                      Text(
-                        'Angiven höjd över havet: ${station.moh}m',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
                     if (station.uptime != null)
                       Text(
                         'Mätstationens upptid är ${station.uptime}%',
@@ -54,6 +49,33 @@ class StationInfoWidget extends StatelessWidget {
                   ],
                 ),
               ),
+              if (station.lat.isNotEmpty && station.lon.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Position',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      Text(
+                        'Latitud: ${double.tryParse(station.lat).toStringAsPrecision(6)}',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                      Text(
+                        'Longitud: ${double.tryParse(station.lon).toStringAsPrecision(6)}',
+                        style: Theme.of(context).textTheme.caption,
+                      ),
+                      if (station.moh != null)
+                        Text(
+                          'Angiven höjd över havet: ${station.moh} meter',
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                    ],
+                  ),
+                ),
               if (station.forutsattning.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
