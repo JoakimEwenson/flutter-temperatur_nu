@@ -81,7 +81,7 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                                   label:
                                       'Just nu finns det inget värde för mätstationen ${widget.station.title}.',
                                   child: Text(
-                                    "noTempDataString",
+                                    "$noTempDataString",
                                     style:
                                         Theme.of(context).textTheme.headline1,
                                     textAlign: TextAlign.center,
