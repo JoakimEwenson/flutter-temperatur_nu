@@ -424,7 +424,7 @@ class Search extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: Icon(Icons.chevron_left),
       onPressed: () {
         Navigator.pop(context);
       },
