@@ -1,5 +1,5 @@
-// Color palette
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Coolors set https://coolors.co/0b090a-161a1d-660708-a4161a-ba181b-e5383b-b1a7a6-d3d3d3-f5f3f4-ffffff
 Color richBlack = Color.fromRGBO(11, 9, 10, 1);
@@ -17,36 +17,65 @@ Color appCanvasColor = cultured;
 Color darkIconColor = cultured;
 Color lightIconColor = eerieBlack;
 
+Color darkModeTextColor = Colors.grey[200];
+Color lightModeTextColor = Colors.grey[800];
+
+// Default string values
+String noTempDataString = "--.-°";
+
 // DateFormat styles
 String shortDateFormat = "d/M -yy";
 String shortTimeFormat = "HH:mm";
 
 // Text styles
-TextStyle temperatureHuge = TextStyle(
-  fontSize: 120,
-  fontWeight: FontWeight.w300,
+TextStyle temperatureHuge = GoogleFonts.robotoMono(
+  textStyle: TextStyle(
+    fontSize: 96,
+    fontWeight: FontWeight.w800,
+    shadows: <Shadow>[
+      Shadow(
+        offset: Offset(1.0, 1.0),
+        blurRadius: 2.0,
+        color: Color.fromARGB(255, 0, 0, 0),
+      ),
+    ],
+  ),
 );
-TextStyle temperatureBig = TextStyle(
-  fontSize: 60,
-  fontWeight: FontWeight.w300,
+TextStyle temperatureBig = GoogleFonts.roboto(
+  textStyle: TextStyle(
+    fontSize: 60,
+    fontWeight: FontWeight.w300,
+  ),
 );
 
 TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 
-TextStyle pageTitle = TextStyle(fontSize: 24);
+TextStyle pageTitle = GoogleFonts.roboto(textStyle: TextStyle(fontSize: 24));
 TextStyle cardTitle = TextStyle(fontSize: 16);
 TextStyle stationOwner = TextStyle(fontSize: 12);
 
+TextStyle bodyText = GoogleFonts.roboto(
+  textStyle: TextStyle(
+    fontSize: 12,
+  ),
+);
+
 // Location List Tile
-TextStyle locationListTileTitle = TextStyle(
-  fontSize: 14,
-  fontWeight: FontWeight.bold,
+TextStyle locationListTileTitle = GoogleFonts.roboto(
+  textStyle: TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  ),
 );
-TextStyle locationListTileSubtitle = TextStyle(
-  fontSize: 12,
-  fontWeight: FontWeight.w300,
+TextStyle locationListTileSubtitle = GoogleFonts.roboto(
+  textStyle: TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w300,
+  ),
 );
-TextStyle locationListTileTemperature = TextStyle(
-  fontSize: 36,
-  fontWeight: FontWeight.w400,
+TextStyle locationListTileTemperature = GoogleFonts.robotoMono(
+  textStyle: TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
+  ),
 );

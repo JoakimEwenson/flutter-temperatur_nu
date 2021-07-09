@@ -159,6 +159,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                 itemBuilder: (context, index) {
                                   Station station = stations[index];
                                   return ListTile(
+                                    dense: true,
                                     leading: IconButton(
                                       icon: station.isFavorite
                                           ? Icon(
@@ -256,21 +257,22 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                         }
                                       },
                                     ),
-                                    title: Text(station.title),
+                                    title: Text(
+                                      station.title,
+                                      style: locationListTileTitle,
+                                    ),
                                     subtitle: Text(
-                                        "${station.kommun} - ${station.lan}"),
+                                      "${station.kommun}",
+                                      style: locationListTileSubtitle,
+                                    ),
                                     trailing: station.temp != null
                                         ? Text(
                                             "${station.temp}°",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline4,
+                                            style: locationListTileTemperature,
                                           )
                                         : Text(
-                                            '--.-°',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .headline4,
+                                            '$noTempDataString',
+                                            style: locationListTileTemperature,
                                           ),
                                     onTap: () {
                                       //saveLocationId(station.id);

@@ -188,10 +188,19 @@ class ChartWidget extends StatelessWidget {
                   Container(
                     margin: const EdgeInsets.all(8),
                     width: double.infinity,
-                    child: Text(
-                      'Periodens högsta temperatur (${amm.max}°) uppmättes ${DateFormat(shortDateFormat).format(maxTime)} kl. ${DateFormat(shortTimeFormat).format(maxTime)} och lägsta temperatur (${amm.min}°) uppmättes ${DateFormat(shortDateFormat).format(minTime)} kl. ${DateFormat(shortTimeFormat).format(minTime)}',
-                      style: Theme.of(context).textTheme.caption,
-                      textAlign: TextAlign.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Max ${amm.max}° uppmättes ${DateFormat(shortDateFormat).format(maxTime)} kl. ${DateFormat(shortTimeFormat).format(maxTime)}.',
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                        Text(
+                          'Min ${amm.min}° uppmättes ${DateFormat(shortDateFormat).format(minTime)} kl. ${DateFormat(shortTimeFormat).format(minTime)}.',
+                          style: Theme.of(context).textTheme.caption,
+                        ),
+                      ],
                     ),
                   ),
                 ],

@@ -33,18 +33,20 @@ class _FavoriteHomeWidgetState extends State<FavoriteHomeWidget> {
                   )
                 : Icon(
                     Icons.favorite_outline,
-                    color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                    color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
                   ),
             label: widget.station.isFavorite
                 ? Text(
                     'Favorit',
                     style: TextStyle(
-                      color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                      color:
+                          _isDarkMode ? darkModeTextColor : lightModeTextColor,
                     ),
                   )
                 : Text('Favorit',
                     style: TextStyle(
-                      color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                      color:
+                          _isDarkMode ? darkModeTextColor : lightModeTextColor,
                     )),
             onPressed: () async {
               try {
@@ -156,12 +158,12 @@ class _FavoriteHomeWidgetState extends State<FavoriteHomeWidget> {
             },
             icon: Icon(
               widget.station.isHome ? Icons.home : Icons.home_outlined,
-              color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+              color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
             ),
             label: Text(
               'Hemstation',
               style: TextStyle(
-                color: _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
               ),
             ),
           ),

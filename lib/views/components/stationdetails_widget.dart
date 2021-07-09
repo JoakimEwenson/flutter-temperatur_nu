@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:temperatur_nu/controller/colorTemperature.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/favhome_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -20,6 +22,8 @@ class StationDetailsWidget extends StatefulWidget {
 class _StationDetailsWidgetState extends State<StationDetailsWidget> {
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: double.infinity,
@@ -62,15 +66,27 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: widget.station.temp != null
-                              ? Text(
-                                  "${widget.station.temp}°",
-                                  style: temperatureHuge,
-                                  textAlign: TextAlign.center,
+                              ? Tooltip(
+                                  message:
+                                      'Just nu är det ${widget.station.temp}°C vid mätstationen ${widget.station.title}. Temperaturen senast uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}.',
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text(
+                                    "${widget.station.temp}°",
+                                    style: temperatureHuge.copyWith(
+                                        color: getColorTemperature(
+                                            widget.station.temp, _isDarkMode)),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 )
-                              : Text(
-                                  "--.-°",
-                                  style: Theme.of(context).textTheme.headline1,
-                                  textAlign: TextAlign.center,
+                              : Tooltip(
+                                  message:
+                                      'Just nu finns det inget värde för mätstationen ${widget.station.title}.',
+                                  child: Text(
+                                    "noTempDataString",
+                                    style:
+                                        Theme.of(context).textTheme.headline1,
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                         ),
                         FavoriteHomeWidget(

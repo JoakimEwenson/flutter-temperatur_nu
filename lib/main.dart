@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
@@ -35,6 +37,11 @@ int _selectedTab = 0;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Add font license
+  LicenseRegistry.addLicense(() async* {
+    final license = await rootBundle.loadString('google_fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+  });
   /*
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
@@ -87,9 +94,9 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.light,
         canvasColor: appCanvasColor,
         accentColor: Colors.grey[100],
-        primaryColor: Colors.grey[800],
+        primaryColor: lightModeTextColor,
         primaryColorBrightness: Brightness.light,
-        textTheme: TextTheme(),
+        textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
       ),
       darkTheme: ThemeData.dark().copyWith(
         appBarTheme: AppBarTheme(
@@ -174,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         currentIndex: _selectedTab,
-        //selectedItemColor: Colors.grey[200],
+        //selectedItemColor: darkModeTextColor,
         //unselectedItemColor: Colors.grey[400],
         showSelectedLabels: false,
         showUnselectedLabels: false,

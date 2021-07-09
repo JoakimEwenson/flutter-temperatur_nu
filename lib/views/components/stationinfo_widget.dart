@@ -54,7 +54,7 @@ class StationInfoWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              if (station.forutsattning != null)
+              if (station.forutsattning.isNotEmpty)
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 8),
                   child: Column(
@@ -76,7 +76,7 @@ class StationInfoWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: Text(
-                    'Temperaturen senast uppdaterat kl.${DateFormat("H:m").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
+                    'Senast uppdaterat kl. ${DateFormat("HH:mm").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
                     style: Theme.of(context).textTheme.caption.copyWith(),
                   ),
                 ),

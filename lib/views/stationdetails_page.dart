@@ -9,6 +9,7 @@ import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
@@ -32,6 +33,8 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     final LocationArguments args = ModalRoute.of(context).settings.arguments;
     if (args != null) {
       setState(() {
@@ -149,11 +152,24 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                   children: [
                     Text('Hittade inga uppgifter för ${args.locationId}'),
                     TextButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        icon: Icon(Icons.chevron_left),
-                        label: Text('Tillbaka'))
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      icon: Icon(
+                        Icons.chevron_left,
+                        color: _isDarkMode
+                            ? darkModeTextColor
+                            : lightModeTextColor,
+                      ),
+                      label: Text(
+                        'Tillbaka',
+                        style: TextStyle(
+                          color: _isDarkMode
+                              ? darkModeTextColor
+                              : lightModeTextColor,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );

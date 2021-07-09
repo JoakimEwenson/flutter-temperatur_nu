@@ -302,6 +302,7 @@ class _LocationListPageState extends State<LocationListPage> {
                       Station station = stations[index];
                       return GestureDetector(
                         child: ListTile(
+                          dense: true,
                           title: Text(
                             station.title,
                             style: locationListTileTitle,
@@ -312,7 +313,7 @@ class _LocationListPageState extends State<LocationListPage> {
                                   style: locationListTileTemperature,
                                 )
                               : Text(
-                                  '--.-°',
+                                  '$noTempDataString',
                                   style: locationListTileTemperature,
                                 ),
                           onTap: () {

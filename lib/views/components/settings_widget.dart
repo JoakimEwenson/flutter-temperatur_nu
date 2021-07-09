@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/views/components/deleteUserHome_dialog.dart';
 import 'package:temperatur_nu/model/UserSettings.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 // Set up SharedPreferences for accessing local storage
 
@@ -147,9 +148,9 @@ class _SettingsCardState extends State<SettingsCard> {
                 ),
                 Slider(
                   activeColor:
-                      _isDarkMode ? Colors.grey[400] : Colors.grey[800],
+                      _isDarkMode ? darkModeTextColor : lightModeTextColor,
                   inactiveColor:
-                      _isDarkMode ? Colors.grey[400] : Colors.grey[800],
+                      _isDarkMode ? darkModeTextColor : lightModeTextColor,
                   min: _minNearbyAmount,
                   max: _maxNearbyAmount,
                   divisions: _maxNearbyAmount.toInt(),
@@ -197,8 +198,9 @@ class _SettingsCardState extends State<SettingsCard> {
                     child: Text(
                       'Spara inställningarna',
                       style: TextStyle(
-                        color:
-                            _isDarkMode ? Colors.grey[200] : Colors.grey[800],
+                        color: _isDarkMode
+                            ? darkModeTextColor
+                            : lightModeTextColor,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

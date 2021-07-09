@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/views/components/aboutapp_widget.dart';
+import 'package:temperatur_nu/views/components/applicenses_widget.dart';
 import 'package:temperatur_nu/views/components/settings_widget.dart';
 
 // Set up SharedPreferences for loading saved data
@@ -40,6 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               AboutAppCard(),
               SettingsCard(),
+              AppLicenseWidget(),
               FutureBuilder(
                 future: _packageInfo,
                 builder: (context, snapshot) {

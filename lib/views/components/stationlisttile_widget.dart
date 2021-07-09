@@ -126,9 +126,10 @@ class _StationListTileState extends State<StationListTile> {
               style: locationListTileTemperature,
             )
           : Text(
-              '--.-°',
+              '$noTempDataString',
               style: locationListTileTemperature,
             ),
+      dense: true,
       onTap: () {
         //saveLocationId(station.id);
         Navigator.pushNamed(context, '/SingleStation',
