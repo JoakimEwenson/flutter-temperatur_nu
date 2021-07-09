@@ -15,7 +15,6 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
   List<DateTime> timestamps = [];
   int position = 0;
   int timestamp = 0;
-  int count = 0;
   int timeLimit = 900000; // 900 000 ms == 15 minutes
   _dataPosts.forEach((_dataPost) {
     // Parse datetime string into DateTime objects for null check
@@ -23,7 +22,6 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
     DateTime dateTime = DateTime.tryParse(_dataPost.datetime);
     if (dateTime.millisecondsSinceEpoch > (timestamp + timeLimit)) {
       timestamp = dateTime.millisecondsSinceEpoch;
-      count++;
       if (temperature == null) {
         spots.add(FlSpot.nullSpot);
         timestamps.add(dateTime);
@@ -40,8 +38,6 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
       }
     }
   });
-
-  print('Entries: $count');
   return ChartSpotList(spots, timestamps);
 }
 

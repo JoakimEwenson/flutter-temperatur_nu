@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:temperatur_nu/controller/colorTemperature.dart';
+import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/favhome_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -90,7 +91,22 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                         ),
                         FavoriteHomeWidget(
                           station: widget.station,
-                        )
+                        ),
+                        if (isTemperatureOld(widget.station.lastUpdate))
+                          Container(
+                            width: double.infinity,
+                            child: TextButton.icon(
+                              onPressed: null,
+                              icon: Icon(
+                                Icons.report,
+                                color: Colors.red,
+                              ),
+                              label: Text(
+                                'Varning, temperaturen har inte uppdaterats på mer än 15 minuter',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),

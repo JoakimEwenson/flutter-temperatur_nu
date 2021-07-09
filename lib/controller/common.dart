@@ -22,6 +22,13 @@ class Utils {
   }
 }
 
+// Function for checking lastUpdate
+bool isTemperatureOld(DateTime lastUpdated) {
+  if (lastUpdated.millisecondsSinceEpoch >=
+      (DateTime.now().millisecondsSinceEpoch - 900000)) return false;
+  return true;
+}
+
 // Saving location for start screen
 saveLocationId(String savedId) async {
   var sp = await SharedPreferences.getInstance();
