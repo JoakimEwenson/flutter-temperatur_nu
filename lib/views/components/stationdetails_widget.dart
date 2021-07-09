@@ -66,10 +66,9 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                         FittedBox(
                           fit: BoxFit.scaleDown,
                           child: widget.station.temp != null
-                              ? Tooltip(
-                                  message:
+                              ? Semantics(
+                                  label:
                                       'Just nu är det ${widget.station.temp}°C vid mätstationen ${widget.station.title}. Temperaturen senast uppdaterad ${DateFormat("yyyy-MM-dd HH:mm").format(widget.station.lastUpdate)}.',
-                                  padding: const EdgeInsets.all(8),
                                   child: Text(
                                     "${widget.station.temp}°",
                                     style: temperatureHuge.copyWith(
@@ -78,8 +77,8 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                                     textAlign: TextAlign.center,
                                   ),
                                 )
-                              : Tooltip(
-                                  message:
+                              : Semantics(
+                                  label:
                                       'Just nu finns det inget värde för mätstationen ${widget.station.title}.',
                                   child: Text(
                                     "noTempDataString",
