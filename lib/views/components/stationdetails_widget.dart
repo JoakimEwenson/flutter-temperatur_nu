@@ -95,16 +95,22 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                         if (isTemperatureOld(widget.station.lastUpdate))
                           Container(
                             width: double.infinity,
-                            child: TextButton.icon(
-                              onPressed: null,
-                              icon: Icon(
-                                Icons.report,
-                                color: Colors.red,
-                              ),
-                              label: Text(
-                                'Varning, temperaturen har inte uppdaterats på mer än 15 minuter',
-                                style: TextStyle(color: Colors.red),
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Observera',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
+                                  style: TextStyle(color: Colors.red),
+                                )
+                              ],
                             ),
                           ),
                       ],

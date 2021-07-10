@@ -25,8 +25,12 @@ class Utils {
 // Function for checking lastUpdate
 bool isTemperatureOld(DateTime lastUpdated) {
   if (lastUpdated.millisecondsSinceEpoch >=
-      (DateTime.now().millisecondsSinceEpoch - 900000)) return false;
+      (DateTime.now().millisecondsSinceEpoch - 1800000)) return false;
   return true;
+}
+
+int getTimeDifference(DateTime input) {
+  return DateTime.now().difference(input).inMinutes;
 }
 
 // Saving location for start screen

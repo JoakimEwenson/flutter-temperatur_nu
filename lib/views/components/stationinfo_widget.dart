@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 class StationInfoWidget extends StatelessWidget {
   const StationInfoWidget({Key key, @required this.station}) : super(key: key);
@@ -12,100 +13,106 @@ class StationInfoWidget extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: double.infinity,
-      child: Card(
-        elevation: 0,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                'Information om mätstationen',
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '${station.sourceInfo}',
-                style: Theme.of(context).textTheme.caption,
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Mätstationen är placerad i ${station.kommun}, ${station.lan}.',
-                      style: Theme.of(context).textTheme.caption,
-                    ),
-                    if (station.uptime != null)
-                      Text(
-                        'Mätstationens upptid är ${station.uptime}%',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                  ],
-                ),
-              ),
-              if (station.lat.isNotEmpty && station.lon.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Position',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Text(
-                        'Latitud: ${double.tryParse(station.lat).toStringAsPrecision(6)}',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      Text(
-                        'Longitud: ${double.tryParse(station.lon).toStringAsPrecision(6)}',
-                        style: Theme.of(context).textTheme.caption,
-                      ),
-                      if (station.moh != null)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Information om mätstationen',
+              style: cardTitle,
+            ),
+          ),
+          Card(
+            elevation: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    '${station.sourceInfo}',
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
                         Text(
-                          'Angiven höjd över havet: ${station.moh} meter',
+                          'Mätstationen är placerad i ${station.kommun}, ${station.lan}.',
                           style: Theme.of(context).textTheme.caption,
                         ),
-                    ],
+                        if (station.uptime != null)
+                          Text(
+                            'Mätstationens upptid är ${station.uptime}%',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              if (station.forutsattning.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Förutsättningar',
-                        style: Theme.of(context).textTheme.subtitle2,
+                  if (station.lat.isNotEmpty && station.lon.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Position',
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          Text(
+                            'Latitud: ${double.tryParse(station.lat).toStringAsPrecision(6)}',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                          Text(
+                            'Longitud: ${double.tryParse(station.lon).toStringAsPrecision(6)}',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                          if (station.moh != null)
+                            Text(
+                              'Angiven höjd över havet: ${station.moh} meter',
+                              style: Theme.of(context).textTheme.caption,
+                            ),
+                        ],
                       ),
-                      Text(
-                        '${station.forutsattning}',
-                        style: Theme.of(context).textTheme.caption,
+                    ),
+                  if (station.forutsattning.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Förutsättningar',
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          Text(
+                            '${station.forutsattning}',
+                            style: Theme.of(context).textTheme.caption,
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Center(
+                      child: Text(
+                        'Senast uppdaterat kl. ${DateFormat("HH:mm").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
+                        style: Theme.of(context).textTheme.caption.copyWith(),
+                      ),
+                    ),
                   ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(
-                  child: Text(
-                    'Senast uppdaterat kl. ${DateFormat("HH:mm").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
-                    style: Theme.of(context).textTheme.caption.copyWith(),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

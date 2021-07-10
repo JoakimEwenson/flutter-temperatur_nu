@@ -5,6 +5,7 @@ import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/model/UserSettings.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 Future<StationNameVerbose> nearby;
 Future<UserSettings> userSettings;
@@ -66,36 +67,40 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
               width: double.infinity,
-              child: Card(
-                elevation: 0,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Närliggande mätstationer',
-                        style: Theme.of(context)
-                            .textTheme
-                            .subtitle1
-                            .copyWith(fontWeight: FontWeight.bold),
-                      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Närliggande mätstationer',
+                      style: cardTitle,
                     ),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return StationListDivider();
-                      },
-                      itemCount: _nearbyStations.stations.length - 1,
-                      itemBuilder: (BuildContext context, int index) {
-                        Station _station = _nearbyStations.stations[index + 1];
-                        return StationListTile(station: _station);
-                      },
+                  ),
+                  Card(
+                    elevation: 0,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (BuildContext context, int index) {
+                            return StationListDivider();
+                          },
+                          itemCount: _nearbyStations.stations.length - 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            Station _station =
+                                _nearbyStations.stations[index + 1];
+                            return StationListTile(station: _station);
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }

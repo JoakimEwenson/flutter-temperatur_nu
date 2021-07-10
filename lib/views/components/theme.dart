@@ -55,7 +55,7 @@ TextStyle temperatureBig = GoogleFonts.robotoMono(
 TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 
 TextStyle pageTitle = TextStyle(fontSize: 24);
-TextStyle cardTitle = TextStyle(fontSize: 16);
+TextStyle cardTitle = TextStyle(fontSize: 18);
 TextStyle stationOwner = TextStyle(fontSize: 12);
 
 TextStyle bodyText = TextStyle(fontSize: 12);

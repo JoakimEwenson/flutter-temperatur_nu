@@ -75,143 +75,225 @@ class ChartWidget extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
-      child: Card(
-        elevation: 0,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-              child: Text(
-                'Temperaturgraf',
-                style: Theme.of(context)
-                    .textTheme
-                    .subtitle1
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+            child: Text(
+              'Temperaturgraf',
+              style: cardTitle,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              child: Text(
-                '${DateFormat(longDateTimeFormat).format(spanStart)} - ${DateFormat(longDateTimeFormat).format(spanEnd)}',
-                style: Theme.of(context).textTheme.caption,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Container(
-              height: chartHeight,
-              width: chartWidth,
-              margin: const EdgeInsets.fromLTRB(4, 0, 4, 16),
-              child: LineChart(
-                LineChartData(
-                  minY: (chartMinY - 5).floorToDouble(),
-                  maxY: (chartMaxY + 5).ceilToDouble(),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  gridData: FlGridData(
-                    drawHorizontalLine: true,
-                    horizontalInterval: 5,
-                    show: true,
-                  ),
-                  lineTouchData: LineTouchData(
-                    enabled: true,
-                    touchTooltipData: LineTouchTooltipData(
-                      fitInsideHorizontally: true,
-                      fitInsideVertically: true,
-                      getTooltipItems: (tooltips) {
-                        return tooltips.map((tooltip) {
-                          DateTime timestamp =
-                              spotList.timestamps[tooltip.x.toInt()];
-                          return LineTooltipItem(
-                            '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
-                            TextStyle(
-                              color: _isDarkMode
-                                  ? Colors.grey[900]
-                                  : Colors.grey[100],
-                            ),
-                          );
-                        }).toList();
-                      },
-                      tooltipBgColor:
-                          _isDarkMode ? Colors.grey[100] : Colors.grey[900],
-                    ),
-                  ),
-                  lineBarsData: [
-                    LineChartBarData(
-                      barWidth: 2,
-                      curveSmoothness: 1,
-                      isCurved: true,
-                      preventCurveOverShooting: true,
-                      colors: _isDarkMode ? [Colors.grey[100]] : [Colors.black],
-                      dotData: FlDotData(show: false),
-                      spots: _spots,
-                    )
-                  ],
-                  titlesData: FlTitlesData(
-                    leftTitles: SideTitles(
-                      showTitles: true,
-                      getTitles: (value) => '${value.toStringAsFixed(0)}°',
-                      getTextStyles: (value) => TextStyle(
-                        color: _isDarkMode ? Colors.grey[100] : Colors.black,
+          ),
+          Card(
+            elevation: 0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  height: chartHeight,
+                  width: chartWidth,
+                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                  child: LineChart(
+                    LineChartData(
+                      minY: (chartMinY - 5).floorToDouble(),
+                      maxY: (chartMaxY + 5).ceilToDouble(),
+                      borderData: FlBorderData(
+                        show: false,
                       ),
-                      margin: 5,
-                      interval: 5,
+                      gridData: FlGridData(
+                        drawHorizontalLine: true,
+                        horizontalInterval: 5,
+                        show: true,
+                      ),
+                      lineTouchData: LineTouchData(
+                        enabled: true,
+                        touchTooltipData: LineTouchTooltipData(
+                          fitInsideHorizontally: true,
+                          fitInsideVertically: true,
+                          getTooltipItems: (tooltips) {
+                            return tooltips.map((tooltip) {
+                              DateTime timestamp =
+                                  spotList.timestamps[tooltip.x.toInt()];
+                              return LineTooltipItem(
+                                '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
+                                TextStyle(
+                                  color: _isDarkMode
+                                      ? Colors.grey[900]
+                                      : Colors.grey[100],
+                                ),
+                              );
+                            }).toList();
+                          },
+                          tooltipBgColor:
+                              _isDarkMode ? Colors.grey[100] : Colors.grey[900],
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          barWidth: 2,
+                          curveSmoothness: 1,
+                          isCurved: true,
+                          preventCurveOverShooting: true,
+                          colors:
+                              _isDarkMode ? [Colors.grey[100]] : [Colors.black],
+                          dotData: FlDotData(show: false),
+                          spots: _spots,
+                        )
+                      ],
+                      titlesData: FlTitlesData(
+                        leftTitles: SideTitles(
+                          showTitles: true,
+                          getTitles: (value) => '${value.toStringAsFixed(0)}°',
+                          getTextStyles: (value) => TextStyle(
+                            color:
+                                _isDarkMode ? Colors.grey[100] : Colors.black,
+                          ),
+                          margin: 5,
+                          interval: 5,
+                        ),
+                        bottomTitles: SideTitles(showTitles: false),
+                      ),
                     ),
-                    bottomTitles: SideTitles(showTitles: false),
                   ),
                 ),
-              ),
-            ),
-            if (amm != null &&
-                amm.min != null &&
-                amm.average != null &&
-                amm.max != null)
-              Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Samlade värden för perioden',
-                          style: Theme.of(context).textTheme.subtitle2,
-                        ),
-                        Text(
-                          "min ${amm.min}° ◦ medel ${amm.average}° ◦ max ${amm.max}°",
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ],
-                    ),
-                  ),
+                if (amm != null &&
+                    amm.min != null &&
+                    amm.average != null &&
+                    amm.max != null)
                   Container(
                     margin: const EdgeInsets.all(8),
-                    width: double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          'Max ${amm.max}° uppmättes ${DateFormat(shortDateTimeFormat).format(maxTime)}.',
-                          style: Theme.of(context).textTheme.caption,
+                        Container(
+                          margin: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: Table(
+                            columnWidths: <int, TableColumnWidth>{
+                              0: FractionColumnWidth(0.5),
+                              1: FlexColumnWidth(),
+                            },
+                            children: [
+                              TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Text(
+                                      'max',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${amm.max}°',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                        Text(
+                                          '$maxTime',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                              TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Text(
+                                      'medel',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Text(
+                                      '${amm.average}°',
+                                      style:
+                                          Theme.of(context).textTheme.caption,
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Text(
+                                      'min',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .caption
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                  TableCell(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${amm.min}°',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                        Text(
+                                          '$minTime',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .caption,
+                                          textAlign: TextAlign.right,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                         Text(
-                          'Min ${amm.min}° uppmättes ${DateFormat(shortDateTimeFormat).format(minTime)}.',
+                          'Vald period:',
+                          style: Theme.of(context)
+                              .textTheme
+                              .caption
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '${DateFormat(longDateTimeFormat).format(spanStart)} - ${DateFormat(longDateTimeFormat).format(spanEnd)}',
                           style: Theme.of(context).textTheme.caption,
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-          ],
-        ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
