@@ -39,7 +39,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
     if (args != null) {
       setState(() {
         post = fetchStation(args.locationId, graphRange: graphRange);
-        print('State set with $graphRange');
+        //print('State set with $graphRange');
       });
     }
 
@@ -86,10 +86,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                                 children: [
                                   Text(
                                     'Välj grafens tidsspann',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .subtitle1
-                                        .copyWith(fontWeight: FontWeight.bold),
+                                    style: cardInnerTitle,
                                   ),
                                   Container(
                                     width: double.infinity,
@@ -104,24 +101,36 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                                           setState(() {
                                             graphRange = value;
                                           });
-                                          print('Chosen value: $value');
+                                          //print('Chosen value: $value');
                                         },
                                         items: [
                                           DropdownMenuItem(
                                             value: '1day',
-                                            child: Text('Senaste dygnet'),
+                                            child: Text(
+                                              'Senaste dygnet',
+                                              style: bodyText,
+                                            ),
                                           ),
                                           DropdownMenuItem(
                                             value: '1week',
-                                            child: Text('Senaste veckan'),
+                                            child: Text(
+                                              'Senaste veckan',
+                                              style: bodyText,
+                                            ),
                                           ),
                                           DropdownMenuItem(
                                             value: '1month',
-                                            child: Text('Senaste månaden'),
+                                            child: Text(
+                                              'Senaste månaden',
+                                              style: bodyText,
+                                            ),
                                           ),
                                           DropdownMenuItem(
                                             value: '1year',
-                                            child: Text('Senaste året'),
+                                            child: Text(
+                                              'Senaste året',
+                                              style: bodyText,
+                                            ),
                                           ),
                                         ],
                                       ),

@@ -169,7 +169,7 @@ class _SettingsCardState extends State<SettingsCard> {
                       bool _settingsSaved =
                           await saveUserSettings(_userSettings);
                       if (_settingsSaved) {
-                        print('Saved settings');
+                        //print('Saved settings');
                         ScaffoldMessenger.of(context)
                           ..removeCurrentSnackBar()
                           ..showSnackBar(
@@ -180,7 +180,7 @@ class _SettingsCardState extends State<SettingsCard> {
                             ),
                           );
                       } else {
-                        print('Error saving user settings');
+                        //print('Error saving user settings');
                         ScaffoldMessenger.of(context)
                           ..removeCurrentSnackBar()
                           ..showSnackBar(

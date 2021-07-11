@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+// Temperatur.nu logotype colors
+Color tnuBlue = Color.fromRGBO(37, 33, 105, 1);
+Color tnuYellow = Color.fromRGBO(252, 194, 79, 1);
+
 // Coolors set https://coolors.co/0b090a-161a1d-660708-a4161a-ba181b-e5383b-b1a7a6-d3d3d3-f5f3f4-ffffff
 Color richBlack = Color.fromRGBO(11, 9, 10, 1);
 Color eerieBlack = Color.fromRGBO(22, 26, 29, 1);
@@ -56,9 +60,23 @@ TextStyle stationTitleSmall = TextStyle(fontSize: 12);
 
 TextStyle pageTitle = TextStyle(fontSize: 24);
 TextStyle cardTitle = TextStyle(fontSize: 18);
+TextStyle cardInnerTitle = TextStyle(fontSize: 16);
 TextStyle stationOwner = TextStyle(fontSize: 12);
 
-TextStyle bodyText = TextStyle(fontSize: 12);
+TextStyle bodyText = TextStyle(fontSize: 14);
+
+// Average, Max, Min table
+TextStyle ammHeader = GoogleFonts.robotoMono(
+  fontSize: 11,
+  fontWeight: FontWeight.bold,
+);
+TextStyle ammValue = GoogleFonts.robotoMono(
+  fontSize: 11,
+  fontWeight: FontWeight.bold,
+);
+TextStyle ammTime = GoogleFonts.robotoMono(
+  fontSize: 10,
+);
 
 // Location List Tile
 TextStyle locationListTileTitle = TextStyle(

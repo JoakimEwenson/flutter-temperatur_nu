@@ -156,10 +156,15 @@ class _FavoriteHomeWidgetState extends State<FavoriteHomeWidget> {
                 }
               } catch (e) {}
             },
-            icon: Icon(
-              widget.station.isHome ? Icons.home : Icons.home_outlined,
-              color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
-            ),
+            icon: widget.station.isHome
+                ? Icon(
+                    Icons.home,
+                    color: _isDarkMode ? tnuYellow : tnuBlue,
+                  )
+                : Icon(
+                    Icons.home_outlined,
+                    color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
+                  ),
             label: Text(
               'Hemstation',
               style: TextStyle(

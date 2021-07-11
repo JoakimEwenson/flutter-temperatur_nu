@@ -124,6 +124,7 @@ class _LocationListPageState extends State<LocationListPage> {
         future: locations,
         builder: (context, snapshot) {
           return Scaffold(
+            /*
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
@@ -199,13 +200,97 @@ class _LocationListPageState extends State<LocationListPage> {
                   },
                 )
               ],
-            ),
-            body: RefreshIndicator(
-              child: locationList(),
-              color: Theme.of(context).primaryColor,
-              backgroundColor: Theme.of(context).accentColor,
-              key: _refreshLocationsKey,
-              onRefresh: () => _refreshList(),
+            ),*/
+            body: NestedScrollView(
+              controller: _controller,
+              headerSliverBuilder: (context, innerBoxScrolled) => [
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  pinned: false,
+                  backgroundColor: appCanvasColor,
+                  elevation: 0,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.search),
+                      onPressed: () {
+                        showSearch(
+                          context: context,
+                          delegate: Search(
+                            snapshot.hasData ? snapshot.data.stations : [],
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                        icon: Icon(Icons.arrow_upward),
+                        onPressed: () {
+                          _setScrollPosition(resetPosition: true);
+                        }),
+                    PopupMenuButton<SortingChoice>(
+                      icon: Icon(Icons.filter_list),
+                      onSelected: (SortingChoice choice) {
+                        if (snapshot.hasData) {
+                          switch (choice.id) {
+                            case 'alphabetical':
+                              setState(() {
+                                _sortingChoice = "alphabetical";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'highest':
+                              setState(() {
+                                _sortingChoice = "highest";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'lowest':
+                              setState(() {
+                                _sortingChoice = "lowest";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'north':
+                              setState(() {
+                                _sortingChoice = "north";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'south':
+                              setState(() {
+                                _sortingChoice = 'south';
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                          }
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return sortingChoices.map((SortingChoice choice) {
+                          return PopupMenuItem<SortingChoice>(
+                            child: ListTile(
+                              leading: choice.icon,
+                              title: Text(choice.title),
+                            ),
+                            value: choice,
+                          );
+                        }).toList();
+                      },
+                    )
+                  ],
+                ),
+              ],
+              body: RefreshIndicator(
+                child: locationList(),
+                color: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).accentColor,
+                key: _refreshLocationsKey,
+                onRefresh: () => _refreshList(),
+              ),
             ),
           );
         });
@@ -292,8 +377,7 @@ class _LocationListPageState extends State<LocationListPage> {
                 return Card(
                   elevation: 0,
                   child: ListView.separated(
-                    controller: _controller,
-                    physics: AlwaysScrollableScrollPhysics(),
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     separatorBuilder: (BuildContext context, int index) =>
                         StationListDivider(),
@@ -354,11 +438,11 @@ class _LocationListPageState extends State<LocationListPage> {
         children: <Widget>[
           Text(
             'Något gick fel!',
-            style: Theme.of(context).textTheme.headline3,
+            style: pageTitle,
           ),
           Text(
             msg,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: bodyText,
           ),
         ],
       ),
@@ -459,6 +543,7 @@ class Search extends SearchDelegate {
         return ListTile(
           title: Text(
             suggestionList[index].title,
+            style: bodyText,
           ),
           leading: query.isEmpty ? Icon(Icons.access_time) : SizedBox(),
           onTap: () {

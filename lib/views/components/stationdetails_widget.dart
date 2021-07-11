@@ -50,6 +50,8 @@ class _StationDetailsWidgetState extends State<StationDetailsWidget> {
                   child: Text(
                     widget.station.title,
                     style: pageTitle,
+                    softWrap: false,
+                    overflow: TextOverflow.fade,
                   ),
                 ),
               ),

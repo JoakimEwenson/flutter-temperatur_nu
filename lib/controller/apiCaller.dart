@@ -22,7 +22,7 @@ Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   if (response.statusCode == 200) {
     content = response.body;
   } else {
-    print("HTTP Status: ${response.statusCode}");
+    //print("HTTP Status: ${response.statusCode}");
     throw Exception("HTTP Status: ${response.statusCode}");
   }
   return content;

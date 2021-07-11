@@ -58,9 +58,6 @@ Future<Null> main() async {
   runApp(MyApp());
 }
 
-// Set title
-String pageTitle = "temperatur.nu";
-
 // Prepare future data
 Future<StationNameVerbose> post;
 Future<StationNameVerbose> nearby;
@@ -97,6 +94,7 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Colors.grey[800],
         primaryColorBrightness: Brightness.light,
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       darkTheme: ThemeData.dark().copyWith(
         appBarTheme: AppBarTheme(
@@ -106,6 +104,7 @@ class _MyAppState extends State<MyApp> {
         brightness: Brightness.dark,
         accentColor: Colors.grey[200],
         primaryColor: Colors.grey[800],
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
@@ -306,10 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           children: [
                             Text(
                               'Välj grafens tidsspann',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .subtitle1
-                                  .copyWith(fontWeight: FontWeight.bold),
+                              style: cardInnerTitle,
                             ),
                             Container(
                               width: double.infinity,
@@ -326,24 +322,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                       post = fetchStation(locationId,
                                           graphRange: value);
                                     });
-                                    print('Chosen value: $value');
+                                    //print('Chosen value: $value');
                                   },
                                   items: [
                                     DropdownMenuItem(
                                       value: '1day',
-                                      child: Text('Senaste dygnet'),
+                                      child: Text(
+                                        'Senaste dygnet',
+                                        style: bodyText,
+                                      ),
                                     ),
                                     DropdownMenuItem(
                                       value: '1week',
-                                      child: Text('Senaste veckan'),
+                                      child: Text(
+                                        'Senaste veckan',
+                                        style: bodyText,
+                                      ),
                                     ),
                                     DropdownMenuItem(
                                       value: '1month',
-                                      child: Text('Senaste månaden'),
+                                      child: Text(
+                                        'Senaste månaden',
+                                        style: bodyText,
+                                      ),
                                     ),
                                     DropdownMenuItem(
                                       value: '1year',
-                                      child: Text('Senaste året'),
+                                      child: Text(
+                                        'Senaste året',
+                                        style: bodyText,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -396,10 +404,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Text(
                       'Välj grafens tidsspann',
-                      style: Theme.of(context)
-                          .textTheme
-                          .subtitle1
-                          .copyWith(fontWeight: FontWeight.bold),
+                      style: cardInnerTitle,
                     ),
                     Container(
                       width: double.infinity,
@@ -416,24 +421,36 @@ class _MyHomePageState extends State<MyHomePage> {
                               post =
                                   fetchStation(locationId, graphRange: value);
                             });
-                            print('Chosen value: $value');
+                            //print('Chosen value: $value');
                           },
                           items: [
                             DropdownMenuItem(
                               value: '1day',
-                              child: Text('Senaste dygnet'),
+                              child: Text(
+                                'Senaste dygnet',
+                                style: bodyText,
+                              ),
                             ),
                             DropdownMenuItem(
                               value: '1week',
-                              child: Text('Senaste veckan'),
+                              child: Text(
+                                'Senaste veckan',
+                                style: bodyText,
+                              ),
                             ),
                             DropdownMenuItem(
                               value: '1month',
-                              child: Text('Senaste månaden'),
+                              child: Text(
+                                'Senaste månaden',
+                                style: bodyText,
+                              ),
                             ),
                             DropdownMenuItem(
                               value: '1year',
-                              child: Text('Senaste året'),
+                              child: Text(
+                                'Senaste året',
+                                style: bodyText,
+                              ),
                             ),
                           ],
                         ),
@@ -472,14 +489,14 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Text(
                   'Något gick fel!',
-                  style: Theme.of(context).textTheme.headline3,
+                  style: pageTitle,
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 Text(
                   "$msg",
-                  style: Theme.of(context).textTheme.caption,
+                  style: bodyText,
                 ),
               ],
             ),

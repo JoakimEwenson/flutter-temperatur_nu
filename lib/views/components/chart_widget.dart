@@ -1,7 +1,9 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
+import 'package:temperatur_nu/views/components/ammdata_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class ChartSpotList {
@@ -95,7 +97,7 @@ class ChartWidget extends StatelessWidget {
                 Container(
                   height: chartHeight,
                   width: chartWidth,
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 16),
+                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
                   child: LineChart(
                     LineChartData(
                       minY: (chartMinY - 5).floorToDouble(),
@@ -105,6 +107,10 @@ class ChartWidget extends StatelessWidget {
                       ),
                       gridData: FlGridData(
                         drawHorizontalLine: true,
+                        getDrawingHorizontalLine: (value) => FlLine(
+                          color: _isDarkMode ? Colors.white12 : Colors.black12,
+                          strokeWidth: 2,
+                        ),
                         horizontalInterval: 5,
                         show: true,
                       ),
@@ -137,8 +143,7 @@ class ChartWidget extends StatelessWidget {
                           curveSmoothness: 1,
                           isCurved: true,
                           preventCurveOverShooting: true,
-                          colors:
-                              _isDarkMode ? [Colors.grey[100]] : [Colors.black],
+                          colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
                           dotData: FlDotData(show: false),
                           spots: _spots,
                         )
@@ -147,7 +152,7 @@ class ChartWidget extends StatelessWidget {
                         leftTitles: SideTitles(
                           showTitles: true,
                           getTitles: (value) => '${value.toStringAsFixed(0)}°',
-                          getTextStyles: (value) => TextStyle(
+                          getTextStyles: (value) => GoogleFonts.robotoMono(
                             color:
                                 _isDarkMode ? Colors.grey[100] : Colors.black,
                           ),
@@ -163,132 +168,13 @@ class ChartWidget extends StatelessWidget {
                     amm.min != null &&
                     amm.average != null &&
                     amm.max != null)
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 8, bottom: 8),
-                          child: Table(
-                            columnWidths: <int, TableColumnWidth>{
-                              0: FractionColumnWidth(0.5),
-                              1: FlexColumnWidth(),
-                            },
-                            children: [
-                              TableRow(
-                                children: [
-                                  TableCell(
-                                    child: Text(
-                                      'max',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .caption
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          '${amm.max}°',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption,
-                                          textAlign: TextAlign.right,
-                                        ),
-                                        Text(
-                                          '$maxTime',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption,
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  TableCell(
-                                    child: Text(
-                                      'medel',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .caption
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Text(
-                                      '${amm.average}°',
-                                      style:
-                                          Theme.of(context).textTheme.caption,
-                                      textAlign: TextAlign.right,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TableRow(
-                                children: [
-                                  TableCell(
-                                    child: Text(
-                                      'min',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .caption
-                                          .copyWith(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                    ),
-                                  ),
-                                  TableCell(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          '${amm.min}°',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption,
-                                          textAlign: TextAlign.right,
-                                        ),
-                                        Text(
-                                          '$minTime',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .caption,
-                                          textAlign: TextAlign.right,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          'Vald period:',
-                          style: Theme.of(context)
-                              .textTheme
-                              .caption
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '${DateFormat(longDateTimeFormat).format(spanStart)} - ${DateFormat(longDateTimeFormat).format(spanEnd)}',
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                      ],
-                    ),
+                  AmmDataWidget(
+                    amm: amm,
+                    maxTime: maxTime,
+                    minTime: minTime,
+                    spanStart: spanStart,
+                    spanEnd: spanEnd,
+                    isDarkMode: _isDarkMode,
                   ),
               ],
             ),
