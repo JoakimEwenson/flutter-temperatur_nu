@@ -188,8 +188,8 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 5,
         selectedItemColor: _isDarkMode ? darkModeTextColor : lightModeTextColor,
         unselectedItemColor: _isDarkMode
-            ? darkModeTextColor.withOpacity(0.3)
-            : lightModeTextColor.withOpacity(0.3),
+            ? darkModeTextColor.withOpacity(0.5)
+            : lightModeTextColor.withOpacity(0.5),
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (int index) {

@@ -9,6 +9,7 @@ import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/drawer.dart';
@@ -91,6 +92,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Widget favoritesList() {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Container(
       width: double.infinity,
       height: MediaQuery.of(context).size.height,
@@ -107,7 +110,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 case ConnectionState.done:
                   {
                     if (!snapshot.hasData) {
-                      return noDataView('Du har inga sparade favoriter än.');
+                      return NoDataWidget(
+                          msg: 'Du har inga sparade favoriter än.');
                     } else if (snapshot.hasData) {
                       List<Station> stations = snapshot.data.stations;
                       if (stations.length > 0) {
@@ -142,16 +146,23 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 8),
+                                  horizontal: 8, vertical: 8),
                               child: Text(
                                 'Mina favoritstationer',
                                 style: pageTitle,
                               ),
                             ),
-                            Card(
-                              elevation: 0,
-                              margin: const EdgeInsets.only(
-                                  left: 4, top: 0, right: 4, bottom: 16),
+                            Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              padding: const EdgeInsets.all(16),
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: _isDarkMode
+                                    ? tempCardDarkBackground
+                                    : tempCardLightBackground,
+                                borderRadius:
+                                    BorderRadius.circular(cardBorderRadius),
+                              ),
                               child: ListView.separated(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -160,6 +171,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   Station station = stations[index];
                                   return ListTile(
                                     dense: true,
+                                    isThreeLine: false,
                                     leading: IconButton(
                                       icon: station.isFavorite
                                           ? Icon(
@@ -175,15 +187,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                               station.isFavorite =
                                                   await existsInFavorites(
                                                       station.id);
-                                              ScaffoldMessenger.of(context)
-                                                ..removeCurrentSnackBar()
-                                                ..showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                      'Tog bort ${station.title} från favoriter.',
-                                                    ),
-                                                  ),
-                                                );
                                               setState(() {
                                                 station.isFavorite = false;
                                               });
@@ -191,14 +194,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                               station.isFavorite =
                                                   await existsInFavorites(
                                                       station.id);
-                                              ScaffoldMessenger.of(context)
-                                                ..removeCurrentSnackBar()
-                                                ..showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Det gick inte att ta bort ${station.title} från favoriter.'),
-                                                  ),
-                                                );
                                               setState(() {
                                                 station.isFavorite = false;
                                               });
@@ -209,14 +204,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                               station.isFavorite =
                                                   await existsInFavorites(
                                                       station.id);
-                                              ScaffoldMessenger.of(context)
-                                                ..removeCurrentSnackBar()
-                                                ..showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'La till ${station.title} i favoriter.'),
-                                                  ),
-                                                );
                                               setState(() {
                                                 station.isFavorite = true;
                                               });
@@ -224,14 +211,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                               station.isFavorite =
                                                   await existsInFavorites(
                                                       station.id);
-                                              ScaffoldMessenger.of(context)
-                                                ..removeCurrentSnackBar()
-                                                ..showSnackBar(
-                                                  SnackBar(
-                                                    content: Text(
-                                                        'Det gick inte att lägga till ${station.title} i favoriter.'),
-                                                  ),
-                                                );
                                               setState(() {
                                                 station.isFavorite = false;
                                               });
@@ -293,10 +272,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           ],
                         );
                       } else {
-                        return noDataView('Du har inga sparade favoriter än.');
+                        return NoDataWidget(
+                            msg: 'Du har inga sparade favoriter än.');
                       }
                     } else if (snapshot.hasError) {
-                      return noDataView(snapshot.error);
+                      return NoDataWidget(msg: snapshot.error);
                     }
 
                     break;
@@ -319,54 +299,52 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   favoritesDialog(BuildContext context, Station station, String type) async {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("Ta bort favorit?"),
-            content: Text(
-                "Är du säker på att du vill ta bort ${station.title} som favorit?"),
-            actions: [
-              TextButton(
-                  onPressed: () async {
-                    if (await removeFromFavorites(station.id)) {
-                      ScaffoldMessenger.of(context)
-                        ..removeCurrentSnackBar()
-                        ..showSnackBar(SnackBar(
-                          content: Text(
-                            'Tog bort ${station.title} från favoriter.',
-                          ),
-                        ));
-                      setState(() {
-                        favorites = fetchFavorites(false);
-                      });
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: Text('Ja')),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('Nej'))
-            ],
-          );
-        });
-  }
-
-  // Error/No data view
-  noDataView(String msg) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 25,
-          ),
-          Text(
-            msg,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Ta bort favorit?",
             style: bodyText,
           ),
-        ],
-      ),
+          content: Text(
+            "Är du säker på att du vill ta bort ${station.title} som favorit?",
+            style: bodyText,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                if (await removeFromFavorites(station.id)) {
+                  ScaffoldMessenger.of(context)
+                    ..removeCurrentSnackBar()
+                    ..showSnackBar(SnackBar(
+                      content: Text(
+                        'Tog bort ${station.title} från favoriter.',
+                        style: bodyText,
+                      ),
+                    ));
+                  setState(() {
+                    favorites = fetchFavorites(false);
+                  });
+                  Navigator.of(context).pop();
+                }
+              },
+              child: Text(
+                'Ja',
+                style: bodyText,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Nej',
+                style: bodyText,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

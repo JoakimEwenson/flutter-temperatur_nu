@@ -8,6 +8,7 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
@@ -120,6 +121,8 @@ class _LocationListPageState extends State<LocationListPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return SafeArea(
       child: FutureBuilder(
           future: locations,
@@ -285,12 +288,24 @@ class _LocationListPageState extends State<LocationListPage> {
                     ],
                   ),
                 ],
-                body: RefreshIndicator(
-                  child: locationList(),
-                  color: Theme.of(context).primaryColor,
-                  backgroundColor: Theme.of(context).accentColor,
-                  key: _refreshLocationsKey,
-                  onRefresh: () => _refreshList(),
+                body: Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: _isDarkMode
+                        ? tempCardDarkBackground
+                        : tempCardLightBackground,
+                    borderRadius: BorderRadius.circular(cardBorderRadius),
+                  ),
+                  child: RefreshIndicator(
+                    child: locationList(),
+                    color: Theme.of(context).primaryColor,
+                    backgroundColor: Theme.of(context).accentColor,
+                    key: _refreshLocationsKey,
+                    onRefresh: () => _refreshList(),
+                  ),
                 ),
               ),
             );
@@ -376,44 +391,44 @@ class _LocationListPageState extends State<LocationListPage> {
                     }
                   });
                 }
-                return Card(
-                  elevation: 0,
-                  child: ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    separatorBuilder: (BuildContext context, int index) =>
-                        StationListDivider(),
-                    itemCount: stations.length,
-                    itemBuilder: (context, index) {
-                      Station station = stations[index];
-                      return GestureDetector(
-                        child: ListTile(
-                          dense: true,
-                          title: Text(
-                            station.title,
-                            style: locationListTileTitle,
-                          ),
-                          trailing: station.temp != null
-                              ? Text(
-                                  "${station.temp}°",
-                                  style: locationListTileTemperature,
-                                )
-                              : Text(
-                                  '$noTempDataString',
-                                  style: locationListTileTemperature,
-                                ),
-                          onTap: () {
-                            //saveLocationId(station.id);
-                            Navigator.pushNamed(context, '/SingleStation',
-                                arguments: LocationArguments(station.id));
-                          },
+                return ListView.separated(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      StationListDivider(),
+                  itemCount: stations.length,
+                  itemBuilder: (context, index) {
+                    Station station = stations[index];
+                    return GestureDetector(
+                      child: ListTile(
+                        dense: true,
+                        isThreeLine: false,
+                        title: Text(
+                          station.title,
+                          style: locationListTileTitle,
                         ),
-                      );
-                    },
-                  ),
+                        trailing: station.temp != null
+                            ? Text(
+                                "${station.temp}°",
+                                style: locationListTileTemperature,
+                              )
+                            : Text(
+                                '$noTempDataString',
+                                style: locationListTileTemperature,
+                              ),
+                        onTap: () {
+                          //saveLocationId(station.id);
+                          Navigator.pushNamed(context, '/SingleStation',
+                              arguments: LocationArguments(station.id));
+                        },
+                      ),
+                    );
+                  },
                 );
               } else if (snapshot.hasError) {
-                return noDataView(snapshot.error);
+                return NoDataWidget(
+                  msg: snapshot.error,
+                );
               }
 
               break;
@@ -430,24 +445,6 @@ class _LocationListPageState extends State<LocationListPage> {
 
         return LoadingWidget();
       },
-    );
-  }
-
-  // Error/No data view
-  noDataView(String msg) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Något gick fel!',
-            style: pageTitle,
-          ),
-          Text(
-            msg,
-            style: bodyText,
-          ),
-        ],
-      ),
     );
   }
 }
@@ -533,11 +530,13 @@ class Search extends SearchDelegate {
     List<Station> suggestionList = [];
     query.isEmpty
         ? suggestionList = recentList //In the true case
-        : suggestionList.addAll(inputList.where(
-            // In the false case
-            (element) =>
-                element.title.toLowerCase().contains(query.toLowerCase()),
-          ));
+        : suggestionList.addAll(
+            inputList.where(
+              // In the false case
+              (element) =>
+                  element.title.toLowerCase().contains(query.toLowerCase()),
+            ),
+          );
 
     return ListView.builder(
       itemCount: suggestionList.length,

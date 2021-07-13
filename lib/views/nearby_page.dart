@@ -6,6 +6,7 @@ import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -87,89 +88,81 @@ class _NearbyListPageState extends State<NearbyListPage> {
   }
 
   Widget nearbyList() {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return FutureBuilder(
-        future: locationList,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              {
-                return LoadingWidget();
-              }
-            case ConnectionState.active:
-              {
-                return LoadingWidget();
-              }
-            case ConnectionState.done:
-              {
-                if (snapshot.hasData) {
-                  List<Station> stations = snapshot.data.stations;
-                  //inspect(stations);
-                  return SingleChildScrollView(
-                    physics: AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 8),
-                          child: Text(
-                            'Närliggande mätstationer',
-                            style: pageTitle,
-                          ),
+      future: locationList,
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.waiting:
+            {
+              return LoadingWidget();
+            }
+          case ConnectionState.active:
+            {
+              return LoadingWidget();
+            }
+          case ConnectionState.done:
+            {
+              if (snapshot.hasData) {
+                List<Station> stations = snapshot.data.stations;
+                //inspect(stations);
+                return SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
+                        child: Text(
+                          'Närliggande mätstationer',
+                          style: pageTitle,
                         ),
-                        Card(
-                          margin: const EdgeInsets.only(
-                              left: 4, top: 0, right: 4, bottom: 16),
-                          elevation: 0,
-                          child: ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            separatorBuilder:
-                                (BuildContext context, int index) =>
-                                    StationListDivider(),
-                            itemCount: stations.length,
-                            itemBuilder: (context, index) {
-                              Station station = stations[index];
-                              return GestureDetector(
-                                child: StationListTile(station: station),
-                              );
-                            },
-                          ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.all(16),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: _isDarkMode
+                              ? tempCardDarkBackground
+                              : tempCardLightBackground,
+                          borderRadius: BorderRadius.circular(cardBorderRadius),
                         ),
-                      ],
-                    ),
-                  );
-                } else if (snapshot.hasError) {
-                  return noDataView(snapshot.error);
-                }
-
-                break;
+                        child: ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          separatorBuilder: (BuildContext context, int index) =>
+                              StationListDivider(),
+                          itemCount: stations.length,
+                          itemBuilder: (context, index) {
+                            Station station = stations[index];
+                            return GestureDetector(
+                              child: StationListTile(station: station),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return NoDataWidget(
+                  msg: snapshot.error,
+                );
               }
-            case ConnectionState.none:
-              {
-                break;
-              }
-          }
-          return LoadingWidget();
-        });
-  }
 
-  // Error/No data view
-  noDataView(var msg) {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Något gick fel!',
-            style: pageTitle,
-          ),
-          Text(
-            "$msg",
-            style: bodyText,
-          ),
-        ],
-      ),
+              break;
+            }
+          case ConnectionState.none:
+            {
+              break;
+            }
+        }
+        return LoadingWidget();
+      },
     );
   }
 }
