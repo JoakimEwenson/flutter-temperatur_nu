@@ -182,8 +182,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        //type: BottomNavigationBarType.shifting,
-        backgroundColor: Colors.grey[900],
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Theme.of(context).canvasColor,
         currentIndex: _selectedTab,
         elevation: 5,
         selectedItemColor: _isDarkMode ? darkModeTextColor : lightModeTextColor,
