@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 Widget appInfo() {
   return Padding(
@@ -9,14 +10,14 @@ Widget appInfo() {
       children: [
         Text(
           'En app av Joakim Ewenson',
-          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
+          style: bodySmallText,
         ),
         SizedBox(
           height: 4,
         ),
         Text(
           'https://www.ewenson.se',
-          style: TextStyle(fontSize: 8, fontStyle: FontStyle.italic),
+          style: bodySmallText,
         ),
         SizedBox(
           height: 16,

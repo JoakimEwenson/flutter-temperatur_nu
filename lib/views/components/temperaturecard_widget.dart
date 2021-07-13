@@ -68,28 +68,6 @@ class _TemperatureCardWidgetState extends State<TemperatureCardWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                /* Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.favorite,
-                        size: 18,
-                      ),
-                      label: Text('Favorit'),
-                    ),
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.home,
-                        size: 18,
-                      ),
-                      label: Text('Hemstation'),
-                    ),
-                  ],
-                ), */
                 FavoriteHomeWidget(
                   station: widget.station,
                 ),
@@ -110,14 +88,14 @@ class _TemperatureCardWidgetState extends State<TemperatureCardWidget> {
                   children: [
                     Text(
                       'Observera',
-                      style: TextStyle(
+                      style: bodyText.copyWith(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
-                      style: TextStyle(color: Colors.red),
+                      style: bodyText.copyWith(color: Colors.red),
                       textAlign: TextAlign.center,
                     )
                   ],

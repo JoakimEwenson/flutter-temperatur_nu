@@ -87,7 +87,9 @@ class _SettingsCardState extends State<SettingsCard> {
                       style: bodyText.copyWith(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                        'Klicka på ikonen för att aktivera platstjänster.'),
+                      'Klicka på ikonen för att aktivera platstjänster.',
+                      style: bodyText,
+                    ),
                     trailing: IconButton(
                       icon: Icon(
                         Icons.report,

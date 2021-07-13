@@ -222,7 +222,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                             ..removeCurrentSnackBar()
                                             ..showSnackBar(
                                               SnackBar(
-                                                content: Text(e.errorMsg()),
+                                                content: Text(
+                                                  e.errorMsg(),
+                                                  style: bodyText,
+                                                ),
                                               ),
                                             );
                                         } catch (e) {
@@ -230,7 +233,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                             ..removeCurrentSnackBar()
                                             ..showSnackBar(
                                               SnackBar(
-                                                content: Text(e.toString()),
+                                                content: Text(
+                                                  e.toString(),
+                                                  style: bodyText,
+                                                ),
                                               ),
                                             );
                                         }

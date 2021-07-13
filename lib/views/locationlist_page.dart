@@ -520,7 +520,10 @@ class Search extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     return Container(
       child: Center(
-        child: Text(selectedResult),
+        child: Text(
+          selectedResult,
+          style: bodyText,
+        ),
       ),
     );
   }

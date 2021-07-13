@@ -64,8 +64,9 @@ class _AppLicenseWidgetState extends State<AppLicenseWidget> {
               ),
               label: Text(
                 'Visa applicenser',
-                style: TextStyle(
+                style: bodyText.copyWith(
                   color: _isDarkMode ? darkModeTextColor : lightModeTextColor,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

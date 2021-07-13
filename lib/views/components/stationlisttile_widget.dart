@@ -22,6 +22,7 @@ class _StationListTileState extends State<StationListTile> {
   Widget build(BuildContext context) {
     return ListTile(
       dense: true,
+      isThreeLine: false,
       visualDensity: VisualDensity.compact,
       leading: IconButton(
         visualDensity: VisualDensity.compact,
@@ -72,7 +73,10 @@ class _StationListTileState extends State<StationListTile> {
               ..removeCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
-                  content: Text(e.errorMsg()),
+                  content: Text(
+                    e.errorMsg(),
+                    style: bodyText,
+                  ),
                 ),
               );
           } catch (e) {
@@ -80,7 +84,10 @@ class _StationListTileState extends State<StationListTile> {
               ..removeCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
-                  content: Text(e.toString()),
+                  content: Text(
+                    e.toString(),
+                    style: bodyText,
+                  ),
                 ),
               );
           }

@@ -211,7 +211,10 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Hittade inga uppgifter för ${args.locationId}'),
+                    Text(
+                      'Hittade inga uppgifter för ${args.locationId}.',
+                      style: bodyText,
+                    ),
                     TextButton.icon(
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -224,7 +227,7 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                       ),
                       label: Text(
                         'Tillbaka',
-                        style: TextStyle(
+                        style: bodyText.copyWith(
                           color: _isDarkMode
                               ? darkModeTextColor
                               : lightModeTextColor,
