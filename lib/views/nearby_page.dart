@@ -155,26 +155,6 @@ class _NearbyListPageState extends State<NearbyListPage> {
         });
   }
 
-  // Loading indicator
-  loadingView() {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 25,
-          ),
-          CircularProgressIndicator(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          Text(
-            'Hämtar data',
-            style: Theme.of(context).textTheme.headline3,
-          ),
-        ],
-      ),
-    );
-  }
-
   // Error/No data view
   noDataView(var msg) {
     return Center(
@@ -182,11 +162,11 @@ class _NearbyListPageState extends State<NearbyListPage> {
         children: <Widget>[
           Text(
             'Något gick fel!',
-            style: Theme.of(context).textTheme.headline3,
+            style: pageTitle,
           ),
           Text(
             "$msg",
-            style: Theme.of(context).textTheme.bodyText1,
+            style: bodyText,
           ),
         ],
       ),

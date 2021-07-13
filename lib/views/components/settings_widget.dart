@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/views/components/deleteUserHome_dialog.dart';
 import 'package:temperatur_nu/model/UserSettings.dart';
@@ -11,7 +12,9 @@ import 'package:temperatur_nu/views/components/theme.dart';
 Future<UserSettings> userSettings;
 
 class SettingsCard extends StatefulWidget {
-  const SettingsCard({Key key}) : super(key: key);
+  const SettingsCard({Key key, @required this.isDarkMode}) : super(key: key);
+
+  final bool isDarkMode;
 
   @override
   _SettingsCardState createState() => _SettingsCardState();
@@ -35,16 +38,21 @@ class _SettingsCardState extends State<SettingsCard> {
     double _minNearbyAmount = 3.0;
     double _maxNearbyAmount = 25.0;
 
-    bool _isDarkMode =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
-
     return FutureBuilder(
       future: userSettings,
       builder: (BuildContext context, snapshot) {
         if (snapshot.hasData) {
           UserSettings _userSettings = snapshot.data;
-          return Card(
-            elevation: 0,
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            padding: const EdgeInsets.all(16),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: widget.isDarkMode
+                  ? tempCardDarkBackground
+                  : tempCardLightBackground,
+              borderRadius: BorderRadius.circular(cardBorderRadius),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
@@ -53,14 +61,14 @@ class _SettingsCardState extends State<SettingsCard> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'Inställningar',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: cardTitle,
                   ),
                 ),
                 if (_userSettings.locationServiceEnabled)
                   ListTile(
                     title: Text(
                       'Platstjänster aktiverade',
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: bodyText.copyWith(fontWeight: FontWeight.bold),
                     ),
                     trailing: IconButton(
                       icon: Icon(
@@ -76,7 +84,7 @@ class _SettingsCardState extends State<SettingsCard> {
                   ListTile(
                     title: Text(
                       'Platstjänster avaktiverade',
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: bodyText.copyWith(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
                         'Klicka på ikonen för att aktivera platstjänster.'),
@@ -96,10 +104,12 @@ class _SettingsCardState extends State<SettingsCard> {
                     isThreeLine: true,
                     title: Text(
                       'Behörighet saknas',
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: bodyText.copyWith(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                        'Appen saknar behörighet att använda platstjänster. Klicka på ikonen för att åtgärda.'),
+                      'Appen saknar behörighet att använda platstjänster. Klicka på ikonen för att åtgärda.',
+                      style: bodyText,
+                    ),
                     trailing: IconButton(
                       icon: Icon(
                         Icons.app_settings_alt,
@@ -113,10 +123,12 @@ class _SettingsCardState extends State<SettingsCard> {
                 ListTile(
                   title: Text(
                     'Nuvarande hemstation',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: bodyText.copyWith(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                      '${_userSettings.userHome != null ? _userSettings.userHome : "Ingen vald"}'),
+                    '${_userSettings.userHome != null ? _userSettings.userHome : "Ingen vald"}',
+                    style: bodyText,
+                  ),
                   trailing: _userSettings.userHome != null
                       ? IconButton(
                           icon: Icon(
@@ -140,17 +152,20 @@ class _SettingsCardState extends State<SettingsCard> {
                   isThreeLine: true,
                   title: Text(
                     'Närliggande mätstationer',
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: bodyText.copyWith(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
                     'Bestämmer antalet kompletterande mätstationer som ska hämtas till varje station, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
+                    style: bodyText,
                   ),
                 ),
                 Slider(
-                  activeColor:
-                      _isDarkMode ? darkModeTextColor : lightModeTextColor,
-                  inactiveColor:
-                      _isDarkMode ? darkModeTextColor : lightModeTextColor,
+                  activeColor: widget.isDarkMode
+                      ? darkModeTextColor
+                      : lightModeTextColor,
+                  inactiveColor: widget.isDarkMode
+                      ? darkModeTextColor
+                      : lightModeTextColor,
                   min: _minNearbyAmount,
                   max: _maxNearbyAmount,
                   divisions: _maxNearbyAmount.toInt(),
@@ -176,6 +191,7 @@ class _SettingsCardState extends State<SettingsCard> {
                             SnackBar(
                               content: Text(
                                 'Inställningar sparade.',
+                                style: bodyText,
                               ),
                             ),
                           );
@@ -187,6 +203,7 @@ class _SettingsCardState extends State<SettingsCard> {
                             SnackBar(
                               content: Text(
                                 'Inställningar sparades ej!',
+                                style: bodyText,
                               ),
                             ),
                           );
@@ -197,11 +214,13 @@ class _SettingsCardState extends State<SettingsCard> {
                     },
                     child: Text(
                       'Spara inställningarna',
-                      style: TextStyle(
-                        color: _isDarkMode
-                            ? darkModeTextColor
-                            : lightModeTextColor,
-                        fontWeight: FontWeight.bold,
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          color: widget.isDarkMode
+                              ? darkModeTextColor
+                              : lightModeTextColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,11 +15,11 @@ Color rubyRed = Color.fromRGBO(164, 22, 26, 1);
 Color carnelian = Color.fromRGBO(186, 24, 27, 1);
 Color imperialRed = Color.fromRGBO(229, 56, 59, 1);
 Color silverChalice = Color.fromRGBO(177, 167, 166, 1);
-Color lightGray = Color.fromRGBO(211, 211, 211, 1);
+Color lightGray = Color.fromRGBO(240, 240, 240, 1);
 Color cultured = Color.fromRGBO(245, 243, 244, 1);
 
 // App theme
-Color appCanvasColor = cultured;
+Color appCanvasColor = lightGray;
 Color darkIconColor = cultured;
 Color lightIconColor = eerieBlack;
 
@@ -34,6 +36,9 @@ String longTimeFormat = "HH:mm:ss";
 String shortDateFormat = "d/M -yy";
 String shortDateTimeFormat = "'kl.' HH:mm 'den' d/M -yy";
 String shortTimeFormat = "HH:mm";
+
+// Design elements
+double cardBorderRadius = 25;
 
 // Text styles
 TextStyle temperatureHuge = GoogleFonts.robotoMono(
@@ -56,36 +61,76 @@ TextStyle temperatureBig = GoogleFonts.robotoMono(
   ),
 );
 
-TextStyle stationTitleSmall = TextStyle(fontSize: 12);
+TextStyle stationTitleSmall = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 12),
+);
 
-TextStyle pageTitle = TextStyle(fontSize: 24);
-TextStyle cardTitle = TextStyle(fontSize: 18);
-TextStyle cardInnerTitle = TextStyle(fontSize: 16);
-TextStyle stationOwner = TextStyle(fontSize: 12);
+TextStyle pageTitle = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 24),
+);
+TextStyle cardTitle = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+);
+TextStyle cardInnerTitle = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 16),
+);
+TextStyle stationOwner = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 12),
+);
 
-TextStyle bodyText = TextStyle(fontSize: 14);
+TextStyle bodyText = GoogleFonts.inter(textStyle: TextStyle(fontSize: 14));
+TextStyle bodySmallText = GoogleFonts.inter(
+  textStyle: TextStyle(fontSize: 11),
+);
+
+// Temperature Card styles
+Color tempCardLightBackground = Colors.white;
+Color tempCardDarkBackground = Colors.black45;
+
+TextStyle tempCardTitle = GoogleFonts.inter(
+  textStyle: TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+  ),
+);
+TextStyle tempCardSubtitle = GoogleFonts.inter(
+  textStyle: TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+  ),
+);
+TextStyle tempCardTemperature = GoogleFonts.robotoMono(
+  textStyle: TextStyle(
+    fontSize: 48,
+    fontWeight: FontWeight.w800,
+  ),
+);
 
 // Average, Max, Min table
 TextStyle ammHeader = GoogleFonts.robotoMono(
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: FontWeight.bold,
 );
 TextStyle ammValue = GoogleFonts.robotoMono(
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: FontWeight.bold,
 );
 TextStyle ammTime = GoogleFonts.robotoMono(
-  fontSize: 10,
+  fontSize: 11,
 );
 
 // Location List Tile
-TextStyle locationListTileTitle = TextStyle(
-  fontSize: 14,
-  fontWeight: FontWeight.bold,
+TextStyle locationListTileTitle = GoogleFonts.inter(
+  textStyle: TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+  ),
 );
-TextStyle locationListTileSubtitle = TextStyle(
-  fontSize: 12,
-  fontWeight: FontWeight.w300,
+TextStyle locationListTileSubtitle = GoogleFonts.inter(
+  textStyle: TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w300,
+  ),
 );
 TextStyle locationListTileTemperature = GoogleFonts.robotoMono(
   textStyle: TextStyle(

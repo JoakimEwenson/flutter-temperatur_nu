@@ -81,103 +81,99 @@ class ChartWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
+          /* Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
             child: Text(
               'Temperaturgraf',
               style: cardTitle,
             ),
-          ),
-          Card(
-            elevation: 0,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: chartHeight,
-                  width: chartWidth,
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                  child: LineChart(
-                    LineChartData(
-                      minY: (chartMinY - 5).floorToDouble(),
-                      maxY: (chartMaxY + 5).ceilToDouble(),
-                      borderData: FlBorderData(
-                        show: false,
+          ), */
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Container(
+                height: chartHeight,
+                width: chartWidth,
+                margin: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                child: LineChart(
+                  LineChartData(
+                    minY: (chartMinY - 5).floorToDouble(),
+                    maxY: (chartMaxY + 5).ceilToDouble(),
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    gridData: FlGridData(
+                      drawHorizontalLine: true,
+                      getDrawingHorizontalLine: (value) => FlLine(
+                        color: _isDarkMode ? Colors.white12 : Colors.black12,
+                        strokeWidth: 2,
                       ),
-                      gridData: FlGridData(
-                        drawHorizontalLine: true,
-                        getDrawingHorizontalLine: (value) => FlLine(
-                          color: _isDarkMode ? Colors.white12 : Colors.black12,
-                          strokeWidth: 2,
+                      horizontalInterval: 5,
+                      show: true,
+                    ),
+                    lineTouchData: LineTouchData(
+                      enabled: true,
+                      touchTooltipData: LineTouchTooltipData(
+                        fitInsideHorizontally: true,
+                        fitInsideVertically: true,
+                        getTooltipItems: (tooltips) {
+                          return tooltips.map((tooltip) {
+                            DateTime timestamp =
+                                spotList.timestamps[tooltip.x.toInt()];
+                            return LineTooltipItem(
+                              '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
+                              TextStyle(
+                                color: _isDarkMode
+                                    ? Colors.grey[900]
+                                    : Colors.grey[100],
+                              ),
+                            );
+                          }).toList();
+                        },
+                        tooltipBgColor:
+                            _isDarkMode ? Colors.grey[100] : Colors.grey[900],
+                      ),
+                    ),
+                    lineBarsData: [
+                      LineChartBarData(
+                        barWidth: 2,
+                        curveSmoothness: 1,
+                        isCurved: true,
+                        preventCurveOverShooting: true,
+                        colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
+                        dotData: FlDotData(show: false),
+                        spots: _spots,
+                      )
+                    ],
+                    titlesData: FlTitlesData(
+                      leftTitles: SideTitles(
+                        showTitles: true,
+                        getTitles: (value) => '${value.toStringAsFixed(0)}°',
+                        getTextStyles: (value) => GoogleFonts.robotoMono(
+                          color: _isDarkMode ? Colors.grey[100] : Colors.black,
                         ),
-                        horizontalInterval: 5,
-                        show: true,
+                        margin: 5,
+                        interval: 5,
                       ),
-                      lineTouchData: LineTouchData(
-                        enabled: true,
-                        touchTooltipData: LineTouchTooltipData(
-                          fitInsideHorizontally: true,
-                          fitInsideVertically: true,
-                          getTooltipItems: (tooltips) {
-                            return tooltips.map((tooltip) {
-                              DateTime timestamp =
-                                  spotList.timestamps[tooltip.x.toInt()];
-                              return LineTooltipItem(
-                                '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
-                                TextStyle(
-                                  color: _isDarkMode
-                                      ? Colors.grey[900]
-                                      : Colors.grey[100],
-                                ),
-                              );
-                            }).toList();
-                          },
-                          tooltipBgColor:
-                              _isDarkMode ? Colors.grey[100] : Colors.grey[900],
-                        ),
-                      ),
-                      lineBarsData: [
-                        LineChartBarData(
-                          barWidth: 2,
-                          curveSmoothness: 1,
-                          isCurved: true,
-                          preventCurveOverShooting: true,
-                          colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
-                          dotData: FlDotData(show: false),
-                          spots: _spots,
-                        )
-                      ],
-                      titlesData: FlTitlesData(
-                        leftTitles: SideTitles(
-                          showTitles: true,
-                          getTitles: (value) => '${value.toStringAsFixed(0)}°',
-                          getTextStyles: (value) => GoogleFonts.robotoMono(
-                            color:
-                                _isDarkMode ? Colors.grey[100] : Colors.black,
-                          ),
-                          margin: 5,
-                          interval: 5,
-                        ),
-                        bottomTitles: SideTitles(showTitles: false),
-                      ),
+                      bottomTitles: SideTitles(showTitles: false),
                     ),
                   ),
                 ),
-                if (amm != null &&
-                    amm.min != null &&
-                    amm.average != null &&
-                    amm.max != null)
-                  AmmDataWidget(
-                    amm: amm,
-                    maxTime: maxTime,
-                    minTime: minTime,
-                    spanStart: spanStart,
-                    spanEnd: spanEnd,
-                    isDarkMode: _isDarkMode,
-                  ),
-              ],
-            ),
+              ),
+              if (amm != null &&
+                  amm.min != null &&
+                  amm.average != null &&
+                  amm.max != null)
+                AmmDataWidget(
+                  amm: amm,
+                  maxTime: maxTime,
+                  minTime: minTime,
+                  spanStart: spanStart,
+                  spanEnd: spanEnd,
+                  isDarkMode: _isDarkMode,
+                ),
+            ],
           ),
         ],
       ),

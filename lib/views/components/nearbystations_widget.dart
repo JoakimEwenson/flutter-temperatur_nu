@@ -30,12 +30,14 @@ Future<UserSettings> _getUserSettings() async {
 class NearbyStationsWidget extends StatefulWidget {
   const NearbyStationsWidget({
     Key key,
-    this.latitude,
-    this.longitude,
+    @required this.latitude,
+    @required this.longitude,
+    @required this.isDarkMode,
   }) : super(key: key);
 
   final String latitude;
   final String longitude;
+  final bool isDarkMode;
 
   @override
   _NearbyStationsWidgetState createState() => _NearbyStationsWidgetState();
@@ -65,25 +67,28 @@ class _NearbyStationsWidgetState extends State<NearbyStationsWidget> {
               snapshot.hasData) {
             StationNameVerbose _nearbyStations = snapshot.data;
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.all(16),
               width: double.infinity,
+              decoration: BoxDecoration(
+                color: widget.isDarkMode
+                    ? tempCardDarkBackground
+                    : tempCardLightBackground,
+                borderRadius: BorderRadius.circular(cardBorderRadius),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Närliggande mätstationer',
-                      style: cardTitle,
-                    ),
-                  ),
-                  Card(
-                    elevation: 0,
+                  Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        Text(
+                          'Närliggande mätstationer',
+                          style: cardTitle,
+                        ),
                         ListView.separated(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,

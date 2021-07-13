@@ -4,111 +4,104 @@ import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class StationInfoWidget extends StatelessWidget {
-  const StationInfoWidget({Key key, @required this.station}) : super(key: key);
+  const StationInfoWidget(
+      {Key key, @required this.station, @required this.isDarkMode})
+      : super(key: key);
 
   final Station station;
+  final bool isDarkMode;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.all(16),
       width: double.infinity,
+      decoration: BoxDecoration(
+        color: isDarkMode ? tempCardDarkBackground : tempCardLightBackground,
+        borderRadius: BorderRadius.circular(cardBorderRadius),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Information om mätstationen',
-              style: cardTitle,
+          Text(
+            'Information om mätstationen',
+            style: cardTitle,
+          ),
+          Text(
+            '${station.sourceInfo}',
+            style: bodySmallText,
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Mätstationen är placerad i ${station.kommun}, ${station.lan}.',
+                  style: bodySmallText,
+                ),
+                if (station.uptime != null)
+                  Text(
+                    'Mätstationens upptid är ${station.uptime}%',
+                    style: bodySmallText,
+                  ),
+              ],
             ),
           ),
-          Card(
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+          if (station.lat.isNotEmpty && station.lon.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    '${station.sourceInfo}',
-                    style: Theme.of(context).textTheme.caption,
+                    'Position',
+                    style: bodyText.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Mätstationen är placerad i ${station.kommun}, ${station.lan}.',
-                          style: Theme.of(context).textTheme.caption,
-                        ),
-                        if (station.uptime != null)
-                          Text(
-                            'Mätstationens upptid är ${station.uptime}%',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                      ],
-                    ),
+                  Text(
+                    'Latitud: ${double.tryParse(station.lat).toStringAsPrecision(6)}',
+                    style: bodySmallText,
                   ),
-                  if (station.lat.isNotEmpty && station.lon.isNotEmpty)
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Position',
-                            style: Theme.of(context).textTheme.subtitle2,
-                          ),
-                          Text(
-                            'Latitud: ${double.tryParse(station.lat).toStringAsPrecision(6)}',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          Text(
-                            'Longitud: ${double.tryParse(station.lon).toStringAsPrecision(6)}',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                          if (station.moh != null)
-                            Text(
-                              'Angiven höjd över havet: ${station.moh} meter',
-                              style: Theme.of(context).textTheme.caption,
-                            ),
-                        ],
-                      ),
+                  Text(
+                    'Longitud: ${double.tryParse(station.lon).toStringAsPrecision(6)}',
+                    style: bodySmallText,
+                  ),
+                  if (station.moh != null)
+                    Text(
+                      'Angiven höjd över havet: ${station.moh} meter',
+                      style: bodySmallText,
                     ),
-                  if (station.forutsattning.isNotEmpty)
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Förutsättningar',
-                            style: Theme.of(context).textTheme.subtitle2,
-                          ),
-                          Text(
-                            '${station.forutsattning}',
-                            style: Theme.of(context).textTheme.caption,
-                          ),
-                        ],
-                      ),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Center(
-                      child: Text(
-                        'Senast uppdaterat kl. ${DateFormat("HH:mm").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
-                        style: Theme.of(context).textTheme.caption.copyWith(),
-                      ),
-                    ),
+                ],
+              ),
+            ),
+          if (station.forutsattning.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Förutsättningar',
+                    style: bodyText.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    '${station.forutsattning}',
+                    style: bodySmallText,
                   ),
                 ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Center(
+              child: Text(
+                'Senast uppdaterat kl. ${DateFormat("HH:mm").format(station.lastUpdate)} den ${DateFormat("d/M yyyy").format(station.lastUpdate)}.',
+                style: bodySmallText.copyWith(),
               ),
             ),
           ),

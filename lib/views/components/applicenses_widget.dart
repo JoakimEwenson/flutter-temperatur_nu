@@ -48,7 +48,7 @@ class _AppLicenseWidgetState extends State<AppLicenseWidget> {
                   applicationIcon: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: BorderRadius.circular(cardBorderRadius),
                       child: Image.asset(
                         'icon/icon.png',
                         width: 128,

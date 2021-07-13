@@ -353,26 +353,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
         });
   }
 
-  // Loading indicator
-  loadingView() {
-    return Center(
-      child: Column(
-        children: <Widget>[
-          SizedBox(
-            height: 25,
-          ),
-          CircularProgressIndicator(
-            backgroundColor: Theme.of(context).primaryColor,
-          ),
-          Text(
-            'Hämtar data',
-            style: Theme.of(context).textTheme.headline3,
-          ),
-        ],
-      ),
-    );
-  }
-
   // Error/No data view
   noDataView(String msg) {
     return Center(
@@ -383,7 +363,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           ),
           Text(
             msg,
-            style: Theme.of(context).textTheme.bodyText1,
+            style: bodyText,
           ),
         ],
       ),

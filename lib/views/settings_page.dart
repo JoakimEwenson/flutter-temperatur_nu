@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/views/components/aboutapp_widget.dart';
 import 'package:temperatur_nu/views/components/applicenses_widget.dart';
 import 'package:temperatur_nu/views/components/settings_widget.dart';
+import 'package:temperatur_nu/views/components/theme.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
@@ -33,14 +34,20 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    bool _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           child: Column(
             children: [
-              AboutAppCard(),
-              SettingsCard(),
+              AboutAppCard(
+                isDarkMode: _isDarkMode,
+              ),
+              SettingsCard(
+                isDarkMode: _isDarkMode,
+              ),
               AppLicenseWidget(),
               FutureBuilder(
                 future: _packageInfo,
@@ -51,7 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Appversion ${packageInfo.version} (build ${packageInfo.buildNumber})',
-                        style: Theme.of(context).textTheme.caption,
+                        style: bodySmallText,
                       ),
                     );
                   }

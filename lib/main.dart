@@ -13,8 +13,8 @@ import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
-import 'package:temperatur_nu/views/components/stationdetails_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
+import 'package:temperatur_nu/views/components/temperaturecard_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/stationdetails_page.dart';
 import 'controller/fetchSinglePost.dart';
@@ -31,6 +31,9 @@ String defaultLocation = 'kayravuopio';
 String defaultGraphRange = '1day';
 String locationId;
 String graphRange;
+
+// Init isDarkMode bool
+bool _isDarkMode;
 
 // Set up navigation
 int _selectedTab = 0;
@@ -167,6 +170,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    _isDarkMode =
+        Theme.of(context).brightness == Brightness.dark ? true : false;
     // Specify list of page childrens
     final List<Widget> _children = [
       _singlePostPage(),
@@ -177,12 +182,14 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+        //type: BottomNavigationBarType.shifting,
         backgroundColor: Colors.grey[900],
-        elevation: 0,
         currentIndex: _selectedTab,
-        selectedItemColor: Colors.grey[200],
-        unselectedItemColor: Colors.grey[600],
+        elevation: 5,
+        selectedItemColor: _isDarkMode ? darkModeTextColor : lightModeTextColor,
+        unselectedItemColor: _isDarkMode
+            ? darkModeTextColor.withOpacity(0.3)
+            : lightModeTextColor.withOpacity(0.3),
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (int index) {
@@ -218,158 +225,56 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: _children[_selectedTab],
-      ),
+      body: _children[_selectedTab],
     );
   }
 
   _singlePostPage() {
-    bool _isDarkMode =
-        Theme.of(context).brightness == Brightness.dark ? true : false;
-    return RefreshIndicator(
-      color: Theme.of(context).primaryColor,
-      backgroundColor: Theme.of(context).accentColor,
-      key: _mainRefreshIndicatorKey,
-      onRefresh: () async {
-        if (locationId != null) {
-          locationId = sp.getString('userHome') ?? locationId;
-          setState(() {
-            post = fetchStation(locationId, graphRange: graphRange);
-          });
-        }
-      },
-      child: FutureBuilder(
-          future: post,
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                {
-                  return LoadingWidget();
-                }
-              case ConnectionState.active:
-                {
-                  return LoadingWidget();
-                }
-              case ConnectionState.done:
-                {
-                  if (snapshot.hasData) {
-                    Station station = snapshot.data.stations[0];
-                    //inspect(station);
-                    return phoneMainScreen(station, context, _isDarkMode);
-                  } else if (snapshot.hasError) {
-                    return noDataView(snapshot.error);
-                  }
-
-                  break;
-                }
-              case ConnectionState.none:
-                {
-                  break;
-                }
+    return SafeArea(
+      child: Scaffold(
+        body: RefreshIndicator(
+          color: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).accentColor,
+          key: _mainRefreshIndicatorKey,
+          onRefresh: () async {
+            if (locationId != null) {
+              locationId = sp.getString('userHome') ?? locationId;
+              setState(() {
+                post = fetchStation(locationId, graphRange: graphRange);
+              });
             }
-            return LoadingWidget();
-          }),
-    );
-  }
+          },
+          child: FutureBuilder(
+              future: post,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                    {
+                      return LoadingWidget();
+                    }
+                  case ConnectionState.active:
+                    {
+                      return LoadingWidget();
+                    }
+                  case ConnectionState.done:
+                    {
+                      if (snapshot.hasData) {
+                        Station station = snapshot.data.stations[0];
+                        //inspect(station);
+                        return phoneMainScreen(station, context, _isDarkMode);
+                      } else if (snapshot.hasError) {
+                        return noDataView(snapshot.error);
+                      }
 
-  Widget tabletMainScreen(
-      Station station, BuildContext context, bool _isDarkMode) {
-    return Container(
-      child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
-        dragStartBehavior: DragStartBehavior.down,
-        child: Row(
-          children: [
-            StationDetailsWidget(
-              station: station,
-              showBackButton: false,
-            ),
-            if (station.data != null)
-              Column(
-                children: [
-                  ChartWidget(
-                    dataposts: station.data != null ? station.data : [],
-                    amm: station.amm != null ? station.amm : null,
-                  ),
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Card(
-                      elevation: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Välj grafens tidsspann',
-                              style: cardInnerTitle,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  elevation: 0,
-                                  isExpanded: true,
-                                  icon: Icon(Icons.timeline),
-                                  value: graphRange,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      graphRange = value;
-                                      setGraphRange(value);
-                                      post = fetchStation(locationId,
-                                          graphRange: value);
-                                    });
-                                    //print('Chosen value: $value');
-                                  },
-                                  items: [
-                                    DropdownMenuItem(
-                                      value: '1day',
-                                      child: Text(
-                                        'Senaste dygnet',
-                                        style: bodyText,
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: '1week',
-                                      child: Text(
-                                        'Senaste veckan',
-                                        style: bodyText,
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: '1month',
-                                      child: Text(
-                                        'Senaste månaden',
-                                        style: bodyText,
-                                      ),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: '1year',
-                                      child: Text(
-                                        'Senaste året',
-                                        style: bodyText,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            NearbyStationsWidget(
-              latitude: station.lat,
-              longitude: station.lon,
-            ),
-            appInfo(),
-          ],
+                      break;
+                    }
+                  case ConnectionState.none:
+                    {
+                      break;
+                    }
+                }
+                return LoadingWidget();
+              }),
         ),
       ),
     );
@@ -382,90 +287,111 @@ class _MyHomePageState extends State<MyHomePage> {
       dragStartBehavior: DragStartBehavior.down,
       child: Column(
         children: [
-          StationDetailsWidget(
+          TemperatureCardWidget(
             station: station,
-            showBackButton: false,
+            isDarkMode: _isDarkMode,
           ),
           if (station.data != null)
-            ChartWidget(
-              dataposts: station.data != null ? station.data : [],
-              amm: station.amm != null ? station.amm : null,
-            ),
-          Container(
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            child: Card(
-              elevation: 0,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Välj grafens tidsspann',
-                      style: cardInnerTitle,
-                    ),
-                    Container(
-                      width: double.infinity,
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton(
-                          elevation: 0,
-                          isExpanded: true,
-                          icon: Icon(Icons.timeline),
-                          value: graphRange,
-                          onChanged: (value) {
-                            setState(() {
-                              graphRange = value;
-                              setGraphRange(value);
-                              post =
-                                  fetchStation(locationId, graphRange: value);
-                            });
-                            //print('Chosen value: $value');
-                          },
-                          items: [
-                            DropdownMenuItem(
-                              value: '1day',
-                              child: Text(
-                                'Senaste dygnet',
-                                style: bodyText,
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              padding: const EdgeInsets.all(16),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: _isDarkMode
+                    ? tempCardDarkBackground
+                    : tempCardLightBackground,
+                borderRadius: BorderRadius.circular(cardBorderRadius),
+              ),
+              child: Column(
+                children: [
+                  ChartWidget(
+                    dataposts: station.data != null ? station.data : [],
+                    amm: station.amm != null ? station.amm : null,
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Välj grafens tidsspann',
+                            style: cardInnerTitle,
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                elevation: 3,
+                                isExpanded: true,
+                                icon: Icon(Icons.timeline),
+                                value: graphRange,
+                                onChanged: (value) {
+                                  setState(() {
+                                    graphRange = value;
+                                    setGraphRange(value);
+                                    post = fetchStation(
+                                      locationId,
+                                      graphRange: value,
+                                    );
+                                  });
+                                  //print('Chosen value: $value');
+                                },
+                                items: [
+                                  DropdownMenuItem(
+                                    value: '1day',
+                                    child: Text(
+                                      'Senaste dygnet',
+                                      style: bodyText,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '1week',
+                                    child: Text(
+                                      'Senaste veckan',
+                                      style: bodyText,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '1month',
+                                    child: Text(
+                                      'Senaste månaden',
+                                      style: bodyText,
+                                    ),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: '1year',
+                                    child: Text(
+                                      'Senaste året',
+                                      style: bodyText,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            DropdownMenuItem(
-                              value: '1week',
-                              child: Text(
-                                'Senaste veckan',
-                                style: bodyText,
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: '1month',
-                              child: Text(
-                                'Senaste månaden',
-                                style: bodyText,
-                              ),
-                            ),
-                            DropdownMenuItem(
-                              value: '1year',
-                              child: Text(
-                                'Senaste året',
-                                style: bodyText,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ),
           NearbyStationsWidget(
             latitude: station.lat,
             longitude: station.lon,
+            isDarkMode: _isDarkMode,
           ),
-          StationInfoWidget(station: station),
+          StationInfoWidget(
+            station: station,
+            isDarkMode: _isDarkMode,
+          ),
           appInfo(),
         ],
       ),

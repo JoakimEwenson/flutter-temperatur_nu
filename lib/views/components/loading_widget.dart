@@ -22,7 +22,6 @@ class LoadingWidget extends StatelessWidget {
             ),
           ),
           LinearProgressIndicator(
-            backgroundColor: tnuYellow,
             minHeight: 2,
           ),
         ],
