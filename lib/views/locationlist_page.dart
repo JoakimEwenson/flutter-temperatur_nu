@@ -8,6 +8,7 @@ import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/navbar_widget.dart';
 import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
@@ -123,174 +124,104 @@ class _LocationListPageState extends State<LocationListPage> {
   Widget build(BuildContext context) {
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
-    return SafeArea(
-      child: FutureBuilder(
+    return Scaffold(
+      bottomNavigationBar: NavigationBarWidget(page: Pages.locations),
+      extendBody: true,
+      extendBodyBehindAppBar: true,
+      body: SafeArea(
+        child: FutureBuilder(
           future: locations,
           builder: (context, snapshot) {
-            return Scaffold(
-              /*
-              appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: () {
-                      showSearch(
-                        context: context,
-                        delegate: Search(
-                          snapshot.hasData ? snapshot.data.stations : [],
-                        ),
-                      );
-                    },
-                  ),
-                  IconButton(
-                      icon: Icon(Icons.arrow_upward),
+            return NestedScrollView(
+              controller: _controller,
+              physics: AlwaysScrollableScrollPhysics(),
+              headerSliverBuilder: (context, innerBoxScrolled) => [
+                SliverAppBar(
+                  floating: true,
+                  snap: true,
+                  pinned: false,
+                  backgroundColor: Theme.of(context).canvasColor,
+                  elevation: 4,
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.search),
                       onPressed: () {
-                        _setScrollPosition(resetPosition: true);
-                      }),
-                  PopupMenuButton<SortingChoice>(
-                    icon: Icon(Icons.filter_list),
-                    onSelected: (SortingChoice choice) {
-                      if (snapshot.hasData) {
-                        switch (choice.id) {
-                          case 'alphabetical':
-                            setState(() {
-                              _sortingChoice = "alphabetical";
-                              _setScrollPosition(resetPosition: true);
-                              saveSortingOrder(_sortingChoice);
-                            });
-                            break;
-                          case 'highest':
-                            setState(() {
-                              _sortingChoice = "highest";
-                              _setScrollPosition(resetPosition: true);
-                              saveSortingOrder(_sortingChoice);
-                            });
-                            break;
-                          case 'lowest':
-                            setState(() {
-                              _sortingChoice = "lowest";
-                              _setScrollPosition(resetPosition: true);
-                              saveSortingOrder(_sortingChoice);
-                            });
-                            break;
-                          case 'north':
-                            setState(() {
-                              _sortingChoice = "north";
-                              _setScrollPosition(resetPosition: true);
-                              saveSortingOrder(_sortingChoice);
-                            });
-                            break;
-                          case 'south':
-                            setState(() {
-                              _sortingChoice = 'south';
-                              _setScrollPosition(resetPosition: true);
-                              saveSortingOrder(_sortingChoice);
-                            });
-                        }
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return sortingChoices.map((SortingChoice choice) {
-                        return PopupMenuItem<SortingChoice>(
-                          child: ListTile(
-                            leading: choice.icon,
-                            title: Text(choice.title),
+                        showSearch(
+                          context: context,
+                          delegate: Search(
+                            snapshot.hasData ? snapshot.data.stations : [],
                           ),
-                          value: choice,
                         );
-                      }).toList();
-                    },
-                  )
-                ],
-              ),*/
-              body: NestedScrollView(
-                controller: _controller,
-                headerSliverBuilder: (context, innerBoxScrolled) => [
-                  SliverAppBar(
-                    floating: true,
-                    snap: true,
-                    pinned: false,
-                    backgroundColor: Theme.of(context).canvasColor,
-                    elevation: 0,
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.search),
+                      },
+                    ),
+                    IconButton(
+                        icon: Icon(Icons.arrow_upward),
                         onPressed: () {
-                          showSearch(
-                            context: context,
-                            delegate: Search(
-                              snapshot.hasData ? snapshot.data.stations : [],
-                            ),
-                          );
-                        },
-                      ),
-                      IconButton(
-                          icon: Icon(Icons.arrow_upward),
-                          onPressed: () {
-                            _setScrollPosition(resetPosition: true);
-                          }),
-                      PopupMenuButton<SortingChoice>(
-                        icon: Icon(Icons.filter_list),
-                        onSelected: (SortingChoice choice) {
-                          if (snapshot.hasData) {
-                            switch (choice.id) {
-                              case 'alphabetical':
-                                setState(() {
-                                  _sortingChoice = "alphabetical";
-                                  _setScrollPosition(resetPosition: true);
-                                  saveSortingOrder(_sortingChoice);
-                                });
-                                break;
-                              case 'highest':
-                                setState(() {
-                                  _sortingChoice = "highest";
-                                  _setScrollPosition(resetPosition: true);
-                                  saveSortingOrder(_sortingChoice);
-                                });
-                                break;
-                              case 'lowest':
-                                setState(() {
-                                  _sortingChoice = "lowest";
-                                  _setScrollPosition(resetPosition: true);
-                                  saveSortingOrder(_sortingChoice);
-                                });
-                                break;
-                              case 'north':
-                                setState(() {
-                                  _sortingChoice = "north";
-                                  _setScrollPosition(resetPosition: true);
-                                  saveSortingOrder(_sortingChoice);
-                                });
-                                break;
-                              case 'south':
-                                setState(() {
-                                  _sortingChoice = 'south';
-                                  _setScrollPosition(resetPosition: true);
-                                  saveSortingOrder(_sortingChoice);
-                                });
-                            }
+                          _setScrollPosition(resetPosition: true);
+                        }),
+                    PopupMenuButton<SortingChoice>(
+                      icon: Icon(Icons.filter_list),
+                      onSelected: (SortingChoice choice) {
+                        if (snapshot.hasData) {
+                          switch (choice.id) {
+                            case 'alphabetical':
+                              setState(() {
+                                _sortingChoice = "alphabetical";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'highest':
+                              setState(() {
+                                _sortingChoice = "highest";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'lowest':
+                              setState(() {
+                                _sortingChoice = "lowest";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'north':
+                              setState(() {
+                                _sortingChoice = "north";
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
+                              break;
+                            case 'south':
+                              setState(() {
+                                _sortingChoice = 'south';
+                                _setScrollPosition(resetPosition: true);
+                                saveSortingOrder(_sortingChoice);
+                              });
                           }
-                        },
-                        itemBuilder: (BuildContext context) {
-                          return sortingChoices.map((SortingChoice choice) {
-                            return PopupMenuItem<SortingChoice>(
-                              child: ListTile(
-                                leading: choice.icon,
-                                title: Text(choice.title),
-                              ),
-                              value: choice,
-                            );
-                          }).toList();
-                        },
-                      )
-                    ],
+                        }
+                      },
+                      itemBuilder: (BuildContext context) {
+                        return sortingChoices.map((SortingChoice choice) {
+                          return PopupMenuItem<SortingChoice>(
+                            child: ListTile(
+                              leading: choice.icon,
+                              title: Text(choice.title),
+                            ),
+                            value: choice,
+                          );
+                        }).toList();
+                      },
+                    )
+                  ],
+                ),
+              ],
+              body: RefreshIndicator(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 8,
                   ),
-                ],
-                body: Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   padding: const EdgeInsets.all(16),
                   width: double.infinity,
                   decoration: BoxDecoration(
@@ -299,17 +230,17 @@ class _LocationListPageState extends State<LocationListPage> {
                         : tempCardLightBackground,
                     borderRadius: BorderRadius.circular(cardBorderRadius),
                   ),
-                  child: RefreshIndicator(
-                    child: locationList(),
-                    color: Theme.of(context).primaryColor,
-                    backgroundColor: Theme.of(context).accentColor,
-                    key: _refreshLocationsKey,
-                    onRefresh: () => _refreshList(),
-                  ),
+                  child: locationList(),
                 ),
+                color: Theme.of(context).primaryColor,
+                backgroundColor: Theme.of(context).accentColor,
+                key: _refreshLocationsKey,
+                onRefresh: () => _refreshList(),
               ),
             );
-          }),
+          },
+        ),
+      ),
     );
   }
 

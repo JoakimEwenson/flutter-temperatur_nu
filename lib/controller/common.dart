@@ -4,6 +4,9 @@ import 'dart:core';
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Enum for pages
+enum Pages { home, favorites, nearby, locations, settings }
+
 // Constant for deciding amount of maximum favorites
 const int maxFavorites = 9999;
 // Constant for setting cache timeout, default 300 000 (5 min)

@@ -85,7 +85,7 @@ TextStyle bodySmallText = GoogleFonts.inter(
 
 // Temperature Card styles
 Color tempCardLightBackground = Colors.white;
-Color tempCardDarkBackground = Colors.black45;
+Color tempCardDarkBackground = Color.fromRGBO(26, 26, 26, 1.0);
 
 TextStyle tempCardTitle = GoogleFonts.inter(
   textStyle: TextStyle(

@@ -7,21 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:temperatur_nu/controller/common.dart';
 import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/views/components/appinfo_widget.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/navbar_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
+import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
 import 'package:temperatur_nu/views/components/temperaturecard_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 import 'package:temperatur_nu/views/stationdetails_page.dart';
-import 'controller/fetchSinglePost.dart';
-import 'views/favorites_page.dart';
-import 'views/nearby_page.dart';
-import 'views/locationlist_page.dart';
-import 'views/settings_page.dart';
+import 'package:temperatur_nu/controller/fetchSinglePost.dart';
+import 'package:temperatur_nu/views/favorites_page.dart';
+import 'package:temperatur_nu/views/nearby_page.dart';
+import 'package:temperatur_nu/views/locationlist_page.dart';
+import 'package:temperatur_nu/views/settings_page.dart';
 
 // Set up SharedPreferences for loading saved data
 SharedPreferences sp;
@@ -36,7 +38,7 @@ String graphRange;
 bool _isDarkMode;
 
 // Set up navigation
-int _selectedTab = 0;
+//int _selectedTab = 0;
 
 Future<Null> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,14 +47,12 @@ Future<Null> main() async {
     final license = await rootBundle.loadString('google_fonts/OFL.txt');
     yield LicenseEntryWithLineBreaks(['google_fonts'], license);
   });
-  /*
   SystemChrome.setSystemUIOverlayStyle(
     SystemUiOverlayStyle(
       statusBarColor: Colors.black,
-      statusBarBrightness: Brightness.dark, // this one for iOS
+      //statusBarBrightness: Brightness.light, // this one for iOS
     ),
   );
-  */
 
   sp = await SharedPreferences.getInstance();
   locationId = sp.getString('userHome') ?? defaultLocation;
@@ -74,26 +74,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    var platform = Theme.of(context).platform;
-    var appBarThemeiOS = AppBarTheme(
-      backgroundColor: Colors.transparent,
-      brightness: Brightness.light,
-      elevation: 0,
-    );
-    var appBarTheme = AppBarTheme(
-      backgroundColor: Colors.black,
-      brightness: Brightness.dark,
-    );
-
     return MaterialApp(
       //debugShowCheckedModeBanner: false,
       title: 'temperatur.nu',
       theme: ThemeData(
-        appBarTheme:
-            platform == TargetPlatform.iOS ? appBarThemeiOS : appBarTheme,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          brightness: Brightness.dark,
+        ),
+        accentColor: Colors.grey[200],
         brightness: Brightness.light,
         canvasColor: appCanvasColor,
-        accentColor: Colors.grey[200],
         primaryColor: Colors.grey[800],
         primaryColorBrightness: Brightness.light,
         textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme),
@@ -101,11 +92,11 @@ class _MyAppState extends State<MyApp> {
       ),
       darkTheme: ThemeData.dark().copyWith(
         appBarTheme: AppBarTheme(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.transparent,
           brightness: Brightness.dark,
         ),
-        brightness: Brightness.dark,
         accentColor: Colors.grey[200],
+        brightness: Brightness.dark,
         primaryColor: Colors.grey[800],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -173,108 +164,124 @@ class _MyHomePageState extends State<MyHomePage> {
     _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
     // Specify list of page childrens
-    final List<Widget> _children = [
+/*     final List<Widget> _children = [
       _singlePostPage(),
       FavoritesPage(),
       NearbyListPage(),
       LocationListPage(),
       SettingsPage(),
-    ];
+    ]; */
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).canvasColor,
-        currentIndex: _selectedTab,
-        elevation: 5,
-        selectedItemColor: _isDarkMode ? darkModeTextColor : lightModeTextColor,
-        unselectedItemColor: _isDarkMode
-            ? darkModeTextColor.withOpacity(0.5)
-            : lightModeTextColor.withOpacity(0.5),
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (int index) {
-          setState(() {
-            _selectedTab = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Hem',
-            tooltip: 'Gå till hemstationen',
+      bottomNavigationBar: NavigationBarWidget(page: Pages.home),
+      /*
+      bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        height: 60,
+        //width: double.infinity,
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: _isDarkMode
+                ? tnuYellow.withOpacity(0.5)
+                : tnuBlue.withOpacity(0.5),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favoriter',
-            tooltip: 'Visa mina favoriter',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.gps_fixed),
-            label: 'Nära dig',
-            tooltip: 'Lista närliggande mätstationer',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Lista alla',
-            tooltip: 'Lista alla mätstationer',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Inställningar',
-            tooltip: 'Inställningar',
-          ),
-        ],
+          borderRadius: BorderRadius.circular(10),
+          color: _isDarkMode ? tempCardDarkBackground : tempCardLightBackground,
+        ),
+        child: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.transparent,
+          currentIndex: _selectedTab,
+          elevation: 0,
+          selectedItemColor: _isDarkMode ? tnuYellow : tnuBlue,
+          unselectedItemColor: _isDarkMode
+              ? darkModeTextColor.withOpacity(0.3)
+              : lightModeTextColor.withOpacity(0.3),
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          onTap: (int index) {
+            setState(() {
+              _selectedTab = index;
+            });
+          },
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Hem',
+              tooltip: 'Gå till hemstationen',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Favoriter',
+              tooltip: 'Visa mina favoriter',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.gps_fixed),
+              label: 'Nära dig',
+              tooltip: 'Lista närliggande mätstationer',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'Lista alla',
+              tooltip: 'Lista alla mätstationer',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: 'Inställningar',
+              tooltip: 'Inställningar',
+            ),
+          ],
+        ),
       ),
-      body: _children[_selectedTab],
+      */
+      body: _singlePostPage(),
     );
   }
 
   _singlePostPage() {
     return SafeArea(
-      child: Scaffold(
-        body: RefreshIndicator(
-          color: Theme.of(context).primaryColor,
-          backgroundColor: Theme.of(context).accentColor,
-          key: _mainRefreshIndicatorKey,
-          onRefresh: () async {
-            if (locationId != null) {
-              locationId = sp.getString('userHome') ?? locationId;
-              setState(() {
-                post = fetchStation(locationId, graphRange: graphRange);
-              });
-            }
-          },
-          child: FutureBuilder(
-              future: post,
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting:
-                    {
-                      return LoadingWidget();
-                    }
-                  case ConnectionState.active:
-                    {
-                      return LoadingWidget();
-                    }
-                  case ConnectionState.done:
-                    {
-                      if (snapshot.hasData) {
-                        Station station = snapshot.data.stations[0];
-                        //inspect(station);
-                        return phoneMainScreen(station, context, _isDarkMode);
-                      } else if (snapshot.hasError) {
-                        return noDataView(snapshot.error);
-                      }
-
-                      break;
-                    }
-                  case ConnectionState.none:
-                    {
-                      break;
-                    }
+      child: RefreshIndicator(
+        color: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).accentColor,
+        key: _mainRefreshIndicatorKey,
+        onRefresh: () async {
+          if (locationId != null) {
+            locationId = sp.getString('userHome') ?? locationId;
+            setState(() {
+              post = fetchStation(locationId, graphRange: graphRange);
+            });
+          }
+        },
+        child: FutureBuilder(
+          future: post,
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                {
+                  return LoadingWidget();
                 }
-                return LoadingWidget();
-              }),
+              case ConnectionState.active:
+                {
+                  return LoadingWidget();
+                }
+              case ConnectionState.done:
+                {
+                  if (snapshot.hasData) {
+                    Station station = snapshot.data.stations[0];
+                    //inspect(station);
+                    return phoneMainScreen(station, context, _isDarkMode);
+                  } else if (snapshot.hasError) {
+                    return NoDataWidget(msg: snapshot.error);
+                  }
+
+                  break;
+                }
+              case ConnectionState.none:
+                {
+                  break;
+                }
+            }
+            return LoadingWidget();
+          },
         ),
       ),
     );
@@ -392,43 +399,8 @@ class _MyHomePageState extends State<MyHomePage> {
             station: station,
             isDarkMode: _isDarkMode,
           ),
-          appInfo(),
         ],
       ),
-    );
-  }
-
-  // Error/No data view
-  noDataView(var msg) {
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints viewportConstraints) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          physics: AlwaysScrollableScrollPhysics(),
-          dragStartBehavior: DragStartBehavior.down,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: viewportConstraints.maxHeight,
-              maxWidth: viewportConstraints.maxWidth,
-            ),
-            child: Column(
-              children: <Widget>[
-                Text(
-                  'Något gick fel!',
-                  style: pageTitle,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  "$msg",
-                  style: bodyText,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }

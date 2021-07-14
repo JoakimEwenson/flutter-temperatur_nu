@@ -6,6 +6,7 @@ import 'package:temperatur_nu/controller/fetchNearbyLocations.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/navbar_widget.dart';
 import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
 import 'package:temperatur_nu/views/components/stationlisttile_widget.dart';
@@ -75,6 +76,9 @@ class _NearbyListPageState extends State<NearbyListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: NavigationBarWidget(page: Pages.nearby),
+      extendBody: true,
+      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: RefreshIndicator(
           child: nearbyList(),
@@ -144,6 +148,9 @@ class _NearbyListPageState extends State<NearbyListPage> {
                             );
                           },
                         ),
+                      ),
+                      SizedBox(
+                        height: 32,
                       ),
                     ],
                   ),

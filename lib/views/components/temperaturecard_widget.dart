@@ -73,7 +73,9 @@ class _TemperatureCardWidgetState extends State<TemperatureCardWidget> {
                 ),
                 Container(
                   child: Text(
-                    '${widget.station.temp}°',
+                    widget.station.temp != null
+                        ? '${widget.station.temp}°'
+                        : '$noTempDataString',
                     style: tempCardTemperature,
                   ),
                 ),

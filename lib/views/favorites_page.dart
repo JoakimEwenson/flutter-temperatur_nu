@@ -7,12 +7,11 @@ import 'package:temperatur_nu/controller/fetchFavorites.dart';
 import 'package:temperatur_nu/controller/timestamps.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/loading_widget.dart';
+import 'package:temperatur_nu/views/components/navbar_widget.dart';
 import 'package:temperatur_nu/views/components/nodata_widget.dart';
-import 'package:temperatur_nu/views/components/stationlistdivider_widget.dart';
+import 'package:temperatur_nu/views/components/temperaturecard_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
-import 'package:temperatur_nu/views/drawer.dart';
 
 // Set up SharedPreferences for accessing local storage
 SharedPreferences sp;
@@ -78,7 +77,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: AppDrawer(),
+      bottomNavigationBar: NavigationBarWidget(
+        page: Pages.favorites,
+      ),
+      extendBody: true,
+      extendBodyBehindAppBar: false,
       body: SafeArea(
         child: RefreshIndicator(
           child: favoritesList(),
@@ -115,31 +118,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     } else if (snapshot.hasData) {
                       List<Station> stations = snapshot.data.stations;
                       if (stations.length > 0) {
-                        /*
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4, vertical: 8),
-                              child: Text(
-                                'Favoritmätstationer',
-                                style: pageTitle,
-                              ),
-                            ),
-                            GridView.count(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              childAspectRatio: 1.4,
-                              crossAxisCount: 2,
-                              children: stations.map((Station station) {
-                                return StationDataSmallWidget(station: station);
-                              }).toList(),
-                            ),
-                          ],
-                        );
-                        */
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -153,22 +131,28 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 8),
-                              padding: const EdgeInsets.all(16),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: _isDarkMode
-                                    ? tempCardDarkBackground
-                                    : tempCardLightBackground,
-                                borderRadius:
-                                    BorderRadius.circular(cardBorderRadius),
-                              ),
-                              child: ListView.separated(
+                              child: ListView.builder(
                                 physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: stations.length,
                                 itemBuilder: (context, index) {
                                   Station station = stations[index];
+                                  return GestureDetector(
+                                    onTap: () {
+                                      //saveLocationId(station.id);
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/SingleStation',
+                                        arguments:
+                                            LocationArguments(station.id),
+                                      );
+                                    },
+                                    child: TemperatureCardWidget(
+                                      station: station,
+                                      isDarkMode: _isDarkMode,
+                                    ),
+                                  );
+                                  /*
                                   return ListTile(
                                     dense: true,
                                     isThreeLine: false,
@@ -269,12 +253,18 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                       );
                                     },
                                   );
+                                  */
                                 },
+                                /*
                                 separatorBuilder:
                                     (BuildContext context, int index) =>
                                         StationListDivider(),
+                                */
                               ),
                             ),
+                            SizedBox(
+                              height: 32,
+                            )
                           ],
                         );
                       } else {
