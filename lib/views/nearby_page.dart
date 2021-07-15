@@ -77,8 +77,6 @@ class _NearbyListPageState extends State<NearbyListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(page: Pages.nearby),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: RefreshIndicator(
           child: nearbyList(),

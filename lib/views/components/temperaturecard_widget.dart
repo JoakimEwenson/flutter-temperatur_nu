@@ -95,17 +95,25 @@ class _TemperatureCardWidgetState extends State<TemperatureCardWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    getTimeDifference(widget.station.lastUpdate) > 60
-                        ? Text(
-                            'Temperaturen har inte uppdaterats den senaste timmen.',
-                            style: bodyText.copyWith(color: Colors.red),
-                            textAlign: TextAlign.left,
-                          )
-                        : Text(
-                            'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
-                            style: bodyText.copyWith(color: Colors.red),
-                            textAlign: TextAlign.left,
-                          ),
+                    if (getTimeDifference(widget.station.lastUpdate) > 1440)
+                      Text(
+                        'Temperaturen har inte uppdaterats på mer än 24 timmar.',
+                        style: bodyText.copyWith(color: Colors.red),
+                        textAlign: TextAlign.left,
+                      ),
+                    if (getTimeDifference(widget.station.lastUpdate) < 1440 &&
+                        getTimeDifference(widget.station.lastUpdate) > 60)
+                      Text(
+                        'Temperaturen har inte uppdaterats den senaste timmen.',
+                        style: bodyText.copyWith(color: Colors.red),
+                        textAlign: TextAlign.left,
+                      ),
+                    if (getTimeDifference(widget.station.lastUpdate) < 60)
+                      Text(
+                        'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
+                        style: bodyText.copyWith(color: Colors.red),
+                        textAlign: TextAlign.left,
+                      ),
                   ],
                 ),
               ),

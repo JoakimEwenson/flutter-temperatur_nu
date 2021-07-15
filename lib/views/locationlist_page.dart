@@ -126,8 +126,6 @@ class _LocationListPageState extends State<LocationListPage> {
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(page: Pages.locations),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: FutureBuilder(
           future: locations,

@@ -18,6 +18,7 @@ import 'package:temperatur_nu/views/components/nodata_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
 import 'package:temperatur_nu/views/components/temperaturecard_widget.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
+import 'package:temperatur_nu/views/licenseslist_page.dart';
 import 'package:temperatur_nu/views/stationdetails_page.dart';
 import 'package:temperatur_nu/controller/fetchSinglePost.dart';
 import 'package:temperatur_nu/views/favorites_page.dart';
@@ -109,6 +110,7 @@ class _MyAppState extends State<MyApp> {
         '/Nearby': (context) => NearbyListPage(),
         '/Settings': (context) => SettingsPage(),
         '/SingleStation': (context) => StationDetailsPage(),
+        '/LicensesListPage': (context) => LicensesListPage(),
       },
     );
   }
@@ -332,6 +334,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             style: cardInnerTitle,
                           ),
                           Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Theme.of(context).canvasColor,
+                            ),
+                            margin: const EdgeInsets.only(top: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
                             width: double.infinity,
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
@@ -355,28 +363,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                     value: '1day',
                                     child: Text(
                                       'Senaste dygnet',
-                                      style: bodyText,
+                                      style: dropdownMenuItem,
                                     ),
                                   ),
                                   DropdownMenuItem(
                                     value: '1week',
                                     child: Text(
                                       'Senaste veckan',
-                                      style: bodyText,
+                                      style: dropdownMenuItem,
                                     ),
                                   ),
                                   DropdownMenuItem(
                                     value: '1month',
                                     child: Text(
                                       'Senaste månaden',
-                                      style: bodyText,
+                                      style: dropdownMenuItem,
                                     ),
                                   ),
                                   DropdownMenuItem(
                                     value: '1year',
                                     child: Text(
                                       'Senaste året',
-                                      style: bodyText,
+                                      style: dropdownMenuItem,
                                     ),
                                   ),
                                 ],

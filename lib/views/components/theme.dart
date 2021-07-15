@@ -83,6 +83,12 @@ TextStyle bodySmallText = GoogleFonts.inter(
   textStyle: TextStyle(fontSize: 11),
 );
 
+TextStyle dropdownMenuItem = bodyText.copyWith(fontWeight: FontWeight.bold);
+
+TextStyle licenseText = GoogleFonts.robotoMono(
+  textStyle: TextStyle(fontSize: 11),
+);
+
 // Temperature Card styles
 Color tempCardLightBackground = Colors.white;
 Color tempCardDarkBackground = Color.fromRGBO(26, 26, 26, 1.0);

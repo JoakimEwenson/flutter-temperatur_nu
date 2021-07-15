@@ -45,8 +45,6 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
 
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
       body: SafeArea(
         child: RefreshIndicator(
           color: Theme.of(context).primaryColor,
@@ -136,6 +134,16 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                                           style: cardInnerTitle,
                                         ),
                                         Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color:
+                                                Theme.of(context).canvasColor,
+                                          ),
+                                          margin: const EdgeInsets.only(top: 8),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                          ),
                                           width: double.infinity,
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton(
@@ -159,28 +167,28 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
                                                   value: '1day',
                                                   child: Text(
                                                     'Senaste dygnet',
-                                                    style: bodyText,
+                                                    style: dropdownMenuItem,
                                                   ),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: '1week',
                                                   child: Text(
                                                     'Senaste veckan',
-                                                    style: bodyText,
+                                                    style: dropdownMenuItem,
                                                   ),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: '1month',
                                                   child: Text(
                                                     'Senaste månaden',
-                                                    style: bodyText,
+                                                    style: dropdownMenuItem,
                                                   ),
                                                 ),
                                                 DropdownMenuItem(
                                                   value: '1year',
                                                   child: Text(
                                                     'Senaste året',
-                                                    style: bodyText,
+                                                    style: dropdownMenuItem,
                                                   ),
                                                 ),
                                               ],

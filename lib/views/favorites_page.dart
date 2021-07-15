@@ -70,7 +70,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
       bottomNavigationBar: NavigationBarWidget(
         page: Pages.favorites,
       ),
-      extendBody: true,
       extendBodyBehindAppBar: false,
       body: SafeArea(
         child: RefreshIndicator(

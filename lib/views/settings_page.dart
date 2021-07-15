@@ -40,44 +40,38 @@ class _SettingsPageState extends State<SettingsPage> {
         Theme.of(context).brightness == Brightness.dark ? true : false;
     return Scaffold(
       bottomNavigationBar: NavigationBarWidget(page: Pages.settings),
-      extendBody: true,
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  AboutAppCard(
-                    isDarkMode: _isDarkMode,
-                  ),
-                  SettingsCard(
-                    isDarkMode: _isDarkMode,
-                  ),
-                  AppLicenseWidget(),
-                  FutureBuilder(
-                    future: _packageInfo,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        PackageInfo packageInfo = snapshot.data;
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Appversion ${packageInfo.version} (build ${packageInfo.buildNumber})',
-                            style: bodySmallText,
-                          ),
-                        );
-                      }
-
-                      return Container();
-                    },
-                  ),
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              AboutAppCard(
+                isDarkMode: _isDarkMode,
               ),
-            ),
+              SettingsCard(
+                isDarkMode: _isDarkMode,
+              ),
+              AppLicenseWidget(),
+              FutureBuilder(
+                future: _packageInfo,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    PackageInfo packageInfo = snapshot.data;
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Appversion ${packageInfo.version} (build ${packageInfo.buildNumber})',
+                        style: bodySmallText,
+                      ),
+                    );
+                  }
+
+                  return Container();
+                },
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -157,7 +157,7 @@ class _SettingsCardState extends State<SettingsCard> {
                     style: bodyText.copyWith(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(
-                    'Bestämmer antalet kompletterande mätstationer som ska hämtas till varje station, mellan ${_minNearbyAmount.toInt()} och ${_maxNearbyAmount.toInt()}.',
+                    'Bestämmer antalet kompletterande mätstationer som ska hämtas till varje mätstation (${_minNearbyAmount.toInt()}-${_maxNearbyAmount.toInt()}).',
                     style: bodyText,
                   ),
                 ),

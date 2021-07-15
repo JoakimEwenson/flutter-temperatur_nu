@@ -147,7 +147,7 @@ class ChartWidget extends StatelessWidget {
                   LineChartBarData(
                     barWidth: 2,
                     curveSmoothness: 1,
-                    isCurved: true,
+                    isCurved: false,
                     preventCurveOverShooting: true,
                     colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
                     dotData: FlDotData(show: false),
@@ -159,7 +159,8 @@ class ChartWidget extends StatelessWidget {
                     showTitles: true,
                     getTitles: (value) => '${value.toStringAsFixed(0)}°',
                     getTextStyles: (value) => GoogleFonts.robotoMono(
-                      color: _isDarkMode ? Colors.grey[100] : Colors.black,
+                      color:
+                          _isDarkMode ? darkModeTextColor : lightModeTextColor,
                     ),
                     margin: 5,
                     interval: 5,
