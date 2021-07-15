@@ -16,6 +16,10 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
   Widget build(BuildContext context) {
     bool _isDarkMode =
         Theme.of(context).brightness == Brightness.dark ? true : false;
+
+    Color iconColor = _isDarkMode ? tnuYellow : tnuBlue;
+    Color iconMutedColor = _isDarkMode ? Colors.white70 : Colors.black26;
+
     return Container(
       margin: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       padding: EdgeInsets.only(
@@ -25,7 +29,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
         border: Border(
           top: BorderSide(color: tnuYellow),
         ),
-        color: _isDarkMode ? tempCardDarkBackground : tempCardDarkBackground,
+        color: _isDarkMode ? tempCardDarkBackground : tempCardLightBackground,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,35 +37,35 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
         children: [
           IconButton(
             icon: Icon(Icons.home),
-            color: widget.page == Pages.home ? tnuYellow : Colors.white70,
+            color: widget.page == Pages.home ? iconColor : iconMutedColor,
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/');
             },
           ),
           IconButton(
             icon: Icon(Icons.favorite),
-            color: widget.page == Pages.favorites ? tnuYellow : Colors.white70,
+            color: widget.page == Pages.favorites ? iconColor : iconMutedColor,
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/Favorites');
             },
           ),
           IconButton(
             icon: Icon(Icons.gps_fixed),
-            color: widget.page == Pages.nearby ? tnuYellow : Colors.white70,
+            color: widget.page == Pages.nearby ? iconColor : iconMutedColor,
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/Nearby');
             },
           ),
           IconButton(
             icon: Icon(Icons.list),
-            color: widget.page == Pages.locations ? tnuYellow : Colors.white70,
+            color: widget.page == Pages.locations ? iconColor : iconMutedColor,
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/LocationList');
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
-            color: widget.page == Pages.settings ? tnuYellow : Colors.white70,
+            color: widget.page == Pages.settings ? iconColor : iconMutedColor,
             onPressed: () {
               Navigator.pushReplacementNamed(context, '/Settings');
             },

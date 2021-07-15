@@ -6,7 +6,7 @@ Future<List> fetchLocalFavorites() async {
   var sp = await SharedPreferences.getInstance();
   var favorites = sp.getString('favorites') ?? "";
   var favList = [];
-  if ((favorites != "") || (favorites != null)) {
+  if (favorites != "" && favorites != null && favorites.isNotEmpty) {
     favList = favorites.split(',');
   }
 

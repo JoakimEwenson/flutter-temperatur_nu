@@ -59,19 +59,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _refreshList() async {
-    num timestamp = int.tryParse(sp.getString('favoritesListTimeout'));
-    num timediff = compareTimeStamp(
-        timestamp, DateTime.now().millisecondsSinceEpoch.toInt());
-    if (timediff > cacheTimeout) {
-      setState(() {
-        favorites = fetchFavorites(false);
-        setTimeStamp('favoritesListTimeout');
-      });
-    } else {
-      setState(() {
-        favorites = fetchFavorites(true);
-      });
-    }
+    setState(() {
+      favorites = fetchFavorites(false);
+    });
   }
 
   @override
@@ -114,9 +104,18 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   {
                     if (!snapshot.hasData) {
                       return NoDataWidget(
-                          msg: 'Du har inga sparade favoriter än.');
-                    } else if (snapshot.hasData) {
+                          title: 'Inga favoriter',
+                          msg:
+                              'Du har inga sparade favoriter än. Tryck på hjärtat för att favoritmarkera en station och försök igen.');
+                    }
+                    if (snapshot.hasData) {
                       List<Station> stations = snapshot.data.stations;
+                      if (stations.length == 1 && stations[0].title.isEmpty) {
+                        return NoDataWidget(
+                            title: 'Inga favoriter',
+                            msg:
+                                'Du har inga sparade favoriter än. Tryck på hjärtat för att favoritmarkera en station och försök igen.');
+                      }
                       if (stations.length > 0) {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

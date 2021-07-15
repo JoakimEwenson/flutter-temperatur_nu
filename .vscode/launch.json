@@ -8,6 +8,24 @@
             "name": "Flutter",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name":"Android",
+            "request": "launch",
+            "type":"dart",
+            "deviceId": "emulator-5554"
+        },
+        {
+            "name":"iPhone",
+            "request": "launch",
+            "type":"dart",
+            "deviceId": "C9EEEA44-DB1F-4C79-B6E9-6EB00806C007"
+        },
+    ],
+    "compounds": [
+        {
+            "name": "All devices",
+            "configurations": ["Android","iPhone"]
         }
     ]
 }

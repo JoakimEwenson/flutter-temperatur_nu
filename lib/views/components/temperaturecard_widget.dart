@@ -95,11 +95,17 @@ class _TemperatureCardWidgetState extends State<TemperatureCardWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
-                      style: bodyText.copyWith(color: Colors.red),
-                      textAlign: TextAlign.center,
-                    )
+                    getTimeDifference(widget.station.lastUpdate) > 60
+                        ? Text(
+                            'Temperaturen har inte uppdaterats den senaste timmen.',
+                            style: bodyText.copyWith(color: Colors.red),
+                            textAlign: TextAlign.left,
+                          )
+                        : Text(
+                            'Temperaturen är senast uppdaterad för ${getTimeDifference(widget.station.lastUpdate)} minuter sedan.',
+                            style: bodyText.copyWith(color: Colors.red),
+                            textAlign: TextAlign.left,
+                          ),
                   ],
                 ),
               ),

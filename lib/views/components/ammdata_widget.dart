@@ -29,7 +29,7 @@ class AmmDataWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: const EdgeInsets.only(top: 8, bottom: 8),
+            margin: const EdgeInsets.only(top: 16, bottom: 8),
             child: Table(
               columnWidths: <int, TableColumnWidth>{
                 0: FractionColumnWidth(0.3),

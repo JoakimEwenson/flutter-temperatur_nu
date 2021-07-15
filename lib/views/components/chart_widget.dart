@@ -22,7 +22,8 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
     // Parse datetime string into DateTime objects for null check
     double temperature = double.tryParse(_dataPost.temperatur);
     DateTime dateTime = DateTime.tryParse(_dataPost.datetime);
-    if (dateTime.millisecondsSinceEpoch > (timestamp + timeLimit)) {
+    if (_dataPosts.length > 100 &&
+        dateTime.millisecondsSinceEpoch > (timestamp + timeLimit)) {
       timestamp = dateTime.millisecondsSinceEpoch;
       if (temperature == null) {
         spots.add(FlSpot.nullSpot);
@@ -90,13 +91,30 @@ class ChartWidget extends StatelessWidget {
                 minY: (chartMinY - 5).floorToDouble(),
                 maxY: (chartMaxY + 5).ceilToDouble(),
                 borderData: FlBorderData(
-                  show: false,
+                  border: Border(
+                    left: BorderSide(
+                      color: _isDarkMode ? Colors.white12 : Colors.black12,
+                      width: 2,
+                    ),
+                    top: BorderSide(
+                      color: _isDarkMode ? Colors.white12 : Colors.black12,
+                      width: 0,
+                    ),
+                    right: BorderSide(
+                      color: _isDarkMode ? Colors.white12 : Colors.black12,
+                      width: 0,
+                    ),
+                    bottom: BorderSide(
+                      color: _isDarkMode ? Colors.white12 : Colors.black12,
+                      width: 2,
+                    ),
+                  ),
                 ),
                 gridData: FlGridData(
                   drawHorizontalLine: true,
                   getDrawingHorizontalLine: (value) => FlLine(
                     color: _isDarkMode ? Colors.white12 : Colors.black12,
-                    strokeWidth: 2,
+                    strokeWidth: 1,
                   ),
                   horizontalInterval: 5,
                   show: true,
@@ -112,16 +130,17 @@ class ChartWidget extends StatelessWidget {
                             spotList.timestamps[tooltip.x.toInt()];
                         return LineTooltipItem(
                           '${tooltip.y}°\n${DateFormat('d/M HH:mm').format(timestamp)}',
-                          TextStyle(
+                          bodyText.copyWith(
                             color: _isDarkMode
-                                ? Colors.grey[900]
-                                : Colors.grey[100],
+                                ? lightModeTextColor
+                                : darkModeTextColor,
                           ),
                         );
                       }).toList();
                     },
-                    tooltipBgColor:
-                        _isDarkMode ? Colors.grey[100] : Colors.grey[900],
+                    tooltipBgColor: _isDarkMode
+                        ? tempCardLightBackground
+                        : tempCardDarkBackground,
                   ),
                 ),
                 lineBarsData: [
@@ -133,7 +152,7 @@ class ChartWidget extends StatelessWidget {
                     colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
                     dotData: FlDotData(show: false),
                     spots: _spots,
-                  )
+                  ),
                 ],
                 titlesData: FlTitlesData(
                   leftTitles: SideTitles(

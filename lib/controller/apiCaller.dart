@@ -18,6 +18,7 @@ Future<String> apiCaller(Map<String, dynamic> urlParams) async {
   // Prepare empty content string
   String content;
   final response = await http.get(url).timeout(const Duration(seconds: 15));
+  //print('Api called at ${DateTime.now().toIso8601String()}');
 
   if (response.statusCode == 200) {
     content = response.body;

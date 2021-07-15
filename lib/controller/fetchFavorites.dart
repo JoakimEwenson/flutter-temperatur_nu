@@ -22,6 +22,9 @@ Future<StationNameVerbose> fetchFavorites(bool getCache) async {
   } else {
     // Save and fetch locally saved data
     List searchLocationList = await fetchLocalFavorites();
+    if (searchLocationList.length == 0) {
+      return null;
+    }
     String searchLocations = searchLocationList.join(',');
     // JSON based response
     Map<String, dynamic> settingsParams = {
