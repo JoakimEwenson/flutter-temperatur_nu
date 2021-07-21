@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/apiCaller.dart';
