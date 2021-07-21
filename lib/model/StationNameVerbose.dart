@@ -145,15 +145,20 @@ class Amm {
   double max;
   String maxTime;
 
-  factory Amm.fromJson(Map<String, dynamic> json) => Amm(
+  factory Amm.fromJson(Map<String, dynamic> json) {
+    if (json.containsKey("minTime") && json.containsKey("maxTime")) {
+      return Amm(
         ammRange: json["ammRange"],
         average:
             json["average"] != null ? double.tryParse(json["average"]) : null,
         min: json["min"] != null ? double.tryParse(json["min"]) : null,
-        minTime: json["minTime"],
+        minTime: json["minTime"] != null ? json["minTime"] : null,
         max: json["max"] != null ? double.tryParse(json["max"]) : null,
-        maxTime: json["maxTime"],
+        maxTime: json["maxTime"] != null ? json["maxTime"] : null,
       );
+    }
+    return null;
+  }
 
   Map<String, dynamic> toJson() => {
         "ammRange": ammRange,

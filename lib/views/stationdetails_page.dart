@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:temperatur_nu/controller/fetchSinglePost.dart';
@@ -5,6 +7,7 @@ import 'package:temperatur_nu/controller/userSettings.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
 import 'package:temperatur_nu/views/components/chart_widget.dart';
+import 'package:temperatur_nu/views/components/loading_widget.dart';
 import 'package:temperatur_nu/views/components/navbar_widget.dart';
 import 'package:temperatur_nu/views/components/nearbystations_widget.dart';
 import 'package:temperatur_nu/views/components/stationinfo_widget.dart';
@@ -53,43 +56,17 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
             future: post,
             builder: (BuildContext context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
+                return LoadingWidget();
               }
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
                 Station station = snapshot.data.stations[0];
+
                 return Container(
                   child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
                     child: Column(
                       children: [
-                        /*
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: TextButton.icon(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            icon: Icon(
-                              Icons.chevron_left,
-                              color: _isDarkMode
-                                  ? darkModeTextColor
-                                  : lightModeTextColor,
-                            ),
-                            label: Text(
-                              'Tillbaka',
-                              style: bodyText.copyWith(
-                                color: _isDarkMode
-                                    ? darkModeTextColor
-                                    : lightModeTextColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        */
                         TemperatureCardWidget(
                           station: station,
                           isDarkMode: _isDarkMode,
