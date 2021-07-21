@@ -191,7 +191,7 @@ class ChartWidget extends StatelessWidget {
                             ? darkModeTextColor
                             : lightModeTextColor,
                       ),
-                      margin: 5,
+                      margin: 15,
                       interval: 5,
                     ),
                     bottomTitles: SideTitles(showTitles: false),
