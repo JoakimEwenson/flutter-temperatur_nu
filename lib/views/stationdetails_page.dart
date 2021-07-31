@@ -59,7 +59,6 @@ class _StationDetailsPageState extends State<StationDetailsPage> {
               if (snapshot.connectionState == ConnectionState.done &&
                   snapshot.hasData) {
                 Station station = snapshot.data.stations[0];
-
                 return Container(
                   child: SingleChildScrollView(
                     physics: AlwaysScrollableScrollPhysics(),
