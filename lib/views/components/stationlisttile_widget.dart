@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:temperatur_nu/controller/favorites.dart';
 import 'package:temperatur_nu/model/LocationArguments.dart';
 import 'package:temperatur_nu/model/StationNameVerbose.dart';
-import 'package:temperatur_nu/model/TooManyFavoritesException.dart';
 import 'package:temperatur_nu/views/components/theme.dart';
 
 class StationListTile extends StatefulWidget {
@@ -68,22 +67,12 @@ class _StationListTileState extends State<StationListTile> {
               }
               setState(() {});
             }
-          } on TooManyFavoritesException catch (e) {
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(
-                    e.errorMsg(),
-                    style: bodyText,
-                  ),
-                ),
-              );
           } catch (e) {
             ScaffoldMessenger.of(context)
               ..removeCurrentSnackBar()
               ..showSnackBar(
                 SnackBar(
+                  behavior: SnackBarBehavior.floating,
                   content: Text(
                     e.toString(),
                     style: bodyText,

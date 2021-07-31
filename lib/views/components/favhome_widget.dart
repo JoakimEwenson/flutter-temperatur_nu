@@ -77,6 +77,7 @@ class _FavoriteHomeWidgetState extends State<FavoriteHomeWidget> {
                   ..removeCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(
+                      behavior: SnackBarBehavior.floating,
                       content: Text(
                         '${e.toString()}',
                         style: bodyText,
@@ -118,6 +119,7 @@ class _FavoriteHomeWidgetState extends State<FavoriteHomeWidget> {
                   ..removeCurrentSnackBar()
                   ..showSnackBar(
                     SnackBar(
+                      behavior: SnackBarBehavior.floating,
                       content: Text(
                         '${e.toString()}',
                         style: bodyText,

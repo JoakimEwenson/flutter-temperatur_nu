@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:http/http.dart' as http;
 
 // Make global base URL for API
@@ -17,13 +19,17 @@ Future<String> apiCaller(Map<String, dynamic> urlParams) async {
 
   // Prepare empty content string
   String content;
-  final response = await http.get(url).timeout(const Duration(seconds: 15));
-
-  if (response.statusCode == 200) {
-    content = response.body;
-  } else {
-    //print("HTTP Status: ${response.statusCode}");
-    throw Exception("HTTP Status: ${response.statusCode}");
+  try {
+    final response = await http.get(url).timeout(const Duration(seconds: 15));
+    if (response.statusCode == 200) {
+      content = response.body;
+    } else {
+      //print("HTTP Status: ${response.statusCode}");
+      throw Exception("HTTP Status: ${response.statusCode}");
+    }
+  } catch (e) {
+    inspect(e);
   }
+
   return content;
 }

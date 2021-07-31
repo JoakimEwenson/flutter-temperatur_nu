@@ -191,9 +191,12 @@ class _SettingsCardState extends State<SettingsCard> {
                           ..removeCurrentSnackBar()
                           ..showSnackBar(
                             SnackBar(
+                              behavior: SnackBarBehavior.floating,
                               content: Text(
                                 'Inställningar sparade.',
-                                style: bodyText,
+                                style: bodyText.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           );
@@ -203,9 +206,12 @@ class _SettingsCardState extends State<SettingsCard> {
                           ..removeCurrentSnackBar()
                           ..showSnackBar(
                             SnackBar(
+                              behavior: SnackBarBehavior.floating,
                               content: Text(
                                 'Inställningar sparades ej!',
-                                style: bodyText,
+                                style: bodyText.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           );

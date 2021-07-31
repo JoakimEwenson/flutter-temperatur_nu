@@ -41,23 +41,23 @@ ChartSpotList dataPostToFlSpot(List<DataPost> _dataPosts) {
           //FlSpot(position.toDouble(), double.maxFinite),
           FlSpot.nullSpot,
         );
+        position++;
+        timestamps.add(dateTime);
       }
-      timestamps.add(dateTime);
-      position++;
     }
     if (_dataPosts.length > 100 &&
         dateTime.millisecondsSinceEpoch > (timestamp + timeLimit)) {
       timestamp = dateTime.millisecondsSinceEpoch;
-      if (temperature != null && !temperature.isNaN) {
+      if (temperature != null && temperature.isNaN == false) {
         spots.add(
           FlSpot(
             position.toDouble(),
             temperature,
           ),
         );
+        timestamps.add(dateTime);
+        position++;
       }
-      timestamps.add(dateTime);
-      position++;
     }
   });
 
@@ -179,7 +179,7 @@ class ChartWidget extends StatelessWidget {
                         preventCurveOverShooting: false,
                         colors: _isDarkMode ? [tnuYellow] : [tnuBlue],
                         dotData: FlDotData(show: false),
-                        spots: _spots,
+                        spots: _spots.first.y.isNaN ? [FlSpot(0, 0)] : _spots,
                       ),
                   ],
                   titlesData: FlTitlesData(

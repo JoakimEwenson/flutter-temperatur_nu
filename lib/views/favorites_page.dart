@@ -199,17 +199,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                             }
                                             setState(() {});
                                           }
-                                        } on TooManyFavoritesException catch (e) {
-                                          ScaffoldMessenger.of(context)
-                                            ..removeCurrentSnackBar()
-                                            ..showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  e.errorMsg(),
-                                                  style: bodyText,
-                                                ),
-                                              ),
-                                            );
                                         } catch (e) {
                                           ScaffoldMessenger.of(context)
                                             ..removeCurrentSnackBar()
@@ -311,6 +300,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   ScaffoldMessenger.of(context)
                     ..removeCurrentSnackBar()
                     ..showSnackBar(SnackBar(
+                      behavior: SnackBarBehavior.floating,
                       content: Text(
                         'Tog bort ${station.title} från favoriter.',
                         style: bodyText,
